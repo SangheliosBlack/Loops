@@ -206,7 +206,6 @@ class AuthService with ChangeNotifier {
   }
 
   Future logout() async {
-    await Future.delayed(const Duration(seconds: 2));
     authStatus = AuthStatus.notAuthenticated;
     notifyListeners();
     await LocalStorage.prefs.remove('token');

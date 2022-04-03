@@ -1,8 +1,18 @@
+import 'dart:convert';
+
+import 'package:delivery/global/enviroment.dart';
+import 'package:delivery/models/geocoding_reverse.dart';
+import 'package:delivery/service/auth_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:http/http.dart' as http;
 
 class PermissionStatusProvider with ChangeNotifier {
+  List<Result> listaSugerencias = [];
+
+  late Position currentLocation;
+
   /*PERMISSION REQUEST*/
   bool _isGranted = false;
 
@@ -55,6 +65,30 @@ class PermissionStatusProvider with ChangeNotifier {
       isEnabled = true;
     } else {
       isEnabled = false;
+    }
+  }
+
+  Future<void> ubicacionActual() async {
+    Position posicion = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.best);
+
+    currentLocation = posicion;
+    final data = {'coordenadas': '${posicion.latitude},${posicion.longitude}'};
+
+    try {
+      final resp = await http.post(
+          Uri.parse('${Statics.apiUrl}/google/sugerencia'),
+          body: jsonEncode(data),
+          headers: {
+            'Content-Type': 'application/json',
+            'x-token': await AuthService.getToken()
+          });
+
+      final searchResponse = geodingReverseFromJson(resp.body);
+      listaSugerencias = searchResponse.results;
+      notifyListeners();
+      // ignore: empty_catches
+    } catch (e) {
     }
   }
 }

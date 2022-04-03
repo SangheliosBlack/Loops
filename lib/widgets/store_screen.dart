@@ -4,7 +4,7 @@ import 'package:delivery/global/enviroment.dart';
 import 'package:delivery/global/styles.dart';
 import 'package:delivery/models/lista_separada.dart';
 import 'package:delivery/service/llenar_pantallas.dart';
-import 'package:delivery/views/extras/categoria_view.dart';
+import 'package:delivery/views/categoria_view.dart';
 import 'package:delivery/widgets/place_holder.dart';
 import 'package:delivery/widgets/producto_general.dart';
 import 'package:delivery/widgets/store_individual.dart';

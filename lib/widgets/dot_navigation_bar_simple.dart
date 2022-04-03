@@ -13,15 +13,9 @@ class MenuInferior extends StatelessWidget {
     final authService = Provider.of<AuthService>(context);
     return Container(
       height: 80,
-      decoration: BoxDecoration(boxShadow: [
-        BoxShadow(
-          color: Colors.grey.withOpacity(.1),
-          spreadRadius: 5,
-          blurRadius: 7,
-          offset: const Offset(0, -3),
-        ),
-      ]),
+      color: Colors.red,
       child: BottomNavigationBar(
+        backgroundColor: Colors.white,
         showSelectedLabels: false,
         showUnselectedLabels: false,
         onTap: (valor) {
@@ -125,7 +119,7 @@ class MenuInferior extends StatelessWidget {
           child: Stack(
             alignment: Alignment.center,
             children: const [
-               Icon(Icons.delivery_dining),
+              Icon(Icons.delivery_dining),
               /*Positioned(
                 top: -3,
                 left: 0,
@@ -152,7 +146,7 @@ class MenuInferior extends StatelessWidget {
           child: Stack(
             alignment: Alignment.center,
             children: const [
-               Icon(Icons.delivery_dining_outlined),
+              Icon(Icons.delivery_dining_outlined),
               /*Positioned(
                 top: -3,
                 left: 0,
@@ -187,7 +181,7 @@ class MenuInferior extends StatelessWidget {
           child: Stack(
             alignment: Alignment.center,
             children: const [
-               Icon(Icons.store),
+              Icon(Icons.store),
               /*Positioned(
                 top: -3,
                 left: 0,
@@ -214,7 +208,7 @@ class MenuInferior extends StatelessWidget {
           child: Stack(
             alignment: Alignment.center,
             children: const [
-               Icon(Icons.store_outlined),
+              Icon(Icons.store_outlined),
               /*Positioned(
                 top: -3,
                 left: 0,

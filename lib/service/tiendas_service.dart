@@ -23,17 +23,16 @@ class TiendasService with ChangeNotifier {
   }
 
   TiendasService() {
-    getTienda();
+    /*getTienda();*/
   }
 
   Future<List<Tienda>> verTodoTienda() async {
     try {
-      final resp = await http.get(
-          Uri.parse('${Statics.apiUrl}/tiendas/verTodoTiendas'),
-          headers: {
-            'Content-Type': 'application/json',
-            'x-token': await AuthService.getToken()
-          });
+      final resp = await http
+          .get(Uri.parse('${Statics.apiUrl}/tiendas/verTodoTiendas'), headers: {
+        'Content-Type': 'application/json',
+        'x-token': await AuthService.getToken()
+      });
 
       final dataParse = tiendaResponseFromJson(resp.body);
       return dataParse.tiendas;
@@ -41,6 +40,7 @@ class TiendasService with ChangeNotifier {
       return [];
     }
   }
+
   Future<List<Producto>> verTodoProductos() async {
     try {
       final resp = await http.get(
@@ -57,9 +57,7 @@ class TiendasService with ChangeNotifier {
     }
   }
 
-  Future<List<Item>> listaCategorias({required String filtro}) async {
-    await Future.delayed(const Duration(seconds: 1));
-
+  Future<List<Producto>> listaCategorias({required String filtro}) async {
     final data = {'filtro': filtro};
 
     try {
@@ -70,6 +68,7 @@ class TiendasService with ChangeNotifier {
             'Content-Type': 'application/json',
             'x-token': await AuthService.getToken()
           });
+
 
       final dataParse = categoriasFromJson(resp.body);
       return dataParse.productos;

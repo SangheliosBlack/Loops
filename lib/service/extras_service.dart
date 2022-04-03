@@ -1,29 +1,13 @@
 import 'dart:convert';
 
 import 'package:delivery/global/enviroment.dart';
-import 'package:delivery/models/direccion_response.dart';
 import 'package:delivery/models/tienda.dart';
 import 'package:delivery/models/tiendas_response.dart';
 import 'package:delivery/service/auth_service.dart';
 import 'package:http/http.dart' as http;
 
 class ExtrasService {
-  Future<Direccion?> getDireccion({required String id}) async {
-    try {
-      final data = {'uid': id};
-      final resp = await http.post(
-          Uri.parse('${Statics.apiUrl}/direcciones/search'),
-          body: jsonEncode(data),
-          headers: {
-            'Content-Type': 'application/json',
-            'x-token': await AuthService.getToken()
-          });
-      final direccionResponse = direccionResponseFromJson(resp.body);
-      return direccionResponse;
-    } catch (e) {
-      return null;
-    }
-  }
+  
 
   Future<Tienda?> agregarNuevaTienda(String nombre) async {
     final data = {'nombre': nombre};

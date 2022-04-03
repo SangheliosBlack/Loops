@@ -18,183 +18,171 @@ class _MetodosPagoViewState extends State<MetodosPagoView> {
   @override
   Widget build(BuildContext context) {
     final tarjetasService = Provider.of<TarjetasService>(context);
-    return WillPopScope(
-      onWillPop: () async {
-        return true;
-      },
-      child: Scaffold(
-        appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(75),
-          child: Container(
-            decoration: BoxDecoration(boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(.05),
-                spreadRadius: 5,
-                blurRadius: 7,
-                offset: const Offset(0, 0),
-              ),
-            ]),
-            child: AppBar(
-              centerTitle: true,
-              iconTheme: const IconThemeData(color: Colors.black),
-              backgroundColor: Colors.white,
-              elevation: 0,
-            ),
-          ),
-        ),
-        body: Stack(
-          children: [
-            fondo(context),
-            SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
-              child: Container(
-                padding: const EdgeInsets.only(top: 0, bottom: 25),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      width: double.infinity,
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        centerTitle: true,
+        iconTheme: const IconThemeData(color: Colors.black),
+        backgroundColor: Colors.white,
+        elevation: 0,
+      ),
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            child: Container(
+              padding: const EdgeInsets.only(top: 0, bottom: 25),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.only(
+                        top: 40, left: 25, right: 25, bottom: 15),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Monedero virtual',
+                          style: Styles.letterCustom(15, false, .7),
+                        ),
+                        const SizedBox(height: 5),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Container(
+                                  margin: const EdgeInsets.only(bottom: 30),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        '\$',
+                                        textAlign: TextAlign.end,
+                                        style: GoogleFonts.playfairDisplay(
+                                            fontSize: 25),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Container(
+                                  margin: const EdgeInsets.only(left: 5),
+                                  child: Text(
+                                    '000.',
+                                    textAlign: TextAlign.end,
+                                    style: GoogleFonts.quicksand(fontSize: 60),
+                                  ),
+                                ),
+                                Container(
+                                  margin: const EdgeInsets.only(bottom: 5),
+                                  child: Text(
+                                    '00',
+                                    style: GoogleFonts.quicksand(
+                                        fontSize: 30,
+                                        fontWeight: FontWeight.w600),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            GestureDetector(
+                              behavior: HitTestBehavior.translucent,
+                              onTap: () {
+                                final snackBar = SnackBar(
+                                  duration: const Duration(seconds: 2),
+                                  backgroundColor:
+                                      const Color.fromRGBO(62, 204, 191, 1),
+                                  content: Text(
+                                    'Proximamente...',
+                                    style: GoogleFonts.quicksand(
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                );
+
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(snackBar);
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.all(5),
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(15)),
+                                child: const Icon(
+                                  Icons.more_vert,
+                                  size: 30,
+                                  color: Colors.black,
+                                ),
+                              ),
+                            )
+                          ],
+                        )
+                      ],
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.only(left: 25, bottom: 25),
+                    child: Text(
+                      'Mis tarjetas',
+                      style: Styles.letterCustom(15, false, .7),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 170,
+                    child: ListView(
+                      physics: const BouncingScrollPhysics(),
+                      scrollDirection: Axis.horizontal,
                       padding: const EdgeInsets.only(
-                          top: 40, left: 25, right: 25, bottom: 15),
+                          left: 25, right: 25, bottom: 20),
+                      children: [
+                        cardAdd(context, tarjetasService),
+                        SizedBox(
+                            height: 170,
+                            child:
+                                listaTarjetas(tarjetasService.listaTarjetas)),
+                      ],
+                    ),
+                  ),
+                  /*Container(
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(25)),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 15, vertical: 10),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            'Monedero virtual',
-                            style: Styles.letterCustom(15, false, .7),
-                          ),
-                          const SizedBox(height: 5),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Container(
-                                    margin: const EdgeInsets.only(bottom: 8),
-                                    child: Text(
-                                      '\$',
-                                      textAlign: TextAlign.end,
-                                      style:
-                                          Styles.letterCustom(30, false, 0.3),
-                                    ),
-                                  ),
-                                  Container(
-                                    margin: const EdgeInsets.only(left: 5),
-                                    child: Text(
-                                      '000.',
-                                      textAlign: TextAlign.end,
-                                      style: Styles.letterCustom(50, false, 1),
-                                    ),
-                                  ),
-                                  Container(
-                                    margin: const EdgeInsets.only(bottom: 5),
-                                    child: Text(
-                                      '00',
-                                      style: Styles.letterCustom(30, false, 1),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              GestureDetector(
-                                behavior: HitTestBehavior.translucent,
-                                onTap: () {
-                                  final snackBar = SnackBar(
-                                    duration: const Duration(seconds: 2),
-                                    backgroundColor:
-                                        const Color.fromRGBO(62, 204, 191, 1),
-                                    content: Text(
-                                      'Proximamente...',
-                                      style: GoogleFonts.quicksand(
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  );
-
-                                  ScaffoldMessenger.of(context)
-                                      .showSnackBar(snackBar);
-                                },
-                                child: Container(
-                                  padding: const EdgeInsets.all(5),
-                                  decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(15)),
-                                  child: Icon(
-                                    Icons.more_vert,
-                                    size: 30,
-                                    color: Colors.black.withOpacity(.3),
-                                  ),
-                                ),
-                              )
-                            ],
-                          )
-                        ],
-                      ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.only(left: 25, bottom: 15),
-                      child: Text(
-                        'Mis tarjetas',
-                        style: Styles.letterCustom(15, false, .7),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 170,
-                      child: ListView(
-                        physics: const BouncingScrollPhysics(),
-                        scrollDirection: Axis.horizontal,
-                        padding: const EdgeInsets.only(
-                            left: 25, right: 25, bottom: 20),
-                        children: [
-                          cardAdd(context, tarjetasService),
-                          SizedBox(
-                              height: 170,
-                              child:
-                                  listaTarjetas(tarjetasService.listaTarjetas)),
-                        ],
-                      ),
-                    ),
-                    Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 25),
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(25)),
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 25, vertical: 20),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              margin: const EdgeInsets.only(bottom: 15),
-                              child: Text(
-                                'Ultimas compras',
-                                style: Styles.letterCustom(15),
-                              ),
+                          Container(
+                            margin: const EdgeInsets.only(bottom: 20),
+                            child: Text(
+                              'Ultimas compras',
+                              style: Styles.letterCustom(15, false, .7),
                             ),
-                            ListView.separated(
-                                physics: const NeverScrollableScrollPhysics(),
-                                shrinkWrap: true,
-                                itemBuilder:
-                                    (BuildContext context, int index) =>
-                                        boughtItem(),
-                                separatorBuilder:
-                                    (BuildContext context, int index) =>
-                                        Container(
-                                          margin: const EdgeInsets.symmetric(
-                                              vertical: 12),
-                                          width: double.infinity,
-                                          height: 1,
-                                          color: Colors.grey.withOpacity(.1),
-                                        ),
-                                itemCount: 10)
-                          ],
-                        )),
-                  ],
-                ),
+                          ),
+                          ListView.separated(
+                              physics: const NeverScrollableScrollPhysics(),
+                              shrinkWrap: true,
+                              itemBuilder: (BuildContext context, int index) =>
+                                  boughtItem(),
+                              separatorBuilder:
+                                  (BuildContext context, int index) =>
+                                      Container(
+                                        margin: const EdgeInsets.symmetric(
+                                            vertical: 10),
+                                        width: double.infinity,
+                                        height: 1,
+                                        color: Colors.grey.withOpacity(.0),
+                                      ),
+                              itemCount: 10)
+                        ],
+                      )),*/
+                ],
               ),
-            )
-          ],
-        ),
+            ),
+          )
+        ],
       ),
     );
   }
@@ -211,8 +199,9 @@ class _MetodosPagoViewState extends State<MetodosPagoView> {
         itemCount: data!.length);
   }
 
-  Row boughtItem() {
+  Widget boughtItem() {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Expanded(
           child: Row(
@@ -222,7 +211,7 @@ class _MetodosPagoViewState extends State<MetodosPagoView> {
                   padding: const EdgeInsets.all(10),
                   decoration: Styles.containerCustom(100),
                   child: const Icon(
-                    Icons.moped,
+                    Icons.moped_outlined,
                     size: 30,
                   )),
               Column(
@@ -230,21 +219,25 @@ class _MetodosPagoViewState extends State<MetodosPagoView> {
                 children: [
                   Text(
                     'Concepto movimiento',
-                    style: Styles.letterCustom(14, true, .8),
+                    style: GoogleFonts.quicksand(fontSize: 16),
                   ),
                   const SizedBox(height: 5),
                   Text(
-                    'Yesterday 9:08 AM',
-                    style: Styles.letterCustom(11, false, .5),
+                    '11:31am • Mar 18',
+                    style:
+                        GoogleFonts.quicksand(fontSize: 12, color: Colors.grey),
                   )
                 ],
               )
             ],
           ),
         ),
-        Text(
-          '\$ 148.99',
-          style: Styles.letterCustom(15, true, .8),
+        Container(
+          margin: const EdgeInsets.only(top: 6),
+          child: Text(
+            '\$148.00',
+            style: GoogleFonts.quicksand(fontSize: 16),
+          ),
         )
       ],
     );
@@ -257,24 +250,18 @@ class _MetodosPagoViewState extends State<MetodosPagoView> {
           context,
           MaterialPageRoute(builder: (context) => const AgregarNuevoMetodo()),
         );
-        /*tarjetasService.newCreditCard
-        (id.id!);
-        StripeServiceCustom().getTarjetas();
-
-        if (mounted) {
-          setState(() {});
-        }*/
       },
       child: Container(
         margin: const EdgeInsets.only(right: 15),
         decoration: BoxDecoration(
+          border: Border.all(width: 1, color: Colors.grey.withOpacity(.1)),
           borderRadius: BorderRadius.circular(10),
           color: Colors.white,
         ),
         width: 70,
         child: const Icon(
           Icons.add,
-          color: Color.fromRGBO(42, 200, 185, 1),
+          color: Colors.black,
         ),
       ),
     );
@@ -432,8 +419,8 @@ class _MetodosPagoViewState extends State<MetodosPagoView> {
                                 Text(
                                   value['titulo'],
                                   style: GoogleFonts.quicksand(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.bold),
+                                    color: Colors.black,
+                                  ),
                                 ),
                                 Container(
                                     padding: const EdgeInsets.all(9),

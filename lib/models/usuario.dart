@@ -15,7 +15,7 @@ class Usuario {
         required this.updatedAt,
         required this.uid,
         this.profilePhotoKey,
-        this.numeroCelular
+        required this.numeroCelular
     });
 
     bool online;
@@ -29,7 +29,7 @@ class Usuario {
     DateTime updatedAt;
     String uid;
     String? profilePhotoKey;
-    String? numeroCelular;
+    String numeroCelular;
 
     factory Usuario.fromJson(Map<String, dynamic> json) => Usuario(
         online: json["online"],
@@ -43,7 +43,7 @@ class Usuario {
         updatedAt: DateTime.parse(json["updatedAt"]),
         uid: json["uid"],
         profilePhotoKey: json["uid"] ?? "",
-        numeroCelular: json['numeroCelular'] ?? "" 
+        numeroCelular: json['numero_celular'] 
     );
     
 }

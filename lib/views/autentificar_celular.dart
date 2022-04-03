@@ -41,7 +41,7 @@ class AutentificarCelular extends StatelessWidget {
               Text(
                 'Ingresa tu numero celular',
                 style: GoogleFonts.quicksand(
-                    color: Colors.grey, fontWeight: FontWeight.w600),
+                    color: Colors.black, fontWeight: FontWeight.w600),
               ),
               Row(
                 children: [
@@ -55,9 +55,8 @@ class AutentificarCelular extends StatelessWidget {
                           errorMessage: 'Numero invalido',
                           autoFocus: false,
                           maxLength: 10,
-                          hintText: '4741040608',
-                          textStyle: GoogleFonts.quicksand(
-                              fontWeight: FontWeight.bold, fontSize: 22),
+                          hintText: '',
+                          textStyle: GoogleFonts.quicksand(fontSize: 22),
                           onInputChanged: (PhoneNumber number) {},
                           selectorConfig: const SelectorConfig(
                             selectorType: PhoneInputSelectorType.BOTTOM_SHEET,

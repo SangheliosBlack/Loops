@@ -10,7 +10,7 @@ class GeneralActions with ChangeNotifier {
     notifyListeners();
   }
 
-  PageController controller2 = PageController(initialPage: 0, keepPage: true);
+   PageController controller2 = PageController(initialPage: 0, keepPage: true);
 
   controllerNavigate(int page) {
     controller2.animateToPage(page,

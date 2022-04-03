@@ -1,6 +1,6 @@
 import 'package:delivery/service/auth_service.dart';
-import 'package:delivery/service/navigator_service.dart';
 import 'package:delivery/service/twilio.dart';
+import 'package:delivery/views/register_view.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -9,11 +9,8 @@ import 'package:sms_autofill/sms_autofill.dart';
 
 class ConfirmarCodigo extends StatefulWidget {
   final String numero;
-  final String signCode;
 
-  const ConfirmarCodigo(
-      {Key? key, required this.numero, required this.signCode})
-      : super(key: key);
+  const ConfirmarCodigo({Key? key, required this.numero}) : super(key: key);
 
   @override
   State<ConfirmarCodigo> createState() => _ConfirmarCodigoState();
@@ -98,17 +95,17 @@ class _ConfirmarCodigoState extends State<ConfirmarCodigo> with CodeAutoFill {
             Text(
               '+52  ',
               style: GoogleFonts.quicksand(
-                  color: Colors.black,
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold),
+                color: Colors.black.withOpacity(.8),
+                fontSize: 22,
+              ),
               textAlign: TextAlign.center,
             ),
             Text(
               widget.numero,
               style: GoogleFonts.quicksand(
-                  color: Colors.black,
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold),
+                color: Colors.black.withOpacity(.8),
+                fontSize: 22,
+              ),
               textAlign: TextAlign.center,
             ),
           ],
@@ -122,14 +119,12 @@ class _ConfirmarCodigoState extends State<ConfirmarCodigo> with CodeAutoFill {
             onCodeChanged: (code) {},
             currentCode: otpCode ?? '',
             decoration: UnderlineDecoration(
-                hintText: '2687',
+                hintText: '    ',
                 hintTextStyle: GoogleFonts.quicksand(
                     color: Colors.grey.withOpacity(.2), fontSize: 30),
-                colorBuilder: const FixedColorBuilder(Colors.black),
+                colorBuilder: FixedColorBuilder(Colors.grey.withOpacity(.2)),
                 textStyle: GoogleFonts.quicksand(
-                    color: const Color.fromRGBO(62, 204, 191, 1),
-                    fontWeight: FontWeight.bold,
-                    fontSize: 30)),
+                    color: Colors.black.withOpacity(.8), fontSize: 30)),
             onCodeSubmitted: (valor) {},
             codeLength: 4,
           ),
@@ -200,22 +195,23 @@ class _ConfirmarCodigoState extends State<ConfirmarCodigo> with CodeAutoFill {
                     padding:
                         const EdgeInsets.symmetric(vertical: 15, horizontal: 0),
                     decoration: BoxDecoration(
-                        color: const Color.fromRGBO(62, 204, 191, 1),
+                        border: Border.all(
+                            width: 1, color: Colors.grey.withOpacity(.8)),
                         borderRadius: send
                             ? BorderRadius.circular(100)
-                            : BorderRadius.circular(10)),
+                            : BorderRadius.circular(25)),
                     child: send
                         ? const SizedBox(
                             width: 19,
                             height: 19,
                             child: CircularProgressIndicator(
-                              color: Colors.white,
+                              color: Colors.black,
                               strokeWidth: 1,
                             ),
                           )
                         : Text('Verificar',
                             style: GoogleFonts.quicksand(
-                                color: Colors.white,
+                                color: Colors.black,
                                 fontWeight: FontWeight.w600))),
               ],
             ),
@@ -232,29 +228,40 @@ class _ConfirmarCodigoState extends State<ConfirmarCodigo> with CodeAutoFill {
     setState(() {
       send = true;
     });
+    await Future.delayed(const Duration(seconds: 1));
+    if (codigo.length >= 3) {
     final confirmado = await TwilioService().confirmarSms(numero, codigo);
-    if (confirmado) {
-      final logIn = await authService.logInCelular(numero: numero);
-      setState(() {
-        send = false;
-      });
-      if (!logIn) {
-        navigationService.navigateTo('/auth/register/$numero');
-      }
-    } else {
-      setState(() {
-        send = false;
-      });
-      final snackBar = SnackBar(
-        duration: const Duration(seconds: 2),
-        backgroundColor: Colors.red,
-        content: Text(
-          'Codigo incorrecto',
-          style: GoogleFonts.quicksand(fontWeight: FontWeight.bold),
-        ),
-      );
+      if (confirmado) {
+        final logIn = await authService.logInCelular(numero: numero);
+        setState(() {
+          send = false;
+        });
+        if (!logIn) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => RegisterView(
+                      numero: numero,
+                    )),
+          );
+        } else {
+          Navigator.pop(context);
+        }
+      } else {
+        setState(() {
+          send = false;
+        });
+        final snackBar = SnackBar(
+          duration: const Duration(seconds: 2),
+          backgroundColor: Colors.red,
+          content: Text(
+            'Codigo incorrecto',
+            style: GoogleFonts.quicksand(fontWeight: FontWeight.bold),
+          ),
+        );
 
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      }
     }
   }
 }

@@ -4,7 +4,7 @@
 
 import 'dart:convert';
 
-import 'package:delivery/models/direccion_response.dart';
+import 'package:delivery/models/direccion.dart';
 
 DireccionesResponse direccionesResponseFromJson(String str) => DireccionesResponse.fromJson(json.decode(str));
 
@@ -29,4 +29,5 @@ class DireccionesResponse {
         "direcciones": List<dynamic>.from(direcciones.map((x) => x.toJson())),
     };
 }
+
 

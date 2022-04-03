@@ -97,7 +97,7 @@ class BottomWidgetMain extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
-            padding: const EdgeInsets.symmetric(horizontal: 25),
+            padding: const EdgeInsets.symmetric(horizontal: 15),
             width: width,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -111,9 +111,9 @@ class BottomWidgetMain extends StatelessWidget {
                       Text(
                         'Establecimientos',
                         style: GoogleFonts.quicksand(
-                            color: Colors.black.withOpacity(.7),
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold),
+                          color: Colors.black.withOpacity(.7),
+                          fontSize: 20,
+                        ),
                       ),
                     ],
                   ),
@@ -139,7 +139,6 @@ class BottomWidgetMain extends StatelessWidget {
                   child: Text(
                     'Ver todo',
                     style: GoogleFonts.quicksand(
-                      fontWeight: FontWeight.w600,
                       color: Colors.grey,
                     ),
                   ),
@@ -183,7 +182,7 @@ class BottomWidgetMain extends StatelessWidget {
                         CartaNegocio(
                           index: index,
                           tienda: llenarPantallaProvider.tiendas[index],
-                          small: true,
+                          small: false,
                         ),
                     separatorBuilder: (BuildContext context, int index) =>
                         const SizedBox(width: 15),

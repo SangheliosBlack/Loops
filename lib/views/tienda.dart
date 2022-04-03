@@ -1,9 +1,11 @@
 import 'package:delivery/models/lista_productos.dart';
 import 'package:delivery/models/tienda.dart';
 import 'package:delivery/service/tiendas_service.dart';
-import 'package:delivery/widgets/producto_general.dart';
+import 'package:delivery/widgets/producto_general2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
@@ -22,12 +24,11 @@ class _StoreIndividualState extends State<StoreIndividual> {
     final tiendaService = Provider.of<TiendasService>(context);
 
     return Scaffold(
-      backgroundColor: const Color.fromRGBO(245, 245, 247, 1),
+      backgroundColor: Colors.black,
       body: CustomScrollView(
         physics: const BouncingScrollPhysics(),
         slivers: [
           SliverAppBar(
-              foregroundColor: Colors.red,
               primary: true,
               stretch: true,
               shadowColor: const Color.fromRGBO(245, 245, 247, 1),
@@ -36,6 +37,10 @@ class _StoreIndividualState extends State<StoreIndividual> {
               actionsIconTheme: const IconThemeData(color: Colors.red),
               systemOverlayStyle: SystemUiOverlayStyle.light,
               collapsedHeight: 80,
+              shape: const ContinuousRectangleBorder(
+                  borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(70),
+                      bottomRight: Radius.circular(70))),
               leading: GestureDetector(
                 behavior: HitTestBehavior.translucent,
                 onTap: () {
@@ -54,16 +59,7 @@ class _StoreIndividualState extends State<StoreIndividual> {
                   ),
                 ),
               ),
-              backgroundColor: const Color.fromRGBO(
-                62,
-                204,
-                191,
-                1,
-              ),
-              shape: const ContinuousRectangleBorder(
-                  borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(70),
-                      bottomRight: Radius.circular(70))),
+              backgroundColor: const Color.fromRGBO(62, 204, 191, 1),
               elevation: 0,
               pinned: true,
               expandedHeight: 350,
@@ -83,8 +79,8 @@ class _StoreIndividualState extends State<StoreIndividual> {
                         child: Stack(
                           children: [
                             AnimatedContainer(
-                              width: cons.biggest.height <= 190 ? 50 : 85,
-                              height: cons.biggest.height <= 190 ? 50 : 85,
+                              width: cons.biggest.height <= 190 ? 50 : 70,
+                              height: cons.biggest.height <= 190 ? 50 : 70,
                               duration: const Duration(milliseconds: 300),
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(100),
@@ -96,8 +92,8 @@ class _StoreIndividualState extends State<StoreIndividual> {
                               ),
                             ),
                             Positioned(
-                              bottom: cons.biggest.height <= 190 ? 0 : 5,
-                              right: cons.biggest.height <= 190 ? 0 : 5,
+                              bottom: cons.biggest.height <= 190 ? 0 : 0,
+                              right: cons.biggest.height <= 190 ? 0 : 0,
                               child: Container(
                                 padding: const EdgeInsets.all(3),
                                 decoration: const BoxDecoration(
@@ -120,206 +116,217 @@ class _StoreIndividualState extends State<StoreIndividual> {
                         child: Text(
                           widget.tienda.nombre,
                           overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.quicksand(
+                          style: GoogleFonts.playfairDisplay(
                               fontSize: 17,
                               fontWeight: FontWeight.w600,
-                              color: cons.biggest.height <= 190
-                                  ? Colors.white
-                                  : Colors.black),
+                              color: Colors.white),
                         ),
                       )
                     ],
                   ),
                   collapseMode: CollapseMode.parallax,
-                  background: Container(
-                    color: const Color.fromRGBO(245, 245, 247, 1),
-                    child: Stack(
-                      fit: StackFit.expand,
-                      children: [
-                        Container(
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(35)),
-                        ),
-                        Stack(
+                  background: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      Positioned.fill(
+                        child: Stack(
                           children: [
-                            const SizedBox(
-                              width: double.infinity,
-                              height: 260,
-                              child: Image(
-                                image: NetworkImage(
-                                    'https://traveler.marriott.com/es/wp-content/uploads/sites/2/2019/10/Maverick_interior.jpg'),
-                                fit: BoxFit.cover,
+                            const Positioned.fill(
+                              child: ClipRRect(
+                                child: SizedBox(
+                                  width: double.infinity,
+                                  child: Image(
+                                    image: NetworkImage(
+                                        'https://images.otstatic.com/prod1/32412251/3/huge.jpg'),
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
                               ),
                             ),
-                            Container(
-                              height: 260,
-                              decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                stops: const [
-                                  0.7,
-                                  0.99,
-                                ],
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                                colors: [
-                                  Colors.white.withOpacity(0),
-                                  Colors.white.withOpacity(1)
-                                ],
-                              )),
+                            Positioned.fill(
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                  stops: const [
+                                    0.4,
+                                    0.99,
+                                  ],
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                  colors: [
+                                    Colors.black.withOpacity(0),
+                                    Colors.black.withOpacity(1)
+                                  ],
+                                )),
+                              ),
                             )
                           ],
                         ),
-                        /*Positioned(
-                          bottom: 140,
-                          right: 20,
-                          child: Container(
-                            width: 45,
-                            height: 45,
-                            padding: const EdgeInsets.all(7),
-                            decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(.3),
-                                shape: BoxShape.circle),
-                            child: const CircleAvatar(
-                              backgroundColor: Color.fromRGBO(253, 96, 122, 1),
-                              child: Icon(
-                                Icons.favorite,
-                                color: Colors.white,
-                                size: 13,
+                      ),
+                      Positioned(
+                        bottom: 100,
+                        left: 140,
+                        child: Row(
+                          children: [
+                            Container(
+                              margin: const EdgeInsets.only(right: 7),
+                              child: RatingBar.builder(
+                                initialRating: 4.5,
+                                minRating: 1,
+                                direction: Axis.horizontal,
+                                allowHalfRating: true,
+                                itemCount: 5,
+                                itemPadding:
+                                    const EdgeInsets.symmetric(horizontal: 4.0),
+                                itemBuilder: (context, _) => const FaIcon(
+                                  FontAwesomeIcons.solidStar,
+                                  color: Colors.white,
+                                ),
+                                itemSize: 12,
+                                unratedColor: Colors.grey,
+                                onRatingUpdate: (rating) {},
                               ),
                             ),
-                          ),
-                        ),*/
-                        Positioned(
-                          bottom: 50,
-                          left: 170,
-                          child: Row(
-                            children: [
-                              Container(
-                                margin: const EdgeInsets.only(right: 7),
-                                child: const Icon(
-                                  Icons.star,
-                                  color: Colors.amber,
-                                  size: 13,
-                                ),
-                              ),
-                              Text(
-                                '5.0',
-                                style: GoogleFonts.quicksand(
-                                    color: Colors.grey.withOpacity(.7),
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.w600),
-                              ),
-                              const SizedBox(
-                                width: 5,
-                              ),
-                              Text(
-                                '( 17 )',
-                                style: GoogleFonts.quicksand(
-                                    color: Colors.grey.withOpacity(.4),
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.w600),
-                              )
-                            ],
-                          ),
+                            Text(
+                              '( 17 )',
+                              style: GoogleFonts.quicksand(
+                                  color: Colors.white,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w600),
+                            )
+                          ],
                         ),
-                        Positioned(
-                            bottom: 10,
-                            right: 25,
-                            child: Row(
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 5, horizontal: 10),
-                                  decoration: BoxDecoration(
-                                      color: const Color.fromRGBO(
-                                          245, 245, 247, 1),
-                                      borderRadius: BorderRadius.circular(15)),
-                                  child: Row(
+                      ),
+                      Positioned(
+                          bottom: 10,
+                          left: 150,
+                          child: Column(
+                            children: [
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Restaurante',
+                                    style: GoogleFonts.quicksand(
+                                        color: Colors.white, fontSize: 12),
+                                  ),
+                                  const SizedBox(height: 5),
+                                  RatingBar.builder(
+                                    initialRating: 3.5,
+                                    minRating: 1,
+                                    direction: Axis.horizontal,
+                                    allowHalfRating: true,
+                                    itemCount: 5,
+                                    itemPadding: const EdgeInsets.symmetric(
+                                        horizontal: 0.0),
+                                    itemBuilder: (context, _) => const Icon(
+                                      Icons.attach_money,
+                                      color: Colors.white,
+                                    ),
+                                    itemSize: 13,
+                                    unratedColor: Colors.grey,
+                                    onRatingUpdate: (rating) {},
+                                  ),
+                                  const SizedBox(height: 5),
+                                  Row(
                                     children: [
                                       const Icon(
-                                        Icons.delivery_dining_outlined,
-                                        color: Colors.black,
+                                        Icons.place_outlined,
+                                        color: Colors.white,
+                                        size: 15,
                                       ),
-                                      const SizedBox(width: 5),
+                                      const SizedBox(width: 3),
                                       Text(
-                                        '45 min',
+                                        '2.4 km Centro, Lagos de Moreno ',
                                         style: GoogleFonts.quicksand(
-                                            color: Colors.black.withOpacity(.7),
-                                            fontWeight: FontWeight.bold),
+                                            color: Colors.white, fontSize: 11),
                                       ),
                                     ],
+                                  )
+                                ],
+                              ),
+                            ],
+                          )),
+                      Positioned(
+                          right: 15,
+                          bottom: 120,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Horario :',
+                                style: GoogleFonts.quicksand(
+                                  color: Colors.white,
+                                  fontSize: 12,
+                                ),
+                              ),
+                              Row(
+                                children: [
+                                  const Icon(
+                                    Icons.restore,
+                                    color: Colors.white,
+                                    size: 15,
                                   ),
-                                ),
-                                const SizedBox(
-                                  width: 10,
-                                ),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 5, horizontal: 10),
-                                  decoration: BoxDecoration(
-                                      color: const Color.fromRGBO(
-                                          245, 245, 247, 1),
-                                      borderRadius: BorderRadius.circular(15)),
-                                  child: Row(
-                                    children: [
-                                      const Icon(
-                                        Icons.schedule,
-                                        size: 21,
-                                        color: Colors.black,
-                                      ),
-                                      const SizedBox(width: 5),
-                                      Text(
-                                        '10:00 PM',
-                                        style: GoogleFonts.quicksand(
-                                            color: Colors.black.withOpacity(.7),
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ))
-                      ],
-                    ),
+                                  const SizedBox(width: 5),
+                                  Text(
+                                    '10:00 PM',
+                                    style: GoogleFonts.quicksand(
+                                      color: Colors.white,
+                                      fontSize: 14,
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ],
+                          )),
+                    ],
                   ),
                 ),
               )),
           SliverToBoxAdapter(
-            child: Column(
-              children: [
-                FutureBuilder(
-                  future: tiendaService.obtenerProductos(),
-                  builder: (BuildContext context,
-                      AsyncSnapshot<List<ListaProductosCategoria>> snapshot) {
-                    return AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 800),
-                        child: snapshot.hasData
-                            ? ListView.separated(
-                                physics: const NeverScrollableScrollPhysics(),
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 20, horizontal: 20),
-                                shrinkWrap: true,
-                                itemBuilder:
-                                    (BuildContext context, int index) =>
-                                        ItemPorCategoria(
-                                  categoria: snapshot.data![index],
-                                ),
-                                itemCount: snapshot.data!.length,
-                                separatorBuilder:
-                                    (BuildContext context, int index) =>
-                                        const SizedBox(height: 20),
-                              )
-                            : Container(
-                                margin: const EdgeInsets.only(top: 30),
-                                child: const CircularProgressIndicator(
-                                  color: Color.fromRGBO(62, 204, 191, 1),
-                                ),
-                              ));
-                  },
-                ),
-              ],
+            child: FutureBuilder(
+              future: tiendaService.obtenerProductos(),
+              builder: (BuildContext context,
+                  AsyncSnapshot<List<ListaProductosCategoria>> snapshot) {
+                return AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 800),
+                    child: snapshot.hasData
+                        ? Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(40),
+                              color: Colors.white,
+                            ),
+                            child: ListView.separated(
+                              physics: const NeverScrollableScrollPhysics(),
+                              padding: const EdgeInsets.only(
+                                  right: 20, left: 20, top: 25, bottom: 45),
+                              shrinkWrap: true,
+                              itemBuilder: (BuildContext context, int index) =>
+                                  ItemPorCategoria(
+                                categoria: snapshot.data![index],
+                              ),
+                              itemCount: snapshot.data!.length,
+                              separatorBuilder:
+                                  (BuildContext context, int index) =>
+                                      const SizedBox(height: 0),
+                            ),
+                          )
+                        : Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 40),
+                            child: ClipRRect(
+                              borderRadius: const BorderRadius.only(
+                                  bottomLeft: Radius.circular(50),
+                                  bottomRight: Radius.circular(50)),
+                              child: LinearProgressIndicator(
+                                color: Colors.white.withOpacity(1),
+                                backgroundColor:
+                                    const Color.fromRGBO(62, 204, 191, 1),
+                              ),
+                            ),
+                          ));
+              },
             ),
           )
         ],
@@ -357,22 +364,10 @@ class _ItemPorCategoriaState extends State<ItemPorCategoria> {
             ExpansionPanel(
               headerBuilder: (context, isExpanded) {
                 return ListTile(
-                  title: Row(
-                    children: [
-                      const Icon(
-                        Icons.lunch_dining,
-                        size: 20,
-                        color: Color.fromRGBO(62, 204, 191, 1),
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        widget.categoria.titulo,
-                        style: GoogleFonts.quicksand(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black.withOpacity(.5),
-                            fontSize: 22),
-                      ),
-                    ],
+                  title: Text(
+                    widget.categoria.titulo,
+                    style: GoogleFonts.quicksand(
+                        color: Colors.black.withOpacity(.5), fontSize: 22),
                   ),
                 );
               },
@@ -383,7 +378,7 @@ class _ItemPorCategoriaState extends State<ItemPorCategoria> {
                     padding: const EdgeInsets.all(0),
                     shrinkWrap: true,
                     itemBuilder: (BuildContext context, int index) =>
-                        ProductoGeneral(
+                        ProductoGeneral2(
                       producto: widget.categoria.productos[index],
                     ),
                     itemCount: widget.categoria.productos.length,

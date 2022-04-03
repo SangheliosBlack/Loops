@@ -1,6 +1,5 @@
 import 'package:delivery/global/styles.dart';
 import 'package:delivery/service/auth_service.dart';
-import 'package:delivery/service/drawer_service.dart';
 import 'package:delivery/service/hide_show_menu.dart';
 import 'package:delivery/service/llenar_pantallas.dart';
 import 'package:delivery/views/notificaciones_view.dart';
@@ -8,6 +7,7 @@ import 'package:delivery/views/orden_view.dart';
 import 'package:delivery/views/socio/socio_dashboard_view.dart';
 import 'package:delivery/views/ver_todo.dart';
 import 'package:delivery/widgets/dot_navigation_bar_simple.dart';
+import 'package:delivery/widgets/drawe_custom.dart';
 import 'package:delivery/widgets/main.dart';
 import 'package:delivery/widgets/store_screen.dart';
 import 'package:flutter/material.dart';
@@ -48,7 +48,7 @@ class DashboardView extends StatelessWidget {
                     child: Stack(
                       children: [
                         Container(
-                          margin: const EdgeInsets.only(right: 15),
+                          margin: const EdgeInsets.only(right: 15, bottom: 3),
                           width: 45,
                           height: 45,
                           child: ClipRRect(
@@ -62,25 +62,24 @@ class DashboardView extends StatelessWidget {
                             ),
                           ),
                         ),
-                        /*Positioned(
-                                right: 10,
-                                top: 10,
-                                child: Container(
-                                  width: 20,
-                                  height: 20,
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(100),
-                                      color: Theme.of(context).primaryColor),
-                                  child: Center(
-                                    child: Text(
-                                      '5',
-                                      style: GoogleFonts.quicksand(
-                                          fontSize: 14,
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ),
-                                ))*/
+                        Positioned(
+                            right: 5,
+                            bottom: 0,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(100),
+                                border:
+                                    Border.all(width: 4, color: Colors.white),
+                              ),
+                              child: Container(
+                                width: 13,
+                                height: 13,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(100),
+                                  color: const Color.fromRGBO(218, 85, 71, 1),
+                                ),
+                              ),
+                            ))
                       ],
                     ),
                   ),
@@ -88,9 +87,8 @@ class DashboardView extends StatelessWidget {
               ],
               leadingWidth: 112,
               leading: GestureDetector(
-                  onTap: () {
-                    drawerAction.openDraw();
-                  },
+                  behavior: HitTestBehavior.translucent,
+                  onTap: () {},
                   child: Container(
                     margin: const EdgeInsets.only(left: 20),
                     child: Column(
@@ -99,20 +97,33 @@ class DashboardView extends StatelessWidget {
                       children: [
                         Text('Mi perfil',
                             style: GoogleFonts.quicksand(color: Colors.grey)),
-                        Row(
-                          children: [
-                            Text(
-                              nombre[0],
-                              style: GoogleFonts.quicksand(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black,
-                                  fontSize: 30),
-                            ),
-                            const Icon(
-                              Icons.expand_more,
-                              color: Colors.black,
-                            )
-                          ],
+                        GestureDetector(
+                          onTap: (() {
+                            showModalBottomSheet(
+                                isScrollControlled: true,
+                                isDismissible: true,
+                                context: context,
+                                backgroundColor: Colors.white,
+                                elevation: 0,
+                                builder: (builder) {
+                                  return const DrawerCustom();
+                                });
+                          }),
+                          child: Row(
+                            children: [
+                              Text(
+                                nombre[0],
+                                style: GoogleFonts.quicksand(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
+                                    fontSize: 30),
+                              ),
+                              const Icon(
+                                Icons.expand_more,
+                                color: Colors.black,
+                              )
+                            ],
+                          ),
                         )
                       ],
                     ),
@@ -253,9 +264,9 @@ class DashBoardMainView extends StatelessWidget {
                       Text(
                         'Productos',
                         style: GoogleFonts.quicksand(
-                            color: Colors.black.withOpacity(.7),
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold),
+                          color: Colors.black.withOpacity(.7),
+                          fontSize: 20,
+                        ),
                       ),
                     ],
                   ),
@@ -281,7 +292,6 @@ class DashBoardMainView extends StatelessWidget {
                   child: Text(
                     'Ver todo',
                     style: GoogleFonts.quicksand(
-                      fontWeight: FontWeight.w600,
                       color: Colors.grey,
                     ),
                   ),

@@ -1,6 +1,3 @@
-import 'package:delivery/bloc/bloc/busqueda_bloc.dart';
-import 'package:delivery/bloc/mapa/mapa_bloc.dart';
-import 'package:delivery/bloc/mi_ubicacion/mi_ubicacion_bloc.dart';
 import 'package:delivery/global/enviroment.dart';
 import 'package:delivery/layout/auth_layout.dart';
 import 'package:delivery/layout/dashboard_layout.dart';
@@ -10,13 +7,11 @@ import 'package:delivery/providers/login_form_provider.dart';
 import 'package:delivery/providers/register_form_provider.dart';
 import 'package:delivery/routes/router.dart';
 import 'package:delivery/service/auth_service.dart';
-import 'package:delivery/service/hide_show_menu.dart';
 import 'package:delivery/service/local_storage.dart';
 import 'package:delivery/service/navigator_service.dart';
 import 'package:delivery/service/permission_status.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 
@@ -32,28 +27,15 @@ class AppState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     /*new StripeService()..init();*/
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(
-          create: (_) => MiUbicacionBloc(),
-        ),
-        BlocProvider(
-          create: (_) => MapaBloc(),
-        ),
-        BlocProvider(
-          create: (_) => BusquedaBloc(),
-        )
-      ],
-      child: MultiProvider(providers: [
-        ChangeNotifierProvider(
-            lazy: false, create: (_) => RegisterFromProvider()),
-        ChangeNotifierProvider(lazy: false, create: (_) => LoginFromProvider()),
-        ChangeNotifierProvider(lazy: false, create: (_) => AuthService()),
-        ChangeNotifierProvider(lazy: false, create: (_) => GeneralActions()),
-        ChangeNotifierProvider(
-            lazy: false, create: (_) => PermissionStatusProvider()),
-      ], child: const MyApp()),
-    );
+    return MultiProvider(providers: [
+      ChangeNotifierProvider(
+          lazy: false, create: (_) => RegisterFromProvider()),
+      ChangeNotifierProvider(lazy: false, create: (_) => LoginFromProvider()),
+      ChangeNotifierProvider(lazy: false, create: (_) => AuthService()),
+      
+      ChangeNotifierProvider(
+          lazy: false, create: (_) => PermissionStatusProvider()),
+    ], child: const MyApp());
   }
 }
 

@@ -2,6 +2,7 @@ import 'package:delivery/models/busqueda_response.dart';
 import 'package:delivery/models/busqueda_result.dart';
 import 'package:delivery/service/traffic_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class SearchBusqueda extends SearchDelegate<BusquedaResult> {
@@ -23,11 +24,10 @@ class SearchBusqueda extends SearchDelegate<BusquedaResult> {
       appBarTheme: const AppBarTheme(
           iconTheme: IconThemeData(color: Colors.black),
           toolbarHeight: 74,
-          elevation: .5,
+          elevation: 0,
           backgroundColor: Colors.white),
-      textTheme: superThemeData.textTheme.copyWith(
-          headline6: GoogleFonts.quicksand(
-              fontWeight: FontWeight.bold, color: Colors.black)),
+      textTheme: superThemeData.textTheme
+          .copyWith(headline6: GoogleFonts.quicksand(color: Colors.black)),
     );
   }
 
@@ -55,12 +55,15 @@ class SearchBusqueda extends SearchDelegate<BusquedaResult> {
     if (query.isEmpty) {
       return Container(
         width: 500,
-        color: const Color(0xffF3F5F6),
+        color: Colors.white,
         child: ListView(
           // ignore: prefer_const_literals_to_create_immutables
           children: [
             ListTile(
-              leading: const Icon(Icons.search),
+              leading: const Icon(
+                Icons.search,
+                color: Colors.white,
+              ),
               title: Text(
                 'Que buscamos ?',
                 style: GoogleFonts.quicksand(),
@@ -87,25 +90,39 @@ class SearchBusqueda extends SearchDelegate<BusquedaResult> {
       stream: _trafficService.busquedaStream,
       builder: (BuildContext context, AsyncSnapshot<Busqueda> snapshot) {
         if (!snapshot.hasData) {
-          return const Center(
-              child: CircularProgressIndicator(
-            color: Color.fromRGBO(41, 199, 184, 1),
-          ));
+          return Container(
+            color: Colors.white,
+            child: ListView(
+              children: const [
+                 LinearProgressIndicator(
+                  color: Color.fromRGBO(41, 199, 184, 1),
+                  backgroundColor: Colors.white,
+                ),
+              ],
+            ),
+          );
         }
         final lugares = snapshot.data!.tiendas;
         if (lugares.isEmpty) {
-          return ListTile(
-            title: Text(
-              'No hay resultados con $query 🤧',
-              style: GoogleFonts.quicksand(
-                  color: Colors.grey, fontWeight: FontWeight.w600),
+          return Container(
+            color: Colors.white,
+            child: ListView(
+              children: [
+                ListTile(
+                  title: Text(
+                    'No hay resultados con $query',
+                    style: GoogleFonts.quicksand(
+                        color: Colors.grey, fontWeight: FontWeight.w600),
+                  ),
+                ),
+              ],
             ),
           );
         }
         return Container(
           color: Colors.white,
           child: ListView.separated(
-            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+            padding: const EdgeInsets.symmetric(horizontal: 15),
             itemCount: lugares.length,
             separatorBuilder: (_, i) => Divider(
               color: Colors.grey.withOpacity(.0),
@@ -113,16 +130,18 @@ class SearchBusqueda extends SearchDelegate<BusquedaResult> {
             itemBuilder: (_, i) {
               final tienda = lugares[i];
               return GestureDetector(
+                behavior: HitTestBehavior.translucent,
                 onTap: () {
-                  close(context, BusquedaResult(cancelo: false,tienda: tienda));
+                  close(
+                      context, BusquedaResult(cancelo: false, tienda: tienda));
                 },
                 child: Row(
                   children: [
                     ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(100),
                       child: const SizedBox(
-                        width: 60,
-                        height: 60,
+                        width: 85,
+                        height: 85,
                         child: Image(
                           image: NetworkImage(
                               'https://images.vexels.com/media/users/3/215185/raw/9975fac6938d6d19c33105e44655a3c8-diseno-de-logo-de-restaurante-cheff.jpg'),
@@ -133,52 +152,75 @@ class SearchBusqueda extends SearchDelegate<BusquedaResult> {
                     const SizedBox(
                       width: 10,
                     ),
-                    SizedBox(
-                      height: 45,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.all(5),
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(5),
-                                    color:
-                                        const Color.fromRGBO(234, 248, 248, 1)),
-                                child: const Icon(
-                                  Icons.star,
-                                  color: Color.fromRGBO(62, 204, 191, 1),
-                                  size: 12,
-                                ),
-                              ),
-                              Container(
-                                margin: const EdgeInsets.symmetric(horizontal: 5),
-                                child: Text(
-                                  '5.0',
-                                  style:
-                                      GoogleFonts.quicksand(color: Colors.grey),
-                                ),
-                              ),
-                              Text(
-                                tienda.nombre,
-                                style: GoogleFonts.quicksand(
-                                    fontWeight: FontWeight.bold, fontSize: 18),
-                              ),
-                            ],
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              '4,9',
+                              style: GoogleFonts.playfairDisplay(
+                                  height: 1,
+                                  fontWeight: FontWeight.w600,
+                                  color: const Color.fromRGBO(62, 204, 191, 1),
+                                  fontSize: 25),
+                            ),
+                            const SizedBox(width: 5),
+                            Text(
+                              tienda.nombre,
+                              style: GoogleFonts.playfairDisplay(
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.black.withOpacity(.7),
+                                  fontSize: 25),
+                            ),
+                          ],
+                        ),
+                        Text(
+                          'Restaurante',
+                          style: GoogleFonts.quicksand(
+                              color: Colors.black, fontSize: 12),
+                        ),
+                        const SizedBox(height: 5),
+                        RatingBar.builder(
+                          initialRating: 3.5,
+                          minRating: 1,
+                          direction: Axis.horizontal,
+                          allowHalfRating: true,
+                          itemCount: 5,
+                          itemPadding:
+                              const EdgeInsets.symmetric(horizontal: 0.0),
+                          itemBuilder: (context, _) => const Icon(
+                            Icons.attach_money,
+                            color: Colors.black,
                           ),
-                          Text(
-                            'Categoria 1 - Categoria 2 - Categoria 3',
-                            style: GoogleFonts.quicksand(color: Colors.grey),
-                          )
-                        ],
-                      ),
+                          itemSize: 13,
+                          unratedColor: Colors.grey,
+                          onRatingUpdate: (rating) {},
+                        ),
+                        const SizedBox(height: 5),
+                        Row(
+                          children: [
+                            const Icon(
+                              Icons.place_outlined,
+                              color: Colors.black,
+                              size: 15,
+                            ),
+                            const SizedBox(width: 3),
+                            Text(
+                              '2.4 km Centro, Lagos de Moreno ',
+                              style: GoogleFonts.quicksand(
+                                  color: Colors.black, fontSize: 11),
+                            ),
+                          ],
+                        )
+                      ],
                     )
                   ],
                 ),
               );
-              
             },
           ),
         );

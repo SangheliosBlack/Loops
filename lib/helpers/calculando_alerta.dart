@@ -5,21 +5,32 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+
+
 void calculandoAlerta(BuildContext context) {
   if (Platform.isAndroid) {
     showDialog(
-        
-        barrierDismissible: false,
+        barrierColor: Colors.white,
+        barrierDismissible: true,
         context: context,
         builder: (context) => AlertDialog(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(15.0))),
               content: Container(
-                height: 70,
+                height: 100,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    CircularProgressIndicator(
-                      color: Theme.of(context).primaryColor,
+                    Container(
+                      width: 100,
+                      height: 100,
+                      child: const CircularProgressIndicator(
+                        strokeWidth: 1,
+                        color: Colors.black,
+                      ),
                     ),
                   ],
                 ),
@@ -27,7 +38,7 @@ void calculandoAlerta(BuildContext context) {
             ));
   } else {
     showCupertinoDialog(
-      barrierDismissible: false,
+        barrierDismissible: false,
         context: context,
         builder: (context) => const CupertinoAlertDialog(
               title: Text('Espere por favor'),

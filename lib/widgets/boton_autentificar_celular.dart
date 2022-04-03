@@ -1,5 +1,5 @@
-import 'package:delivery/service/navigator_service.dart';
 import 'package:delivery/service/twilio.dart';
+import 'package:delivery/views/confirmar_codigo.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sms_autofill/sms_autofill.dart';
@@ -22,40 +22,48 @@ class _BotonAutentificarState extends State<BotonAutentificar> {
     double width = MediaQuery.of(context).size.width;
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
-      onTap: send ? null : () async {
-        var validar = widget.formKey.currentState!.validate();
-        if (validar) {
-          setState(() {
-            send = true;
-          });
-          await Future.delayed(const Duration(seconds: 5));
+      onTap: send
+          ? null
+          : () async {
+              var validar = widget.formKey.currentState!.validate();
+              if (validar) {
+                setState(() {
+                  send = true;
+                });
+                await Future.delayed(const Duration(seconds: 5));
 
-          FocusManager.instance.primaryFocus?.unfocus();
-          final signCode = await SmsAutoFill().getAppSignature;
+                FocusManager.instance.primaryFocus?.unfocus();
+                final signCode = await SmsAutoFill().getAppSignature;
 
-          final estado =
-              await TwilioService().enviarSms(widget.controller.text, signCode);
-          setState(() {
-            send = false;
-          });
-          if (estado) {
-            final String numero = widget.controller.text;
+                final estado = await TwilioService()
+                    .enviarSms(widget.controller.text, signCode);
+                setState(() {
+                  send = false;
+                });
+                if (estado) {
+                  final String numero = widget.controller.text;
 
-            navigationService.navigateTo('/phone/confirmar/$numero/$signCode');
-          } else {
-            final snackBar = SnackBar(
-              duration: const Duration(seconds: 3),
-              backgroundColor: Colors.red,
-              content: Text(
-                'Error al verificar tu numero',
-                style: GoogleFonts.quicksand(fontWeight: FontWeight.bold),
-              ),
-            );
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ConfirmarCodigo(
+                              numero: numero,
+                            )),
+                  );
+                } else {
+                  final snackBar = SnackBar(
+                    duration: const Duration(seconds: 3),
+                    backgroundColor: Colors.red,
+                    content: Text(
+                      'Error al verificar tu numero',
+                      style: GoogleFonts.quicksand(fontWeight: FontWeight.bold),
+                    ),
+                  );
 
-            ScaffoldMessenger.of(context).showSnackBar(snackBar);
-          }
-        }
-      },
+                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                }
+              }
+            },
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -67,26 +75,25 @@ class _BotonAutentificarState extends State<BotonAutentificar> {
               alignment: Alignment.center,
               padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 0),
               decoration: BoxDecoration(
-                  color: const Color.fromRGBO(62, 204, 191, 1),
+                  border:
+                      Border.all(width: 1, color: Colors.grey.withOpacity(.8)),
                   borderRadius: send
                       ? BorderRadius.circular(100)
-                      : BorderRadius.circular(10)),
+                      : BorderRadius.circular(25)),
               child: send
                   ? const SizedBox(
                       width: 19,
                       height: 19,
                       child: CircularProgressIndicator(
-                        color: Colors.white,
+                        color: Colors.black,
                         strokeWidth: 1,
                       ),
                     )
                   : Text('Continuar',
                       style: GoogleFonts.quicksand(
-                          color: Colors.white, fontWeight: FontWeight.w600))),
+                          color: Colors.black, fontWeight: FontWeight.w600))),
         ],
       ),
     );
   }
 }
-
-

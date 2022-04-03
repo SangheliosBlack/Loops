@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:delivery/global/enviroment.dart';
-import 'package:delivery/models/direccion_response.dart';
+import 'package:delivery/models/direccion.dart';
 import 'package:delivery/models/direcciones_response.dart';
 import 'package:delivery/service/auth_service.dart';
 import 'package:flutter/cupertino.dart';
@@ -9,15 +9,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 
 class DireccionesService with ChangeNotifier {
-  int _direccionPredeterminada = 0;
-
-  int get direccionPredeterminada => _direccionPredeterminada;
-
-  set direccionPredeterminada(int valor) {
-    _direccionPredeterminada = valor;
-    notifyListeners();
-  }
-
   List<Direccion> _direcciones = [];
 
   List<Direccion> get direcciones => _direcciones;
@@ -28,34 +19,20 @@ class DireccionesService with ChangeNotifier {
     notifyListeners();
   }
 
-  int _value = 100000;
-
-  int get value => _value;
-
-  set value(int value) {
-    _value = value;
-    notifyListeners();
-  }
-
   DireccionesService() {
     getDirecciones();
   }
 
-  Future cambiarDireccionIcono(int icono, int index) async {
-    _direcciones[index].icono = icono;
-    notifyListeners();
-  }
-
   Future<bool> agregarNuevaDireccion(
-      String texto, String descripcion, double latitud, double longitud,bool predeterminado) async {
+      {required String id,
+      required double latitud,
+      required longitud,
+      required String titulo}) async {
     final data = {
+      "id": id,
       "latitud": latitud,
       "longitud": longitud,
-      "texto": texto,
-      "descripcion": descripcion,
-      "titulo": "Casa",
-      "icono": 58890,
-      "predeterminado":predeterminado
+      "titulo": titulo
     };
 
     try {
@@ -71,11 +48,33 @@ class DireccionesService with ChangeNotifier {
 
       direcciones.insert(direcciones.length, direccion.direcciones[0]);
 
-      direccionPredeterminada = 0;
-
       notifyListeners();
 
       if (resp.statusCode == 200) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<bool> eliminarDireccion({required String id}) async {
+    final data = {'id': id};
+
+    try {
+      final resp = await http.post(
+          Uri.parse('${Statics.apiUrl}/direcciones/eliminar'),
+          body: jsonEncode(data),
+          headers: {
+            'Content-Type': 'application/json',
+            'x-token': await AuthService.getToken()
+          });
+
+      if (resp.statusCode == 200) {
+        direcciones.removeWhere((element) => element.id == id);
+        notifyListeners();
         return true;
       } else {
         return false;
@@ -93,15 +92,9 @@ class DireccionesService with ChangeNotifier {
             'x-token': await AuthService.getToken()
           });
       final direccionesResponse = direccionesResponseFromJson(resp.body);
+
       direcciones = direccionesResponse.direcciones;
 
-      try {
-        final busqueda =
-            direcciones.indexWhere((element) => element.predeterminado);
-        direccionPredeterminada = busqueda;
-      } catch (e) {
-        direccionPredeterminada = 0;
-      }
       return direccionesResponse.direcciones;
     } catch (e) {
       return null;

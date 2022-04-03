@@ -35,7 +35,6 @@ class TrafficService {
   Stream<Busqueda> get busquedaStream => _busquedaStreamController.stream;
 
   final _baseUrlDir = 'https://api.mapbox.com/directions/v5';
-  final _baseUrlGeo = 'https://api.mapbox.com/geocoding/v5';
   final _apiKey =
       'pk.eyJ1IjoianVsaW9qYW1vbjMwMDAiLCJhIjoiY2t1MDNpOW02M2lzNDJ3bzJvanZpcTIydyJ9.2Anx0T9p97v-j57728PO9g';
 
@@ -59,18 +58,19 @@ class TrafficService {
   }
 
   Future<SearchResponse> getResultadosPorQuery(String busqueda) async {
-    final url = '$_baseUrlGeo/mapbox.places/$busqueda.json';
+    
+    final data = {'query': busqueda};
 
     try {
-      final resp = await _dio.get(url, queryParameters: {
-        'access_token': _apiKey,
-        'autocomplete': 'true',
-        'bbox':
-            '${-101.97451812873011},${21.28793396499772},${-101.88430301760484},${21.386101516510493}',
-        'language': 'es'
-      });
+      final resp = await http.post(
+        Uri.parse('${Statics.apiUrl}/google/busqueda'),
+        body: jsonEncode(data),
+        headers: {
+          'Content-Type': 'application/json',
+          'x-token': await AuthService.getToken()
+        });
 
-      final searchResponse = searchResponseFromJson(resp.data);
+      final searchResponse = searchResponseFromJson(resp.body);
 
       return searchResponse;
     } catch (e) {
@@ -99,14 +99,14 @@ class TrafficService {
   }
 
   void getBusquedaPorQuery(String busqueda) async {
-    EasyDebounce.debounce('fuck', Duration(milliseconds: 1200), () async {
+    EasyDebounce.debounce('fuck', Duration(milliseconds: 1600), () async {
       final resultados = await obtenerBusqueda(busqueda);
       _busquedaStreamController.add(resultados);
     });
   }
 
   void getSugerenciasPorQuery(String busqueda) async {
-    EasyDebounce.debounce('fuck', Duration(milliseconds: 1200), () async {
+    EasyDebounce.debounce('fuck', Duration(milliseconds: 1600), () async {
       final resultados = await getResultadosPorQuery(busqueda);
       _sugerenciasStreamController.add(resultados);
     });

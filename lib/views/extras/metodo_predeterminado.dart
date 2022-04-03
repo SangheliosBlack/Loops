@@ -13,12 +13,48 @@ class MetodoPredeterminado extends StatelessWidget {
   Widget build(BuildContext context) {
     final tarjetasService = Provider.of<TarjetasService>(context);
     return ListView(
+      physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
       children: [
         Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Container(
+                margin: const EdgeInsets.only(top: 25),
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        GestureDetector(
+                          behavior: HitTestBehavior.translucent,
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(7),
+                            decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.grey[100]),
+                            child: Icon(
+                              Icons.close,
+                              color: Colors.grey[500],
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                    Text(
+                      'Selecciona un metodo de pago',
+                      style: GoogleFonts.quicksand(
+                          fontSize: 20, color: Colors.black.withOpacity(.8)),
+                    ),
+                  ],
+                )),
             const SizedBox(
               height: 25,
             ),
@@ -26,7 +62,7 @@ class MetodoPredeterminado extends StatelessWidget {
               height: 190,
               child: ListView.separated(
                   padding:
-                      const EdgeInsets.symmetric(vertical: 20, horizontal: 30),
+                      const EdgeInsets.only(left: 25, right: 25, bottom: 20),
                   shrinkWrap: true,
                   physics: const BouncingScrollPhysics(),
                   scrollDirection: Axis.horizontal,

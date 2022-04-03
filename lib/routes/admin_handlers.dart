@@ -49,8 +49,7 @@ class AdminHandlers {
     final authService = Provider.of<AuthService>(context!);
     final permissionService = Provider.of<PermissionStatusProvider>(context);
     if (authService.authStatus == AuthStatus.notAuthenticated) {
-      /* return const LoginView();*/
-      return  ConfirmarCodigo(numero: params['numero']![0], signCode: params['code']![0]);
+      return ConfirmarCodigo(numero: params['numero']![0]);
     } else {
       if (permissionService.isGranted) {
         if (permissionService.isEnabled) {
@@ -67,7 +66,9 @@ class AdminHandlers {
   static Handler register = Handler(handlerFunc: (context, params) {
     final authService = Provider.of<AuthService>(context!);
     if (authService.authStatus == AuthStatus.notAuthenticated) {
-      return  RegisterView(numero: params['numero']![0],);
+      return RegisterView(
+        numero: params['numero']![0],
+      );
     } else {
       return const DashboardView();
     }

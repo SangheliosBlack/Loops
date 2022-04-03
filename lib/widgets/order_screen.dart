@@ -1,8 +1,10 @@
 import 'package:delivery/global/styles.dart';
 import 'package:delivery/helpers/calculando_alerta.dart';
+import 'package:delivery/models/direccion.dart';
 import 'package:delivery/models/search_results.dart';
 import 'package:delivery/search/search_destination.dart';
 import 'package:delivery/service/direcciones.service.dart';
+import 'package:delivery/service/permission_status.dart';
 import 'package:delivery/service/stripe_service.dart';
 import 'package:delivery/service/tarjetas.service.dart';
 import 'package:delivery/views/extras/metodo_predeterminado.dart';
@@ -27,31 +29,39 @@ class SectionOrder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(top: 15),
+      margin: EdgeInsets.only(
+          top: 15,
+          left: titulo == 'Direccion envio' ? 0 : 25,
+          right: titulo == 'Direccion envio' ? 0 : 25),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                titulo,
-                style: Styles.letterCustom(18, true),
-              ),
-              titulo == 'Direccion envio'
-                  ? Container(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 5, horizontal: 10),
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(10)),
-                      child: Text(
-                        'Cambiar',
-                        style:
-                            GoogleFonts.quicksand(fontWeight: FontWeight.w600),
-                      ))
-                  : Container()
-            ],
+          Container(
+            margin: EdgeInsets.only(
+                left: titulo == 'Direccion envio' ? 25 : 0,
+                right: titulo == 'Direccion envio' ? 25 : 0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  titulo,
+                  style: GoogleFonts.quicksand(
+                      color: Colors.black.withOpacity(.7), fontSize: 20),
+                ),
+                titulo == 'Direccion envio'
+                    ? Container(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 5, horizontal: 10),
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10)),
+                        child: Text(
+                          'Cambiar',
+                          style: GoogleFonts.quicksand(color: Colors.grey),
+                        ))
+                    : Container()
+              ],
+            ),
           ),
           const SizedBox(height: 10),
           Container(
@@ -106,13 +116,14 @@ class OrderItems extends StatelessWidget {
         ),
       ),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+        padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 5),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(20),
         ),
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Column(
               children: [
@@ -121,7 +132,7 @@ class OrderItems extends StatelessWidget {
                   height: 80,
                   width: 80,
                   child: ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(15),
                     child: const Image(
                       image: NetworkImage(
                           'https://saboryestilo.com.mx/wp-content/uploads/2019/09/platillos-tipicos-de-mexico1-1200x675.jpg'),
@@ -144,84 +155,86 @@ class OrderItems extends StatelessWidget {
                       children: [
                         Text(
                           'Nombre del producto',
+                          maxLines: 2,
                           style: GoogleFonts.quicksand(
-                              color: Colors.black.withOpacity(.7),
-                              fontSize: 15,
-                              fontWeight: FontWeight.w600),
+                            color: Colors.black.withOpacity(.8),
+                            fontSize: 16,
+                          ),
                         ),
-                        Row(
-                          children: [
-                            Text(
-                              'Enviado por : ',
-                              style: GoogleFonts.quicksand(
-                                  fontSize: 10,
-                                  color: Colors.grey.withOpacity(.7)),
-                            ),
-                            Text(
-                              'Nombre negocio',
-                              style: GoogleFonts.quicksand(
-                                  fontSize: 10, color: Colors.blue),
-                            ),
-                          ],
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.place_outlined,
+                          size: 13,
+                          color: Colors.grey,
                         ),
+                        const SizedBox(width: 3),
+                        Text(
+                          'Lugar de donde pide',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.quicksand(
+                              color: Colors.grey, fontSize: 13),
+                        )
                       ],
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                        Row(
                           children: [
-                            Text(
-                              'Precio unitario : ',
-                              style: GoogleFonts.quicksand(
-                                  fontSize: 10,
-                                  color: Colors.grey.withOpacity(.7)),
+                            Container(
+                              margin: const EdgeInsets.only(bottom: 5),
+                              child: Text('\$',
+                                  style: GoogleFonts.playfairDisplay(
+                                      fontSize: 16,
+                                      color: Colors.black.withOpacity(.8))),
                             ),
-                            Text('\$45.00',
-                                style: Styles.letterCustom(25, false, .7)),
+                            Text('45.00',
+                                style: GoogleFonts.quicksand(
+                                    fontSize: 24,
+                                    color: Colors.black.withOpacity(.8))),
                           ],
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Container(
-                                padding: const EdgeInsets.all(1),
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(7),
-                                    color: const Color(0xffF3F5F6)
-                                        .withOpacity(.5)),
-                                child: Icon(
-                                  Icons.remove,
-                                  color: Colors.grey.withOpacity(.7),
-                                )),
-                            Container(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 10),
-                                child: Text(
-                                  '1',
-                                  style: GoogleFonts.quicksand(
-                                      fontWeight: FontWeight.w600),
-                                )),
-                            Container(
-                                padding: const EdgeInsets.all(1),
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(7),
-                                    color:
-                                        const Color.fromRGBO(234, 248, 248, 1)),
-                                child: const Icon(
-                                  Icons.add,
-                                  color: Color.fromRGBO(62, 204, 191, 1),
-                                )),
-                          ],
-                        )
                       ],
                     ),
                   ],
                 ),
               ),
             ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Container(
+                    padding: const EdgeInsets.all(9),
+                    decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: const Color(0xffF3F5F6).withOpacity(.5)),
+                    child: Icon(
+                      Icons.remove,
+                      size: 16,
+                      color: Colors.grey.withOpacity(.7),
+                    )),
+                Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: Text(
+                      '1',
+                      style: GoogleFonts.quicksand(fontWeight: FontWeight.w600),
+                    )),
+                Container(
+                    padding: const EdgeInsets.all(9),
+                    decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Color.fromRGBO(234, 248, 248, 1)),
+                    child: const Icon(
+                      Icons.add,
+                      size: 16,
+                      color: Color.fromRGBO(62, 204, 191, 1),
+                    )),
+              ],
+            )
           ],
         ),
       ),
@@ -235,45 +248,42 @@ class DeliveryOptionsContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final direccionesService = Provider.of<DireccionesService>(context);
+    final sugerencia = Provider.of<PermissionStatusProvider>(context);
 
     return direccionesService.direcciones.isNotEmpty
-        ? DireccionBuildWidget(
-            predeterminado: direccionesService
-                .direcciones[direccionesService.direccionPredeterminada]
-                .predeterminado,
-            icono: direccionesService
-                .direcciones[direccionesService.direccionPredeterminada].icono,
-            uid: direccionesService
-                .direcciones[direccionesService.direccionPredeterminada].id,
-            index: direccionesService.direccionPredeterminada,
-            titulo: direccionesService
-                .direcciones[direccionesService.direccionPredeterminada].texto,
-            descripcion: direccionesService
-                .direcciones[direccionesService.direccionPredeterminada]
-                .descripcion,
-            latitud: direccionesService
-                .direcciones[direccionesService.direccionPredeterminada]
-                .coordenadas
-                .latitud,
-            longitud: direccionesService
-                .direcciones[direccionesService.direccionPredeterminada]
-                .coordenadas
-                .longitud,
-            onlyShow: true,
-          )
+        ? direccionFavorita(direccionesService)
         : GestureDetector(
             behavior: HitTestBehavior.translucent,
             onTap: () async {
-              try {
-                final resultado = await showSearch(
-                    context: context, delegate: SearchDestination());
-                retornoBusqueda(resultado!, direccionesService, context, true);
-              } catch (e) {
-                debugPrint('Ningun lugar seleccionado');
+              if (sugerencia.listaSugerencias.isEmpty) {
+                calculandoAlerta(context);
+                try {
+                  if (sugerencia.listaSugerencias.isEmpty) {
+                    await sugerencia.ubicacionActual();
+                  }
+                  final resultado = await showSearch(
+                      context: context, delegate: SearchDestination());
+                  if (resultado!.cancelo == false) {
+                    retornoBusqueda(resultado, direccionesService, context);
+                  }
+                } catch (e) {
+                  debugPrint('Ningun lugar seleccionado');
+                }
+                Navigator.pop(context);
+              } else {
+                try {
+                  final resultado = await showSearch(
+                      context: context, delegate: SearchDestination());
+                  if (resultado!.cancelo == false) {
+                    retornoBusqueda(resultado, direccionesService, context);
+                  }
+                } catch (e) {
+                  debugPrint('Ningun lugar seleccionado');
+                }
               }
             },
             child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+              padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
               decoration: BoxDecoration(
                   color: Colors.white, borderRadius: BorderRadius.circular(10)),
               child: Row(
@@ -283,13 +293,18 @@ class DeliveryOptionsContainer extends StatelessWidget {
                     padding: const EdgeInsets.only(left: 5),
                     child: Text(
                       'Agregar nueva direccion',
-                      style: GoogleFonts.quicksand(
-                          fontWeight: FontWeight.bold, color: Colors.grey),
+                      style: GoogleFonts.quicksand(color: Colors.grey),
                     ),
                   ),
-                  const Icon(
-                    Icons.add,
-                    color: Colors.blue,
+                  Container(
+                    margin: const EdgeInsets.only(right: 4),
+                    padding: const EdgeInsets.all(5),
+                    decoration: BoxDecoration(
+                        shape: BoxShape.circle, color: Colors.blue[50]),
+                    child: const Icon(
+                      Icons.add,
+                      color: Colors.blue,
+                    ),
                   )
                 ],
               ),
@@ -297,21 +312,35 @@ class DeliveryOptionsContainer extends StatelessWidget {
           );
   }
 
-  void retornoBusqueda(
-      SearchResult result,
-      DireccionesService direccionesService,
-      BuildContext context,
-      bool predeterminado) async {
+  DireccionBuildWidget direccionFavorita(
+      DireccionesService direccionesService) {
+    return DireccionBuildWidget(
+      onlyShow: true,
+      direccion: direccionesService.direcciones[
+          obtenerFavorito(direccionesService.direcciones) != -1
+              ? obtenerFavorito(direccionesService.direcciones)
+              : 0],
+    );
+  }
+
+  obtenerFavorito(List<Direccion> direcciones) {
+    final busqueda =
+        direcciones.indexWhere((element) => element.predeterminado);
+    return busqueda;
+  }
+
+  void retornoBusqueda(SearchResult result,
+      DireccionesService direccionesService, BuildContext context) async {
     calculandoAlerta(context);
     await Future.delayed(const Duration(milliseconds: 1500));
 
-    final String texto = result.nombreDestino;
-    final String descripcion = result.descripcion;
-    final latitud = result.position.latitude;
-    final longitud = result.position.longitude;
+    final String titulo = result.titulo;
+    final double latitud = result.latitud;
+    final double longitud = result.longitud;
+    final String id = result.placeId;
 
     final nuevaDireccion = await direccionesService.agregarNuevaDireccion(
-        texto, descripcion, latitud, longitud, predeterminado);
+        id: id, latitud: latitud, longitud: longitud, titulo: titulo);
     if (nuevaDireccion) {
       Navigator.pop(context);
     } else {
@@ -366,7 +395,8 @@ class PaymentSummary extends StatelessWidget {
         (element) => element.id == customerService.tarjetaPredeterminada);
 
     return Container(
-      padding: const EdgeInsets.all(15),
+      margin: const EdgeInsets.only(top: 10),
+      padding: const EdgeInsets.all(0),
       decoration: Styles.containerCustom(),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -376,7 +406,7 @@ class PaymentSummary extends StatelessWidget {
             children: [
               Text(
                 'Metodo de pago',
-                style: Styles.letterCustom(14),
+                style: GoogleFonts.quicksand(color: Colors.grey),
               ),
               tarjetasService.listaTarjetas.length > 1
                   ? GestureDetector(
@@ -386,7 +416,6 @@ class PaymentSummary extends StatelessWidget {
                       child: Container(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(15),
-                          color: const Color.fromRGBO(234, 248, 248, 1),
                         ),
                         padding: const EdgeInsets.all(5),
                         child: Row(
@@ -395,14 +424,11 @@ class PaymentSummary extends StatelessWidget {
                             Text(
                               'Cambiar tarjeta',
                               style: GoogleFonts.quicksand(
-                                  fontSize: 14,
-                                  color: const Color.fromRGBO(62, 204, 191, 1)),
+                                  fontSize: 14, color: Colors.black),
                             ),
                             const SizedBox(width: 6),
-                            const Icon(
-                              Icons.style,
-                              color: Color.fromRGBO(62, 204, 191, 1),
-                            ),
+                            const Icon(Icons.style_outlined,
+                                color: Colors.black),
                             const SizedBox(width: 2),
                           ],
                         ),
@@ -422,7 +448,7 @@ class PaymentSummary extends StatelessWidget {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(15),
                     border: Border.all(
-                        color: Colors.grey.withOpacity(.1), width: 1),
+                        color: Colors.grey.withOpacity(.05), width: 1),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -445,9 +471,9 @@ class PaymentSummary extends StatelessWidget {
                               tarjetasService
                                   .listaTarjetas[busqueda].card.last4,
                               style: GoogleFonts.quicksand(
-                                  fontSize: 17,
-                                  color: Colors.black.withOpacity(1),
-                                  fontWeight: FontWeight.w600))
+                                fontSize: 17,
+                                color: Colors.black.withOpacity(1),
+                              ))
                         ],
                       ),
                       Container(
@@ -473,7 +499,7 @@ class PaymentSummary extends StatelessWidget {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(15),
                     border: Border.all(
-                        color: Colors.grey.withOpacity(.1), width: 1),
+                        color: Colors.grey.withOpacity(.05), width: 1),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -485,15 +511,15 @@ class PaymentSummary extends StatelessWidget {
                             padding: const EdgeInsets.all(5),
                             child: const Icon(
                               Icons.attach_money,
-                              color: Color.fromRGBO(2, 204, 66, .7),
+                              color: Colors.black,
                             ),
                           ),
                           const SizedBox(width: 14),
                           Text('Efectivo',
                               style: GoogleFonts.quicksand(
-                                  fontSize: 17,
-                                  color: Colors.black.withOpacity(.8),
-                                  fontWeight: FontWeight.w600))
+                                fontSize: 17,
+                                color: Colors.black.withOpacity(.8),
+                              ))
                         ],
                       ),
                       Container(
@@ -502,7 +528,8 @@ class PaymentSummary extends StatelessWidget {
                         decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             border: Border.all(
-                                color: Colors.black.withOpacity(.1), width: 1)),
+                                color: Colors.black.withOpacity(.05),
+                                width: 1)),
                         child: Container(
                           width: 10,
                           height: 10,
@@ -515,7 +542,7 @@ class PaymentSummary extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 5),
-                Container(
+                /*Container(
                   margin: const EdgeInsets.only(top: 5),
                   padding: const EdgeInsets.all(5),
                   decoration: BoxDecoration(
@@ -532,16 +559,16 @@ class PaymentSummary extends StatelessWidget {
                             margin: const EdgeInsets.only(left: 5),
                             padding: const EdgeInsets.all(5),
                             child: Icon(
-                              Icons.account_balance_wallet,
-                              color: Colors.black.withOpacity(.2),
+                              Icons.wallet_giftcard,
+                              color: Colors.black.withOpacity(.1),
                             ),
                           ),
                           const SizedBox(width: 16),
                           Text('\$ 0.00',
                               style: GoogleFonts.quicksand(
-                                  fontSize: 17,
-                                  color: Colors.black.withOpacity(.2),
-                                  fontWeight: FontWeight.w600))
+                                fontSize: 17,
+                                color: Colors.black.withOpacity(.2),
+                              ))
                         ],
                       ),
                       Container(
@@ -561,7 +588,7 @@ class PaymentSummary extends StatelessWidget {
                       )
                     ],
                   ),
-                ),
+                ),*/
               ],
             ),
           ),
@@ -571,9 +598,9 @@ class PaymentSummary extends StatelessWidget {
             children: [
               Text(
                 'Codigo promocional',
-                style: Styles.letterCustom(14),
+                style: GoogleFonts.quicksand(color: Colors.grey),
               ),
-              Text('VF85SD', style: Styles.letterCustom(14, true, .8))
+              Text('VF85SD', style: GoogleFonts.quicksand(color: Colors.blue))
             ],
           ),
           Container(
@@ -585,36 +612,33 @@ class PaymentSummary extends StatelessWidget {
                   height: 40,
                   width: 180,
                   child: TextFormField(
-                    style: GoogleFonts.quicksand(
-                        color: Colors.grey, fontWeight: FontWeight.w600),
+                    style:
+                        GoogleFonts.quicksand(color: Colors.grey, fontSize: 12),
                     enableSuggestions: false,
                     decoration: InputDecoration(
                       contentPadding:
                           const EdgeInsets.only(bottom: 10, left: 10),
-                      hintText: 'CODIGO CUPON',
-                      hintStyle: Styles.letterCustom(12, false, .3),
+                      hintStyle: GoogleFonts.quicksand(),
                       focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
                           borderSide: BorderSide(
-                              color: Colors.black.withOpacity(.1), width: 2)),
+                              color: Colors.black.withOpacity(.05), width: 1)),
                       enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
                           borderSide: BorderSide(
-                              color: Colors.black.withOpacity(.1), width: 2)),
+                              color: Colors.black.withOpacity(.05), width: 1)),
                       border: InputBorder.none,
                     ),
                   ),
                 ),
                 ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                        elevation: 0,
-                        primary: const Color.fromRGBO(255, 240, 235, 1)),
+                        elevation: 0, primary: Colors.grey.withOpacity(.1)),
                     onPressed: () {},
                     child: Text(
                       'Aplicar',
                       style: GoogleFonts.quicksand(
-                          fontSize: 14,
-                          color: const Color.fromRGBO(255, 103, 50, 1)),
+                          fontSize: 14, color: Colors.grey),
                     ))
               ],
             ),
@@ -622,17 +646,20 @@ class PaymentSummary extends StatelessWidget {
           Container(
             width: double.infinity,
             height: 2,
-            color: Colors.black.withOpacity(.05),
+            color: Colors.black.withOpacity(.02),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 20),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 'Total orden',
-                style: Styles.letterCustom(14),
+                style: GoogleFonts.quicksand(),
               ),
-              Text('\$ 150.00', style: Styles.letterCustom(14, true, .8))
+              Text(
+                '\$ 150.00',
+                style: GoogleFonts.quicksand(fontSize: 18),
+              )
             ],
           ),
           const SizedBox(height: 10),
@@ -641,9 +668,12 @@ class PaymentSummary extends StatelessWidget {
             children: [
               Text(
                 'Envio',
-                style: Styles.letterCustom(14),
+                style: GoogleFonts.quicksand(),
               ),
-              Text('\$ 50.00', style: Styles.letterCustom(14, true, .8))
+              Text(
+                '\$ 50.00',
+                style: GoogleFonts.quicksand(fontSize: 18),
+              )
             ],
           ),
           const SizedBox(height: 10),
@@ -652,41 +682,39 @@ class PaymentSummary extends StatelessWidget {
             children: [
               Text(
                 'Cuenta total',
-                style: Styles.letterCustom(14),
+                style: GoogleFonts.quicksand(),
               ),
-              Text('\$ 200.00', style: Styles.letterCustom(14, true, .8))
+              Text(
+                '\$ 200.00',
+                style: GoogleFonts.quicksand(fontSize: 18),
+              )
             ],
           ),
           const SizedBox(height: 10),
           Row(
             children: [
               Expanded(
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(30),
-                  child: SizedBox(
-                      height: 45,
-                      child: ElevatedButton(
-                          onPressed: () {},
-                          style: ButtonStyle(
-                            shape: MaterialStateProperty.all<
-                                    RoundedRectangleBorder>(
-                                RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(0))),
-                            backgroundColor: MaterialStateProperty.all<Color>(
-                                Theme.of(context).primaryColor),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Icon(Icons.moped),
-                              const SizedBox(width: 10),
-                              Text(
-                                'Ordenar',
-                                style: Styles.letterCustom(17, true, -0.1),
-                              ),
-                            ],
-                          ))),
-                ),
+                child: Container(
+                    margin: const EdgeInsets.only(top: 20, bottom: 10),
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(width: 1, color: Colors.black)),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(
+                          Icons.moped,
+                          color: Colors.black,
+                        ),
+                        const SizedBox(width: 10),
+                        Text(
+                          'Ordenar',
+                          style: GoogleFonts.quicksand(
+                              color: Colors.black, fontSize: 20),
+                        ),
+                      ],
+                    )),
               ),
             ],
           )
@@ -699,7 +727,6 @@ class PaymentSummary extends StatelessWidget {
     showModalBottomSheet(
         isDismissible: true,
         context: context,
-        enableDrag: true,
         backgroundColor: Colors.white,
         elevation: 0,
         builder: (builder) {

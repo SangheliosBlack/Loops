@@ -1,14 +1,17 @@
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class SearchResult {
   final bool cancelo;
-  final bool manual;
-  final LatLng position;
-  final String nombreDestino;
-  final String descripcion;
+  final bool sugerencia;
+  final String placeId;
+  final String titulo;
+  final double latitud;
+  final double longitud;
 
-  SearchResult({this.descripcion = '', required this.cancelo, this.manual = false ,  this.position =  const LatLng(21.377222000000003,-101.92916700000002)  , this.nombreDestino = ''});
-
-
-  
+  SearchResult(
+      {this.titulo = '',
+      this.placeId = '',
+      this.latitud = 54156165,
+      this.longitud = 564654564,
+      required this.cancelo,
+      required this.sugerencia});
 }

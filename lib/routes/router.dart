@@ -14,7 +14,7 @@ class Flurorouter {
   static String registerRoute = '/auth/register/:numero';
 
   static String autentificarRoute = '/phone/confirmar';
-  static String confirmarRoute = '/phone/confirmar/:numero/:code';
+  static String confirmarRoute = '/phone/confirmar/:numero';
 
   static String metodosPagoRoute = '/drawer/metodosPago';
   static String direccionesRoute = '/drawer/direcciones';
@@ -78,9 +78,7 @@ class Flurorouter {
     router.define(loginRoute,
         handler: AdminHandlers.login, transitionType: TransitionType.none);
 
-    router.define(addAddressMapRoute,
-        handler: DashBoardHandlers.addAdressMap,
-        transitionType: TransitionType.none);
+    
 
     router.define(allowGpsPermissionRoute,
         handler: DashBoardHandlers.allowGpsPermission,
@@ -109,9 +107,7 @@ class Flurorouter {
         transitionDuration: const Duration(milliseconds: 500),
         transitionType: TransitionType.native);
 
-    router.define(editarDireccionesRoute,
-        handler: ExtrasHandlers.editarDireccion,
-        transitionType: TransitionType.none);
+    
 
     router.define(editarMenuRoute,
         handler: ExtrasHandlers.editarMenu,

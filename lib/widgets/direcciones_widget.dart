@@ -1,36 +1,29 @@
-import 'package:delivery/service/navigator_service.dart';
+import 'package:delivery/models/direccion.dart';
+import 'package:delivery/views/extras/editar_direccion.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class DireccionBuildWidget extends StatelessWidget {
-  final bool predeterminado;
-  final int index;
-  final String titulo;
-  final String descripcion;
-  final double latitud;
-  final double longitud;
-  final String uid;
-  final int icono;
+  final Direccion direccion;
   final bool onlyShow;
 
-  const DireccionBuildWidget(
-      {Key? key,
-      required this.index,
-      required this.titulo,
-      required this.descripcion,
-      required this.latitud,
-      required this.longitud,
-      required this.icono,
-      required this.uid,
-      required this.onlyShow,
-      required this.predeterminado})
-      : super(key: key);
+  const DireccionBuildWidget({
+    Key? key,
+    required this.onlyShow,
+    required this.direccion,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        navigationService.navigateTo('/extras/editarDirecciones/$index');
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => EditarDireccionView(
+                    direccion: direccion,
+                  )),
+        );
       },
       child: ClipRRect(
         borderRadius: BorderRadius.circular(15),
@@ -39,78 +32,70 @@ class DireccionBuildWidget extends StatelessWidget {
             AnimatedContainer(
               duration: const Duration(milliseconds: 500),
               width: double.infinity,
-              height: 95,
-              padding: const EdgeInsets.all(15),
+              height: 55,
+              margin: const EdgeInsets.symmetric(horizontal: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 15),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(15),
-                color: Colors.white,
               ),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Container(
-                      width: 65,
-                      height: double.infinity,
+                      width: 35,
+                      height: 35,
                       padding: const EdgeInsets.all(5),
                       decoration: BoxDecoration(
-                        color: const Color.fromRGBO(235, 248, 248, 1),
-                        borderRadius: BorderRadius.circular(15),
+                        border: Border.all(
+                            width: 1, color: Colors.grey.withOpacity(.2)),
+                        borderRadius: BorderRadius.circular(100),
                       ),
-                      child: Icon(
-                        IconData(icono, fontFamily: 'MaterialIcons'),
-                        color: const Color.fromRGBO(41, 199, 184, 1),
-                        size: 30,
+                      child: const Icon(
+                        Icons.place_outlined,
+                        color: Colors.black,
+                        size: 22,
                       )),
-                  const SizedBox(width: 10),
+                  const SizedBox(width: 15),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          titulo,
+                          direccion.titulo,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: GoogleFonts.quicksand(
                               color: Theme.of(context).primaryColor,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20),
+                              fontSize: 16),
                         ),
-                        const SizedBox(height: 3),
-                        Text(
-                          descripcion,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.quicksand(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 13,
-                              color: Colors.grey.withOpacity(.8)),
-                        ),
-                        const SizedBox(height: 5),
                       ],
                     ),
-                  )
+                  ),
+                  Container(
+                      margin: const EdgeInsets.only(left: 12),
+                      child: Icon(Icons.arrow_forward_ios,
+                          color: Colors.grey.withOpacity(.4), size: 20))
                 ],
               ),
             ),
             Positioned(
-              right: 10,
-              top: 10,
+              left: 68,
+              top: -5,
               child: AnimatedOpacity(
                   duration: const Duration(milliseconds: 500),
                   opacity: onlyShow
                       ? 0
-                      : predeterminado
+                      : direccion.predeterminado
                           ? 1
                           : 0,
                   child: Container(
                       padding: const EdgeInsets.all(6),
-                      decoration: const BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Color.fromRGBO(253, 95, 122, 1)),
-                      child: const Icon(
-                        Icons.favorite,
-                        size: 15,
-                        color: Colors.white,
+                      child: Text(
+                        'Predeterminado',
+                        style: GoogleFonts.quicksand(
+                            fontSize: 12,
+                            color: const Color.fromRGBO(253, 95, 122, 1)),
                       ))),
             )
           ],
