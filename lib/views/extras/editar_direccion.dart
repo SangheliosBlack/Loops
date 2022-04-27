@@ -60,12 +60,14 @@ class _EditarDireccionViewState extends State<EditarDireccionView> {
             children: [
               GestureDetector(
                 behavior: HitTestBehavior.translucent,
-                onTap: () async {},
+                onTap: () async {
+                  direccionesService.calcularFavorito(id: widget.direccion.id, estado: widget.direccion.predeterminado);
+                },
                 child: Container(
                     margin: const EdgeInsets.only(bottom: 2),
                     padding: const EdgeInsets.all(10),
                     child: AnimatedSwitcher(
-                      duration: Duration(seconds: 1),
+                      duration: const Duration(seconds: 1),
                       child: widget.direccion.predeterminado
                           ? const Icon(
                               FontAwesomeIcons.solidStar,
@@ -83,8 +85,8 @@ class _EditarDireccionViewState extends State<EditarDireccionView> {
               GestureDetector(
                 behavior: HitTestBehavior.translucent,
                 onTap: () async {
-                  final result = await confirmarEliminacion(
-                      context, widget.direccion.titulo);
+                  final result = await confirmarEliminacion(context: context, tipo: 0, titulo: widget.direccion.titulo
+                      );
                   if (result) {
                     direccionesService.eliminarDireccion(
                         id: widget.direccion.id);

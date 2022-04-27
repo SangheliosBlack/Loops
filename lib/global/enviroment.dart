@@ -32,8 +32,8 @@ class Statics {
     {'icono': Icons.moped, 'titulo': 'En linea 1', 'precio': '150.00'},
     {'icono': Icons.point_of_sale, 'titulo': 'En linea 2', 'precio': '180.00'}
   ];
-  static String apiUrl = 'https://server-delivery-production.herokuapp.com/api';
-  /*static String apiUrl = 'http://192.168.0.5:3000/api';*/
+  /*static String apiUrl = 'https://server-delivery-production.herokuapp.com/api';*/
+  static String apiUrl = 'http://192.168.0.11:3000/api';
   static List<dynamic> listSetting = [
     {
       'icono': Icons.credit_card_outlined,
@@ -50,16 +50,6 @@ class Statics {
       'titulo': 'Mis pedidos',
       'ruta': '/drawer/pedidos'
     },
-    {
-      'icono': Icons.storefront_outlined,
-      'titulo': 'Vender con nosotros',
-      'ruta': '/drawer/pedidos'
-    },
-    {
-      'icono': Icons.help_outline,
-      'titulo': 'Mas informacion',
-      'ruta': '/drawer/info'
-    },
     {'icono': Icons.logout, 'titulo': 'Cerrar sesion', 'ruta': 'logout'},
   ];
 
@@ -72,14 +62,14 @@ class Statics {
 
   static List<dynamic> listaCategorias = [
     {'titulo': 'Pizza', 'icono': FontAwesomeIcons.pizzaSlice},
-    {'titulo': 'Hamburguesas', 'icono': FontAwesomeIcons.hamburger},
+    {'titulo': 'Hamburguesas', 'icono': FontAwesomeIcons.burger},
     {
       'titulo': 'Saludable',
       'icono': FontAwesomeIcons.seedling,
     },
     {
       'titulo': 'Bebidas',
-      'icono': FontAwesomeIcons.beer,
+      'icono': FontAwesomeIcons.beerMugEmpty,
     },
     {
       'titulo': 'Mariscos',

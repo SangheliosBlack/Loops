@@ -17,7 +17,10 @@ class ProductoGeneral2 extends StatelessWidget {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const VerProductoView()),
+          MaterialPageRoute(
+              builder: (context) => VerProductoView(
+                    producto: producto,
+                  )),
         );
       },
       child: Stack(
@@ -31,31 +34,41 @@ class ProductoGeneral2 extends StatelessWidget {
                   decoration: Styles.containerCustom(8),
                   width: 100,
                   height: 100,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(15),
-                    child: const Image(
-                      image: NetworkImage(
-                          'https://saboryestilo.com.mx/wp-content/uploads/2019/09/platillos-tipicos-de-mexico1-1200x675.jpg'),
-                      fit: BoxFit.cover,
+                  child: Hero(
+                    tag: producto.id,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(15),
+                      child: const Image(
+                        image: NetworkImage(
+                            'https://www.pequeocio.com/wp-content/uploads/2010/11/hamburguesas-caseras-800x717.jpg'),
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
                 ),
                 Expanded(
                   child: Container(
-                    height: 92,
+                    height: 100,
                     margin: const EdgeInsets.only(left: 15),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(producto.nombre,
-                            style: Styles.letterCustom(20, true, 1)),
-                        Text(
-                            'Lorem Ipsum es simplemente el texto de relleno de las imprentas y archivos de texto. Lorem Ipsum ha sido el texto de relleno estándar de las industrias desde el año 1500, cuando un impresor (N. del T. persona que se dedica a la imprenta) desconocido usó',
-                            maxLines: 3,
-                            overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.quicksand(
-                                fontSize: 13, color: Colors.grey)),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(producto.nombre,
+                                style: GoogleFonts.quicksand(
+                                    color: Colors.black.withOpacity(.8),
+                                    fontSize: 20)),
+                            Text(producto.descripcion,
+                                maxLines: 3,
+                                overflow: TextOverflow.ellipsis,
+                                style: GoogleFonts.quicksand(
+                                    fontSize: 13, color: Colors.grey)),
+                          ],
+                        ),
                         const SizedBox(height: 5),
                         Row(
                           children: [
@@ -91,9 +104,23 @@ class ProductoGeneral2 extends StatelessWidget {
           Positioned(
             right: 0,
             bottom: 0,
-            child: Text(
-              '\$ 54.00',
-              style: GoogleFonts.quicksand(fontSize: 20, color: Colors.black),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '\$',
+                  style: GoogleFonts.playfairDisplay(
+                      fontSize: 15, color: Colors.black),
+                ),
+                const SizedBox(
+                  width: 4,
+                ),
+                Text(
+                  producto.precio.toStringAsFixed(2),
+                  style:
+                      GoogleFonts.quicksand(fontSize: 20, color: Colors.black),
+                ),
+              ],
             ),
           )
         ],

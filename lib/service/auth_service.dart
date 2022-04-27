@@ -1,8 +1,10 @@
 import 'dart:convert';
+import 'dart:ffi';
 import 'dart:io';
 
 import 'package:delivery/global/enviroment.dart';
 import 'package:delivery/models/image_response.dart';
+import 'package:delivery/models/productos.dart';
 import 'package:delivery/models/usuario.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http_parser/http_parser.dart';
@@ -209,5 +211,110 @@ class AuthService with ChangeNotifier {
     authStatus = AuthStatus.notAuthenticated;
     notifyListeners();
     await LocalStorage.prefs.remove('token');
+  }
+
+  Future cambiarMetodoDePago({required int tipo}) async {
+    if (tipo == 1) {
+      usuario.cesta.efectivo = false;
+    } else {
+      usuario.cesta.efectivo = true;
+    }
+    notifyListeners();
+  }
+
+  Future<bool> agregarProductoCesta(
+      {required Producto producto,
+      required num cantidad,
+      required String eleccion1,
+      required String eleccion2}) async {
+    await Future.delayed(const Duration(seconds: 1));
+
+    List<Opcion> opciones = producto.opciones
+        .map((e) => Opcion(
+            titulo: e.titulo,
+            listado: e.listado.map((e) {
+              return Listado(
+                  precio: e.precio,
+                  tipo: e.tipo,
+                  activo: e.tipo == eleccion1 || e.tipo == eleccion2
+                      ? true
+                      : false);
+            }).toList()))
+        .toList();
+
+    var enCesta = productoAgregado(id: producto.id, opciones: opciones);
+
+    if (enCesta!.isNotEmpty) {
+      int index = usuario.cesta.productos
+          .indexWhere((element) => element.sku == enCesta);
+      usuario.cesta.productos[index].cantidad =
+          usuario.cesta.productos[index].cantidad + cantidad > 15
+              ? 15
+              : usuario.cesta.productos[index].cantidad + cantidad;
+      notifyListeners();
+      return true;
+    } else {
+      final Producto newProducto = Producto(
+          id: producto.id,
+          precio: producto.precio,
+          nombre: producto.nombre,
+          descripcion: producto.descripcion,
+          descuentoP: producto.descuentoP,
+          descuentoC: producto.descuentoC,
+          disponible: producto.disponible,
+          tienda: producto.tienda,
+          cantidad: cantidad,
+          opciones: opciones,
+          sku: producto.id + eleccion1 + eleccion2);
+
+      newProducto.cantidad = cantidad;
+      usuario.cesta.productos.insert(0, newProducto);
+
+      calcularTotal();
+      notifyListeners();
+      return true;
+    }
+  }
+
+  String? productoAgregado(
+      {required String id, required List<Opcion> opciones}) {
+    List<Producto> listaRepetidos =
+        usuario.cesta.productos.where((element) => element.id == id).toList();
+    if (listaRepetidos.isEmpty) {
+      return '';
+    } else {
+      for (var item in listaRepetidos) {
+        if (listEquals(item.opciones, opciones)) {
+          return item.sku;
+        }
+      }
+      return '';
+    }
+  }
+
+  num calcularTotal() {
+    var valores = usuario.cesta.productos.fold<num>(
+        0,
+        (previousValue, element) =>
+            (element.cantidad * element.precio) + previousValue);
+    return valores == 0 ? 0 : valores;
+  }
+
+  num totalPiezas() {
+    var totaltem = usuario.cesta.productos.fold<num>(
+        0, (previousValue, element) => element.cantidad + previousValue);
+    return totaltem;
+  }
+
+  void actulizarCantidad({required int cantidad, required int index}) {
+    usuario.cesta.productos[index].cantidad = cantidad;
+    notifyListeners();
+  }
+
+  Future<void> eliminarProductoCesta({required int pos}) async {
+    await Future.delayed(const Duration(seconds: 1));
+
+    usuario.cesta.productos.removeAt(pos);
+    notifyListeners();
   }
 }

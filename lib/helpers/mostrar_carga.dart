@@ -5,10 +5,10 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-void calculandoAlerta(BuildContext context) {
+void mostrarCarga(BuildContext context) {
   if (Platform.isAndroid) {
     showDialog(
-        barrierColor: Colors.white,
+        barrierColor: Colors.white.withOpacity(.2),
         barrierDismissible: false,
         useSafeArea: true,
         context: context,

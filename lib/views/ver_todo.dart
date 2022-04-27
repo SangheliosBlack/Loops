@@ -22,13 +22,14 @@ class VerTodoView extends StatelessWidget {
         title: Text(
           titulo,
           textAlign: TextAlign.start,
-          style: GoogleFonts.quicksand(color: Colors.black, fontSize: 25),
+          style: GoogleFonts.quicksand(
+              color: Colors.black.withOpacity(.8), fontSize: 25),
         ),
         centerTitle: true,
         iconTheme: const IconThemeData(color: Colors.black),
         backgroundColor: Colors.white,
         elevation: 0,
-        actions: [
+        /*actions: [
           GestureDetector(
             onTap: () async {
               try {} catch (e) {
@@ -48,7 +49,7 @@ class VerTodoView extends StatelessWidget {
                       color: Colors.black,
                     )))),
           ),
-        ],
+        ],*/
       ),
       body: titulo == 'Establecimientos'
           ? FutureBuilder(
@@ -56,7 +57,7 @@ class VerTodoView extends StatelessWidget {
               builder:
                   (BuildContext context, AsyncSnapshot<List<Tienda>> snapshot) {
                 return AnimatedSwitcher(
-                    duration: const Duration(seconds: 0),
+                    duration: const Duration(milliseconds: 200),
                     child: snapshot.hasData
                         ? GridView.builder(
                             physics: const BouncingScrollPhysics(),
@@ -82,7 +83,7 @@ class VerTodoView extends StatelessWidget {
                             children: const [
                               LinearProgressIndicator(
                                 backgroundColor:
-                                    Color.fromRGBO(234, 248, 248, 1),
+                                    Color.fromRGBO(234, 248, 248, 0),
                                 color: Color.fromRGBO(62, 204, 191, 1),
                               )
                             ],
@@ -94,7 +95,7 @@ class VerTodoView extends StatelessWidget {
               builder: (BuildContext context,
                   AsyncSnapshot<List<Producto>> snapshot) {
                 return AnimatedSwitcher(
-                    duration: const Duration(seconds: 0),
+                    duration: const Duration(milliseconds: 600),
                     child: snapshot.hasData
                         ? ListView.separated(
                             padding: const EdgeInsets.all(20),
@@ -117,7 +118,7 @@ class VerTodoView extends StatelessWidget {
                             children: const [
                               LinearProgressIndicator(
                                 backgroundColor:
-                                    Color.fromRGBO(234, 248, 248, 1),
+                                    Color.fromRGBO(234, 248, 248, 0),
                                 color: Color.fromRGBO(62, 204, 191, 1),
                               )
                             ],

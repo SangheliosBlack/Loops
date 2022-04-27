@@ -36,7 +36,7 @@ class Tienda {
   DateTime aniversario;
   DateTime createdAt;
   DateTime updatedAt;
-  String uid  ;
+  String uid;
   Horario horario;
   Coordenadas coordenadas;
   List<Producto> listaProductos;
@@ -56,7 +56,10 @@ class Tienda {
         uid: json["uid"] ?? json['_id'],
         horario: Horario.fromJson(json["horario"]),
         coordenadas: Coordenadas.fromJson(json["coordenadas"]),
-        listaProductos: json["listaProductos"] != null ?  List<Producto>.from(json["listaProductos"].map((x) => Producto.fromJson(x))):[],
+        listaProductos: List<Producto>.from(json["listaProductos"].map((x) {
+          print(x);
+          return Producto.fromJson(x);
+        })),
       );
 
   Map<String, dynamic> toJson() => {
@@ -74,7 +77,8 @@ class Tienda {
         "uid": uid,
         "horario": horario.toJson(),
         "coordenadas": coordenadas.toJson(),
-        "listaProductos": List<Producto>.from(listaProductos.map((x) => x.toJson())),
+        "listaProductos":
+            List<Producto>.from(listaProductos.map((x) => x.toJson())),
       };
 }
 

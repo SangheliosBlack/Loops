@@ -91,12 +91,14 @@ class LlenarPantallasService with ChangeNotifier {
             'x-token': await AuthService.getToken()
           });
 
+      print(resp.body);
       final pantallaResponse = tiendaResponseFromJson(resp.body);
 
       tiendas = pantallaResponse.tiendas;
 
       return pantallaResponse;
     } catch (e) {
+      print(e);
       return [];
     }
   }

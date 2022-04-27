@@ -1,11 +1,17 @@
 import 'package:delivery/global/styles.dart';
+import 'package:delivery/helpers/calculando_alerta.dart';
+import 'package:delivery/helpers/confirmar_eliminacion.dart';
 import 'package:delivery/models/tarjeta_model.dart';
+import 'package:delivery/service/auth_service.dart';
+import 'package:delivery/service/stripe_service.dart';
 import 'package:delivery/service/tarjetas.service.dart';
 import 'package:delivery/views/extras/nuevo_metodo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+
+import 'package:delivery/extensions/extensions.dart';
 
 class MetodosPagoView extends StatefulWidget {
   const MetodosPagoView({Key? key}) : super(key: key);
@@ -93,13 +99,14 @@ class _MetodosPagoViewState extends State<MetodosPagoView> {
                               behavior: HitTestBehavior.translucent,
                               onTap: () {
                                 final snackBar = SnackBar(
-                                  duration: const Duration(seconds: 2),
+                                  duration: const Duration(seconds: 4),
                                   backgroundColor:
-                                      const Color.fromRGBO(62, 204, 191, 1),
+                                      const Color.fromRGBO(0, 0, 0, .8),
                                   content: Text(
                                     'Proximamente...',
                                     style: GoogleFonts.quicksand(
-                                        fontWeight: FontWeight.bold),
+                                      color: Colors.white,
+                                    ),
                                   ),
                                 );
 
@@ -131,7 +138,7 @@ class _MetodosPagoViewState extends State<MetodosPagoView> {
                     ),
                   ),
                   SizedBox(
-                    height: 170,
+                    height: 225,
                     child: ListView(
                       physics: const BouncingScrollPhysics(),
                       scrollDirection: Axis.horizontal,
@@ -140,7 +147,7 @@ class _MetodosPagoViewState extends State<MetodosPagoView> {
                       children: [
                         cardAdd(context, tarjetasService),
                         SizedBox(
-                            height: 170,
+                            height: 185,
                             child:
                                 listaTarjetas(tarjetasService.listaTarjetas)),
                       ],
@@ -252,10 +259,10 @@ class _MetodosPagoViewState extends State<MetodosPagoView> {
         );
       },
       child: Container(
-        margin: const EdgeInsets.only(right: 15),
+        margin: const EdgeInsets.only(right: 15, top: 30),
         decoration: BoxDecoration(
-          border: Border.all(width: 1, color: Colors.grey.withOpacity(.1)),
-          borderRadius: BorderRadius.circular(10),
+          border: Border.all(width: 1, color: Colors.grey.withOpacity(.2)),
+          borderRadius: BorderRadius.circular(15),
           color: Colors.white,
         ),
         width: 70,
@@ -271,179 +278,280 @@ class _MetodosPagoViewState extends State<MetodosPagoView> {
     BuildContext context,
     Tarjeta datum,
   ) {
+    final customerService = Provider.of<StripeService>(context);
+    final tarjetaService = Provider.of<TarjetasService>(context);
+    final authService = Provider.of<AuthService>(context);
+    final stripeService = Provider.of<StripeService>(context);
     double width = MediaQuery.of(context).size.width;
-    return Container(
-      width: width - 140,
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8),
-          gradient: LinearGradient(
-            begin: Alignment.topRight,
-            end: Alignment.bottomLeft,
-            colors: [
-              datum.card.brand == 'visa'
-                  ? const Color.fromRGBO(46, 161, 207, 1)
-                  : const Color.fromRGBO(66, 64, 65, 1),
-              datum.card.brand == 'visa'
-                  ? const Color.fromRGBO(32, 95, 165, 1)
-                  : const Color.fromRGBO(3, 1, 2, 1)
-            ],
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.1),
-              spreadRadius: 5,
-              blurRadius: 7,
-              offset: const Offset(0, 3),
+
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        AnimatedOpacity(
+            duration: const Duration(milliseconds: 500),
+            opacity: datum.id == customerService.tarjetaPredeterminada ? 1 : 0,
+            child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 6),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.favorite,
+                      color: datum.card.brand == 'visa'
+                          ? Colors.blue
+                          : Colors.orange,
+                      size: 15,
+                    ),
+                    const SizedBox(
+                      width: 3,
+                    ),
+                    Text(
+                      'Predeterminada',
+                      style: GoogleFonts.quicksand(
+                        fontSize: 12,
+                        color: datum.card.brand == 'visa'
+                            ? Colors.blue
+                            : Colors.orange,
+                      ),
+                    ),
+                  ],
+                ))),
+        Expanded(
+          child: Container(
+            width: width - 140,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(15),
+              gradient: LinearGradient(
+                begin: Alignment.topRight,
+                end: Alignment.bottomLeft,
+                colors: [
+                  datum.card.brand == 'visa'
+                      ? const Color.fromRGBO(232, 241, 254, 1)
+                      : const Color.fromRGBO(251, 231, 220, 1),
+                  datum.card.brand == 'visa'
+                      ? const Color.fromRGBO(232, 241, 254, 1)
+                      : const Color.fromRGBO(251, 231, 220, 1)
+                ],
+              ),
             ),
-          ]),
-      child: Stack(
-        children: [
-          Positioned(
-            bottom: 13,
-            left: 15,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.start,
+            child: Stack(
               children: [
-                Text(
-                  'Valido hasta',
-                  style:
-                      GoogleFonts.quicksand(color: Colors.white, fontSize: 8),
+                Positioned(
+                  bottom: 13,
+                  right: 15,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text('Valido hasta',
+                          style: GoogleFonts.quicksand(
+                              color: datum.card.brand == 'visa'
+                                  ? Colors.blue
+                                  : Colors.orange,
+                              fontSize: 12)),
+                      const SizedBox(
+                        height: 4,
+                      ),
+                      Text('${datum.card.expMonth}/${datum.card.expYear}',
+                          style: GoogleFonts.sairaCondensed(
+                              height: 1,
+                              color: datum.card.brand == 'visa'
+                                  ? Colors.blue
+                                  : Colors.orange,
+                              fontSize: 20)),
+                    ],
+                  ),
                 ),
-                const SizedBox(
-                  height: 2,
-                ),
-                Text('${datum.card.expMonth}/${datum.card.expYear}',
-                    style: Styles.letterCustom(15, true, -0.1)),
+                Positioned(
+                    bottom: 13,
+                    left: 15,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Ultimos 4 digitos',
+                          style: GoogleFonts.quicksand(
+                              color: datum.card.brand == 'visa'
+                                  ? Colors.blue
+                                  : Colors.orange,
+                              fontSize: 12),
+                        ),
+                        const SizedBox(
+                          height: 4,
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              datum.card.last4,
+                              style: GoogleFonts.sairaCondensed(
+                                  height: 1,
+                                  color: datum.card.brand == 'visa'
+                                      ? Colors.blue
+                                      : Colors.orange,
+                                  fontSize: 20),
+                            )
+                          ],
+                        ),
+                      ],
+                    )),
+                Positioned(
+                    right: 10,
+                    top: datum.card.brand == 'visa' ? -5 : 10,
+                    child: SizedBox(
+                      child: AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 400),
+                          child: datum.card.brand == 'visa'
+                              ? SizedBox(
+                                  width: 80,
+                                  child: SvgPicture.asset(
+                                    'assets/images/visa_color.svg',
+                                    height: 80,
+                                    width: 80,
+                                  ),
+                                )
+                              : SizedBox(
+                                  width: 70,
+                                  child: SvgPicture.asset(
+                                    'assets/images/mc.svg',
+                                    height: 50,
+                                    width: 50,
+                                  ),
+                                )),
+                    )),
+                Positioned.fill(
+                  child: Container(
+                    width: 200,
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                    alignment: Alignment.centerRight,
+                    margin: const EdgeInsets.only(right: 7, bottom: 115),
+                    child: DropdownButton(
+                      isExpanded: true,
+                      dropdownColor: Colors.white,
+                      itemHeight: 57,
+                      elevation: 0,
+                      iconSize: 0,
+                      onChanged: (boton) async {
+                        if (boton == 'Predeterminado') {
+                          calculandoAlerta(context);
+                          final confirm =
+                              await stripeService.metodoPredeterminado(
+                                  id: datum.id,
+                                  customer: authService.usuario.customerID);
+                          Navigator.pop(context);
+                          if (confirm == false) {
+                            final snackBar = SnackBar(
+                              duration: const Duration(seconds: 4),
+                              backgroundColor:
+                                  const Color.fromRGBO(253, 95, 122, 1),
+                              content: Text(
+                                'Error desconocido ...',
+                                style: GoogleFonts.quicksand(
+                                  color: Colors.white,
+                                ),
+                              ),
+                            );
+
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(snackBar);
+                          }
+                        } else if (boton == 'Eliminar') {
+                          final eliminar = await confirmarEliminacion(
+                              context: context,
+                              tipo: 1,
+                              titulo:
+                                  'Tarjeta ${(datum.card.brand).capitalize()} con terminacion ${datum.card.last4}');
+                          if (eliminar) {
+                            calculandoAlerta(context);
+                            if (stripeService.tarjetaPredeterminada ==
+                                datum.id) {
+                              stripeService.tarjetaPredeterminada = '';
+                            }
+                            final confirm = await tarjetaService
+                                .eliminarMetodoPago(id: datum.id);
+
+                            if (confirm == false) {
+                              final snackBar = SnackBar(
+                                duration: const Duration(seconds: 4),
+                                backgroundColor:
+                                    const Color.fromRGBO(253, 95, 122, 1),
+                                content: Text(
+                                  'Error desconocido ...',
+                                  style: GoogleFonts.quicksand(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              );
+
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(snackBar);
+                            }
+
+                            Navigator.pop(context);
+                          }
+                        }
+                      },
+                      borderRadius: BorderRadius.circular(15),
+                      underline: Container(),
+                      style: const TextStyle(color: Colors.white),
+                      iconEnabledColor: Colors.black,
+                      hint: Container(
+                        padding: const EdgeInsets.all(5),
+                        decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(.6),
+                            borderRadius: BorderRadius.circular(7)),
+                        child: Icon(
+                          Icons.more_vert,
+                          color: datum.card.brand == 'visa'
+                              ? Colors.blue
+                              : Colors.orange,
+                          size: 25,
+                        ),
+                      ),
+                      items: <dynamic>[
+                        {'titulo': 'Predeterminado', 'icono': Icons.favorite},
+                        {'titulo': 'Eliminar', 'icono': Icons.delete},
+                        {'titulo': 'Cerrar', 'icono': Icons.close},
+                      ].map<DropdownMenuItem<String>>((value) {
+                        return DropdownMenuItem<String>(
+                          value: value['titulo'],
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                value['titulo'],
+                                style: GoogleFonts.quicksand(
+                                  color: Colors.black.withOpacity(.8),
+                                ),
+                              ),
+                              Container(
+                                  padding: const EdgeInsets.all(9),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(100),
+                                    color: datum.card.brand == 'visa'
+                                        ? const Color.fromRGBO(232, 241, 254, 1)
+                                        : const Color.fromRGBO(
+                                            251, 231, 220, 1),
+                                  ),
+                                  child: Icon(
+                                    (value['icono']),
+                                    color: datum.card.brand == 'visa'
+                                        ? Colors.blue
+                                        : Colors.orange,
+                                    size: 15,
+                                  ))
+                            ],
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                )
               ],
             ),
           ),
-          Positioned(
-              bottom: 40,
-              left: 15,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Ultimos 4 digitos',
-                    style:
-                        GoogleFonts.quicksand(color: Colors.white, fontSize: 8),
-                  ),
-                  Row(
-                    children: [
-                      Text(
-                        datum.card.last4,
-                        style: GoogleFonts.sairaCondensed(
-                            color: Colors.white, fontSize: 20),
-                      )
-                    ],
-                  ),
-                ],
-              )),
-          Positioned(
-              bottom: 10,
-              right: 10,
-              child: AnimatedOpacity(
-                duration: const Duration(milliseconds: 500),
-                opacity: datum.card.brand == 'visa' ? 1 : 0,
-                child: Container(
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(10)),
-                  child: SizedBox(
-                    height: 25,
-                    width: 50,
-                    child: SvgPicture.asset(
-                      'assets/images/visa_color.svg',
-                      height: 50,
-                      width: 50,
-                    ),
-                  ),
-                ),
-              )),
-          Positioned(
-              left: 15,
-              top: 15,
-              child: SizedBox(
-                width: width - 170,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 400),
-                        child: datum.card.brand == 'visa'
-                            ? SizedBox(
-                                width: 70,
-                                child: SvgPicture.asset(
-                                  'assets/images/visa.svg',
-                                  height: 50,
-                                  width: 50,
-                                  color: Colors.white,
-                                ),
-                              )
-                            : SizedBox(
-                                width: 70,
-                                child: SvgPicture.asset(
-                                  'assets/images/mc.svg',
-                                  height: 50,
-                                  width: 50,
-                                ),
-                              )),
-                    SizedBox(
-                      width: 143,
-                      child: DropdownButton(
-                        dropdownColor: Colors.white,
-                        elevation: 0,
-                        alignment: Alignment.centerRight,
-                        iconSize: 0,
-                        onChanged: (dasdas) {},
-                        borderRadius: BorderRadius.circular(20),
-                        underline: Container(),
-                        style: const TextStyle(color: Colors.white),
-                        iconEnabledColor: Colors.black,
-                        hint: const Icon(
-                          Icons.more_vert,
-                          color: Colors.white,
-                        ),
-                        items: <dynamic>[
-                          {'titulo': 'Predeterminado', 'icono': Icons.favorite},
-                          {'titulo': 'Editar', 'icono': Icons.edit},
-                          {'titulo': 'Eliminar', 'icono': Icons.delete},
-                        ].map<DropdownMenuItem<String>>((value) {
-                          return DropdownMenuItem<String>(
-                            value: value['titulo'],
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  value['titulo'],
-                                  style: GoogleFonts.quicksand(
-                                    color: Colors.black,
-                                  ),
-                                ),
-                                Container(
-                                    padding: const EdgeInsets.all(9),
-                                    decoration: BoxDecoration(
-                                        borderRadius:
-                                            BorderRadius.circular(100),
-                                        color: const Color(0xffF3F5F6)),
-                                    child: Icon(
-                                      (value['icono']),
-                                      color: Colors.grey,
-                                      size: 15,
-                                    ))
-                              ],
-                            ),
-                          );
-                        }).toList(),
-                      ),
-                    )
-                  ],
-                ),
-              ))
-        ],
-      ),
+        ),
+      ],
     );
   }
 

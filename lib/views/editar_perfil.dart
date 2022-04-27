@@ -29,38 +29,25 @@ class EditarPerfil extends StatelessWidget {
           children: [
             Stack(
               children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(1000),
-                  child: SizedBox(
-                    width: 100,
-                    height: 100,
-                    child: authService.usuario.profilePhotoKey != ''
-                        ? Container(
-                            padding: const EdgeInsets.all(7),
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(100),
-                                border: Border.all(
-                                    width: 1,
-                                    color: Colors.grey.withOpacity(.1))),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(1000),
-                              child: const FadeInImage(
-                                image: NetworkImage(
-                                    'https://scontent.fagu2-1.fna.fbcdn.net/v/t1.6435-9/176949178_2858133404453229_857333007463047365_n.jpg?_nc_cat=104&ccb=1-5&_nc_sid=09cbfe&_nc_eui2=AeElgITRvUI8Cifv2j1PFGHEztI9OQNDPWLO0j05A0M9Yoq2Ymp4FtwDI5psIxxbEqnFCt1VOJJ-iJ8MAETHuS0t&_nc_ohc=G-OPgIVClf4AX9eJRQP&_nc_ht=scontent.fagu2-1.fna&oh=00_AT-x73nsClxkH8CZupgHJa3jctNM5atRrgoeBCrnbtUX1g&oe=625DA8EA'),
-                                fit: BoxFit.cover,
-                                placeholder: AssetImage(
-                                    'assets/images/place_holder.gif'),
-                              ),
-                            ),
-                          )
-                        : Container(
-                            decoration: BoxDecoration(
-                                color: Theme.of(context).primaryColor),
-                            child: const Icon(
-                              Icons.person,
-                              size: 25,
-                              color: Colors.white,
-                            )),
+                Container(
+                  margin: const EdgeInsets.only(right: 25),
+                  child: Hero(
+                    tag: 'perfil123',
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(1000),
+                      child: SizedBox(
+                        width: 100,
+                        height: 100,
+                        child: Container(
+                          padding: const EdgeInsets.all(7),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(1000),
+                            child: Image(
+                                image: AssetImage('assets/images/peeps.png')),
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
                 ),
                 Positioned(
@@ -120,7 +107,7 @@ class EditarPerfil extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  '+' + authService.usuario.numeroCelular,
+                  '+ ' + authService.usuario.numeroCelular,
                   style: GoogleFonts.quicksand(
                       color: Colors.black.withOpacity(.8), fontSize: 18),
                 ),

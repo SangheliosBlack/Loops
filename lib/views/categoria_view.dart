@@ -29,48 +29,37 @@ class CategoriaView extends StatelessWidget {
         backgroundColor: Colors.white,
         elevation: 0,
       ),
-      body: ListView(
-        physics: const BouncingScrollPhysics(),
-        children: [
-          FutureBuilder(
-            future: tiendaProvider.listaCategorias(filtro: titulo),
-            builder:
-                (BuildContext context, AsyncSnapshot<List<Producto>> snapshot) {
-              return AnimatedSwitcher(
-                  duration: const Duration(seconds: 0),
-                  child: snapshot.hasData
-                      ? Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 0, vertical: 0),
-                          child: ListView.separated(
-                            shrinkWrap: true,
-                            padding: const EdgeInsets.all(20),
-                            itemCount: snapshot.data!.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              return ProductoGeneral(
-                                producto: snapshot.data![index],
-                              );
-                            },
-                            separatorBuilder:
-                                (BuildContext context, int index) =>
-                                    const SizedBox(
-                              height: 10,
-                            ),
-                          ),
+      body: FutureBuilder(
+        future: tiendaProvider.listaCategorias(filtro: titulo),
+        builder:
+            (BuildContext context, AsyncSnapshot<List<Producto>> snapshot) {
+          return AnimatedSwitcher(
+              duration: const Duration(milliseconds: 200),
+              child: snapshot.hasData
+                  ? ListView.separated(
+                      padding: const EdgeInsets.all(20),
+                      itemCount: snapshot.data!.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return ProductoGeneral(
+                          producto: snapshot.data![index],
+                        );
+                      },
+                      separatorBuilder: (BuildContext context, int index) =>
+                          const SizedBox(
+                        height: 10,
+                      ),
+                    )
+                  : Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: const [
+                        LinearProgressIndicator(
+                          backgroundColor: Color.fromRGBO(234, 248, 248, 0),
+                          color: Color.fromRGBO(62, 204, 191, 1),
                         )
-                      : Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: const [
-                            LinearProgressIndicator(
-                              backgroundColor: Color.fromRGBO(234, 248, 248, 0),
-                              color: Color.fromRGBO(62, 204, 191, 1),
-                            )
-                          ],
-                        ));
-            },
-          ),
-        ],
+                      ],
+                    ));
+        },
       ),
     );
   }

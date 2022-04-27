@@ -23,7 +23,7 @@ class MisDireccionesView extends StatelessWidget {
           'Mis direcciones',
           textAlign: TextAlign.start,
           style: GoogleFonts.quicksand(
-              color: Colors.black, fontWeight: FontWeight.bold, fontSize: 17),
+              color: Colors.black.withOpacity(.8), fontSize: 17),
         ),
         actions: [
           GestureDetector(
@@ -85,7 +85,6 @@ class MisDireccionesView extends StatelessWidget {
           physics: const BouncingScrollPhysics(),
           itemBuilder: (BuildContext context, int index) {
             return DireccionBuildWidget(
-              onlyShow: false,
               direccion: direccionesService.direcciones[index],
             );
           },

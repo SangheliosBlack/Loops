@@ -3,7 +3,6 @@ import 'package:delivery/views/tienda.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:image_stack/image_stack.dart';
 
 class CartaNegocio extends StatelessWidget {
   final bool small;
@@ -19,12 +18,7 @@ class CartaNegocio extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<String> images = [
-      "https://scontent.fagu2-1.fna.fbcdn.net/v/t1.6435-9/176949178_2858133404453229_857333007463047365_n.jpg?_nc_cat=104&ccb=1-5&_nc_sid=09cbfe&_nc_eui2=AeElgITRvUI8Cifv2j1PFGHEztI9OQNDPWLO0j05A0M9Yoq2Ymp4FtwDI5psIxxbEqnFCt1VOJJ-iJ8MAETHuS0t&_nc_ohc=Jio9uxV3F3IAX-ZGbw5&_nc_ht=scontent.fagu2-1.fna&oh=00_AT8jnSP5KzDKB301UlZgJFBnvn9bhzzVOinb743obtxuVA&oe=6259B46A",
-      "https://scontent.fagu2-1.fna.fbcdn.net/v/t1.6435-9/176949178_2858133404453229_857333007463047365_n.jpg?_nc_cat=104&ccb=1-5&_nc_sid=09cbfe&_nc_eui2=AeElgITRvUI8Cifv2j1PFGHEztI9OQNDPWLO0j05A0M9Yoq2Ymp4FtwDI5psIxxbEqnFCt1VOJJ-iJ8MAETHuS0t&_nc_ohc=Jio9uxV3F3IAX-ZGbw5&_nc_ht=scontent.fagu2-1.fna&oh=00_AT8jnSP5KzDKB301UlZgJFBnvn9bhzzVOinb743obtxuVA&oe=6259B46A",
-      "https://scontent.fagu2-1.fna.fbcdn.net/v/t1.6435-9/176949178_2858133404453229_857333007463047365_n.jpg?_nc_cat=104&ccb=1-5&_nc_sid=09cbfe&_nc_eui2=AeElgITRvUI8Cifv2j1PFGHEztI9OQNDPWLO0j05A0M9Yoq2Ymp4FtwDI5psIxxbEqnFCt1VOJJ-iJ8MAETHuS0t&_nc_ohc=Jio9uxV3F3IAX-ZGbw5&_nc_ht=scontent.fagu2-1.fna&oh=00_AT8jnSP5KzDKB301UlZgJFBnvn9bhzzVOinb743obtxuVA&oe=6259B46A",
-      "https://scontent.fagu2-1.fna.fbcdn.net/v/t1.6435-9/176949178_2858133404453229_857333007463047365_n.jpg?_nc_cat=104&ccb=1-5&_nc_sid=09cbfe&_nc_eui2=AeElgITRvUI8Cifv2j1PFGHEztI9OQNDPWLO0j05A0M9Yoq2Ymp4FtwDI5psIxxbEqnFCt1VOJJ-iJ8MAETHuS0t&_nc_ohc=Jio9uxV3F3IAX-ZGbw5&_nc_ht=scontent.fagu2-1.fna&oh=00_AT8jnSP5KzDKB301UlZgJFBnvn9bhzzVOinb743obtxuVA&oe=6259B46A"
-    ];
+    
     double width = MediaQuery.of(context).size.width;
     return GestureDetector(
       onTap: () {
@@ -189,7 +183,7 @@ class CartaNegocio extends StatelessWidget {
                             children: [
                               const Icon(
                                 Icons.moped_sharp,
-                                size: 16,
+                                size: 17,
                                 color: Colors.black,
                               ),
                               const SizedBox(width: 5),
@@ -198,11 +192,11 @@ class CartaNegocio extends StatelessWidget {
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: GoogleFonts.quicksand(
-                                    color: Colors.grey, fontSize: 11),
+                                    color: Colors.grey, fontSize: 13),
                               ),
                               Container(
                                 margin:
-                                    const EdgeInsets.symmetric(horizontal: 5),
+                                    const EdgeInsets.symmetric(horizontal: 10),
                                 child: Text(
                                   '|',
                                   maxLines: 1,
@@ -222,24 +216,11 @@ class CartaNegocio extends StatelessWidget {
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: GoogleFonts.quicksand(
-                                    color: Colors.grey, fontSize: 11),
+                                    color: Colors.grey, fontSize: 13),
                               ),
                             ],
                           ),
                           const SizedBox(height: 5),
-                          ImageStack(
-                            imageList: images,
-                            totalCount: images.length,
-                            imageRadius: 25,
-                            imageCount: 4,
-                            imageBorderWidth: 1,
-                            showTotalCount: true,
-                            extraCountBorderColor: Colors.white,
-                            extraCountTextStyle:
-                                GoogleFonts.quicksand(color: Colors.grey),
-                            backgroundColor: Colors.white,
-                            imageBorderColor: Colors.grey.withOpacity(.2),
-                          ),
                         ],
                       ))
                 ],

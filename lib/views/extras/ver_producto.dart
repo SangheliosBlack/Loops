@@ -1,13 +1,35 @@
-import 'package:delivery/global/styles.dart';
+import 'package:delivery/helpers/calculando_alerta.dart';
+import 'package:delivery/models/productos.dart';
+import 'package:delivery/service/auth_service.dart';
 import 'package:delivery/views/notificaciones_view.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
-class VerProductoView extends StatelessWidget {
-  const VerProductoView({Key? key}) : super(key: key);
+class VerProductoView extends StatefulWidget {
+  const VerProductoView({
+    Key? key,
+    required this.producto,
+  }) : super(key: key);
+
+  final Producto producto;
+
+  @override
+  State<VerProductoView> createState() => _VerProductoViewState();
+}
+
+class _VerProductoViewState extends State<VerProductoView> {
+  String valor1 = '';
+  String valor2 = '';
+  int cantidad = 1;
+
+  num eleccion1 = 0;
+  num eleccion2 = 0;
 
   @override
   Widget build(BuildContext context) {
+    final authService = Provider.of<AuthService>(context);
+    double width = MediaQuery.of(context).size.width;
     return SafeArea(
       top: false,
       child: Scaffold(
@@ -40,21 +62,25 @@ class VerProductoView extends StatelessWidget {
                         ),
                       ),
                       Positioned(
-                          right: 15,
+                          right: 5,
                           top: 0,
-                          child: Container(
-                            width: 20,
-                            height: 20,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(100),
-                              color: const Color.fromRGBO(62, 204, 191, 1),
-                            ),
-                            child: Center(
-                              child: Text(
-                                '5',
-                                style: GoogleFonts.quicksand(
-                                  fontSize: 14,
-                                  color: Colors.white,
+                          child: AnimatedOpacity(
+                            duration: const Duration(milliseconds: 200),
+                            opacity: authService.totalPiezas() == 0 ? 0 : 1,
+                            child: Container(
+                              width: 23,
+                              height: 23,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(100),
+                                color: const Color.fromRGBO(62, 204, 191, 1),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  authService.totalPiezas().toString(),
+                                  style: GoogleFonts.quicksand(
+                                    fontSize: 12,
+                                    color: Colors.white,
+                                  ),
                                 ),
                               ),
                             ),
@@ -64,7 +90,7 @@ class VerProductoView extends StatelessWidget {
                 ),
               )
             ],
-            leadingWidth: 112,
+            leadingWidth: 350,
             leading: GestureDetector(
                 onTap: () {},
                 child: Container(
@@ -85,7 +111,7 @@ class VerProductoView extends StatelessWidget {
                           ),
                           const SizedBox(width: 2),
                           Text(
-                            '0.00',
+                            authService.calcularTotal().toStringAsFixed(2),
                             style: GoogleFonts.quicksand(
                               color: const Color.fromRGBO(47, 47, 47, .9),
                               fontSize: 30,
@@ -99,46 +125,31 @@ class VerProductoView extends StatelessWidget {
             backgroundColor: Colors.white,
             elevation: 0),
         body: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(
-              child: Stack(
-                children: [
-                  Positioned.fill(
-                    child: Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 15),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(25),
-                        child: const Image(
-                          image: NetworkImage(
-                              'https://www.recetasderechupete.com/wp-content/uploads/2018/06/alitas-de-pollo-horno.jpg'),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                  ),
-                  Positioned.fill(
-                      child: SizedBox(
-                    width: double.infinity,
-                    child: Container(
-                      decoration: BoxDecoration(
-                          gradient: LinearGradient(colors: [
-                        Colors.black.withOpacity(.0),
-                        Colors.white.withOpacity(.0),
-                      ])),
-                    ),
-                  )),
-                ],
+            Container(
+              width: width,
+              height: width - 30,
+              margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 0),
+              child: Hero(
+                tag: widget.producto.id,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(25),
+                  child: const Image(
+                      image: NetworkImage(
+                          'https://www.pequeocio.com/wp-content/uploads/2010/11/hamburguesas-caseras-800x717.jpg'),
+                      fit: BoxFit.cover),
+                ),
               ),
             ),
             Container(
-              height: 420,
               padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 25),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: 10),
-                  Text('Nombre del lugar',
+                  Text(widget.producto.tienda,
                       style: GoogleFonts.quicksand(
                           fontSize: 14, color: Colors.grey)),
                   Row(
@@ -155,7 +166,7 @@ class VerProductoView extends StatelessWidget {
                       const SizedBox(
                         width: 8,
                       ),
-                      Text('Nombre del producto',
+                      Text(widget.producto.nombre,
                           style: GoogleFonts.quicksand(
                               fontSize: 25,
                               color: const Color.fromRGBO(83, 84, 85, 1))),
@@ -165,116 +176,326 @@ class VerProductoView extends StatelessWidget {
                   Text(
                     'Lorem Ipsum es simplemente el texto de relleno de las imprentas y archivos de texto. Lorem Ipsum ha sido el texto de relleno estándar de las industrias desde el año 1500,',
                     textAlign: TextAlign.start,
-                    maxLines: 3,
+                    maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style:
-                        GoogleFonts.quicksand(color: Colors.grey, fontSize: 14),
+                        GoogleFonts.quicksand(color: Colors.grey, fontSize: 13),
                   ),
-                  const SizedBox(height: 12),
-                  Text('Tamaño', style: GoogleFonts.quicksand(fontSize: 15)),
-                  Container(
-                    margin: const EdgeInsets.only(top: 15),
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 16, horizontal: 30),
-                    decoration: BoxDecoration(
-                        color: const Color.fromRGBO(200, 201, 203, 1),
-                        borderRadius: BorderRadius.circular(40)),
-                    child: Text('250g',
-                        style: GoogleFonts.quicksand(
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
-                            fontSize: 16)),
-                  ),
-                  Container(
-                    margin: const EdgeInsets.symmetric(vertical: 25),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                                width: 1, color: Colors.grey.withOpacity(.2)),
+                ],
+              ),
+            ),
+            const SizedBox(
+              height: 15,
+            ),
+            widget.producto.opciones.isEmpty
+                ? Container()
+                : ListView.separated(
+                    physics: const NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    itemBuilder: (BuildContext context, int index) {
+                      final Opcion opcion = widget.producto.opciones[index];
+                      return Row(
+                        children: [
+                          Container(
+                              margin: const EdgeInsets.only(left: 5),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 20),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(opcion.titulo,
+                                      style: GoogleFonts.quicksand(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w600)),
+                                  Text(index == 0 ? valor1 : valor2,
+                                      style: GoogleFonts.quicksand(
+                                          fontSize: 14, color: Colors.grey)),
+                                ],
+                              )),
+                          Expanded(
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(30),
+                              child: SizedBox(
+                                height: 45,
+                                child: ListView.separated(
+                                  padding: const EdgeInsets.only(right: 25),
+                                  shrinkWrap: true,
+                                  physics: const BouncingScrollPhysics(),
+                                  scrollDirection: Axis.horizontal,
+                                  itemBuilder:
+                                      (BuildContext context, int index2) {
+                                    final opcionIndex = opcion.listado[index2];
+                                    return GestureDetector(
+                                      onTap: (() {
+                                        if (mounted) {
+                                          setState(() {
+                                            if (index == 0) {
+                                              eleccion1 = index2;
+                                              valor1 = opcionIndex.tipo;
+                                            } else {
+                                              eleccion2 = index2;
+                                              valor2 = opcionIndex.tipo;
+                                            }
+                                          });
+                                        }
+                                      }),
+                                      child: AnimatedContainer(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 5, horizontal: 25),
+                                          decoration: index == 0
+                                              ? BoxDecoration(
+                                                  color: opcionIndex.tipo ==
+                                                          valor1
+                                                      ? const Color.fromRGBO(
+                                                          62, 204, 191, 1)
+                                                      : const Color.fromRGBO(
+                                                          200, 201, 203, .2),
+                                                  borderRadius:
+                                                      BorderRadius.circular(25))
+                                              : BoxDecoration(
+                                                  color: opcionIndex.tipo ==
+                                                          valor2
+                                                      ? const Color.fromRGBO(
+                                                          62, 204, 191, 1)
+                                                      : const Color.fromRGBO(
+                                                          200, 201, 203, .2),
+                                                  borderRadius:
+                                                      BorderRadius.circular(25)),
+                                          duration: const Duration(milliseconds: 100),
+                                          child: Center(
+                                              child: Text(opcionIndex.tipo,
+                                                  style: index == 0
+                                                      ? GoogleFonts.quicksand(
+                                                          color: opcionIndex
+                                                                      .tipo ==
+                                                                  valor1
+                                                              ? Colors.white
+                                                              : Colors.grey,
+                                                        )
+                                                      : GoogleFonts.quicksand(
+                                                          color: opcionIndex
+                                                                      .tipo ==
+                                                                  valor2
+                                                              ? Colors.white
+                                                              : Colors.grey,
+                                                        )))),
+                                    );
+                                  },
+                                  itemCount: opcion.listado.length,
+                                  separatorBuilder:
+                                      (BuildContext context, int index) =>
+                                          const SizedBox(
+                                    width: 10,
+                                  ),
+                                ),
+                              ),
+                            ),
                           ),
-                          child: const Icon(
-                            Icons.remove,
-                            color: Colors.grey,
-                          ),
-                        ),
-                        Container(
-                            margin: const EdgeInsets.symmetric(horizontal: 20),
-                            child: Text('1',
-                                style: GoogleFonts.quicksand(fontSize: 20))),
-                        Container(
-                          padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                                width: 1, color: Colors.grey.withOpacity(.2)),
-                          ),
-                          child: const Icon(
-                            Icons.add,
-                            color: Colors.grey,
-                          ),
-                        )
-                      ],
+                        ],
+                      );
+                    },
+                    itemCount: widget.producto.opciones.length,
+                    separatorBuilder: (BuildContext context, int index) =>
+                        const SizedBox(
+                      height: 15,
                     ),
                   ),
-                  const SizedBox(height: 15),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        children: [
-                          Text('Total :',
-                              style: GoogleFonts.quicksand(color: Colors.grey)),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('\$',
-                                  style: GoogleFonts.playfairDisplay(
-                                    fontWeight: FontWeight.bold,
-                                    color: const Color.fromRGBO(65, 65, 66, 1),
-                                    fontSize: 25,
-                                  )),
-                              const SizedBox(width: 3),
-                              Text('52.22',
-                                  style: GoogleFonts.quicksand(
-                                    color: const Color.fromRGBO(65, 65, 66, 1),
-                                    fontSize: 40,
-                                  )),
-                            ],
-                          )
-                        ],
+            Expanded(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  GestureDetector(
+                    behavior: HitTestBehavior.translucent,
+                    onTap: cantidad > 1
+                        ? () {
+                            if (mounted) {
+                              setState(() {
+                                cantidad--;
+                              });
+                            }
+                          }
+                        : null,
+                    child: AnimatedContainer(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: cantidad == 0
+                            ? Border.all(
+                                width: 1, color: Colors.red.withOpacity(.8))
+                            : Border.all(
+                                width: 1,
+                                color: Colors.grey
+                                    .withOpacity(cantidad > 1 ? .2 : .1)),
                       ),
-                      Container(
-                          width: 230,
-                          margin: const EdgeInsets.only(left: 10),
-                          padding: const EdgeInsets.all(20),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(35),
-                              border: Border.all(
-                                  width: 1,
-                                  color: Colors.grey.withOpacity(.2))),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.moped_sharp,
+                      duration: const Duration(milliseconds: 500),
+                      child: Icon(
+                        Icons.remove,
+                        color: cantidad == 0
+                            ? Colors.red.withOpacity(.8)
+                            : Colors.grey.withOpacity(cantidad > 1 ? 1 : .4),
+                      ),
+                    ),
+                  ),
+                  Container(
+                      width: 30,
+                      margin: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Center(
+                        child: Text(cantidad.toString(),
+                            style: GoogleFonts.quicksand(
                                 color: Colors.black.withOpacity(.8),
-                              ),
-                              const SizedBox(width: 15),
-                              Text(
-                                'Agregar',
-                                style: GoogleFonts.quicksand(
-                                    color: Colors.black.withOpacity(.8),
-                                    fontSize: 20),
-                              )
-                            ],
-                          ))
+                                fontSize: 30)),
+                      )),
+                  GestureDetector(
+                    behavior: HitTestBehavior.translucent,
+                    onTap: () {
+                      if (cantidad < 15) {
+                        if (mounted) {
+                          setState(() {
+                            cantidad++;
+                          });
+                        }
+                      }
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                            width: 1, color: Colors.grey.withOpacity(.2)),
+                      ),
+                      child: const Icon(
+                        Icons.add,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+            Container(
+              margin: const EdgeInsets.only(bottom: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 25),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    children: [
+                      Text('Total :',
+                          style: GoogleFonts.quicksand(color: Colors.grey)),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('\$',
+                              style: GoogleFonts.playfairDisplay(
+                                fontWeight: FontWeight.bold,
+                                color: const Color.fromRGBO(65, 65, 66, 1),
+                                fontSize: 21,
+                              )),
+                          const SizedBox(width: 3),
+                          Text(
+                              (widget.producto.precio * cantidad)
+                                  .toStringAsFixed(2),
+                              style: GoogleFonts.quicksand(
+                                color: const Color.fromRGBO(65, 65, 66, 1),
+                                fontSize: 33,
+                              )),
+                        ],
+                      )
                     ],
+                  ),
+                  Expanded(
+                    child: GestureDetector(
+                      behavior: HitTestBehavior.translucent,
+                      onTap: widget.producto.opciones.length == 1
+                          ? valor1.isNotEmpty
+                              ? () async {
+                                  calculandoAlerta(context);
+                                  await authService.agregarProductoCesta(
+                                      producto: widget.producto,
+                                      cantidad: cantidad,
+                                      eleccion1: valor1,
+                                      eleccion2: valor2);
+
+                                  Navigator.pop(context);
+                                  Navigator.pop(context);
+                                }
+                              : null
+                          : valor1.isNotEmpty && valor2.isNotEmpty
+                              ? () async {
+                                  calculandoAlerta(context);
+                                  await authService.agregarProductoCesta(
+                                      producto: widget.producto,
+                                      cantidad: cantidad,
+                                      eleccion1: valor1,
+                                      eleccion2: valor2);
+                                  Navigator.pop(context);
+                                  Navigator.pop(context);
+                                }
+                              : null,
+                      child: AnimatedSize(
+                        duration: const Duration(seconds: 1),
+                        curve: Curves.fastOutSlowIn,
+                        child: Container(
+                            margin: const EdgeInsets.only(left: 20),
+                            padding: const EdgeInsets.all(15),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(35),
+                                border: cantidad == 0
+                                    ? Border.all(
+                                        width: 1,
+                                        color: Colors.red.withOpacity(.8))
+                                    : Border.all(
+                                        width: 1,
+                                        color: Colors.black.withOpacity(
+                                            widget.producto.opciones.length == 1
+                                                ? valor1.isNotEmpty
+                                                    ? .8
+                                                    : .1
+                                                : valor1.isNotEmpty &&
+                                                        valor2.isNotEmpty
+                                                    ? .8
+                                                    : .1))),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.moped_sharp,
+                                  color: cantidad == 0
+                                      ? Colors.red.withOpacity(.8)
+                                      : Colors.black.withOpacity(
+                                          widget.producto.opciones.length == 1
+                                              ? valor1.isNotEmpty
+                                                  ? .8
+                                                  : .1
+                                              : valor1.isNotEmpty &&
+                                                      valor2.isNotEmpty
+                                                  ? .8
+                                                  : .1),
+                                ),
+                                const SizedBox(width: 15),
+                                Text(
+                                  'Agregar',
+                                  style: GoogleFonts.quicksand(
+                                      color: cantidad == 0
+                                          ? Colors.red.withOpacity(.8)
+                                          : Colors.black.withOpacity(
+                                              widget.producto.opciones.length ==
+                                                      1
+                                                  ? valor1.isNotEmpty
+                                                      ? .8
+                                                      : .1
+                                                  : valor1.isNotEmpty &&
+                                                          valor2.isNotEmpty
+                                                      ? .8
+                                                      : .1),
+                                      fontSize: 20),
+                                )
+                              ],
+                            )),
+                      ),
+                    ),
                   )
                 ],
               ),
@@ -285,127 +506,18 @@ class VerProductoView extends StatelessWidget {
     );
   }
 
-  Container detailContainer(BuildContext context) {
-    return Container(
-      color: Colors.white,
-      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-      child: Column(
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Container(
-                margin: const EdgeInsets.only(top: 5, bottom: 10),
-                child: Text(
-                  'Lorem Ipsum es simplemente el texto de relleno de las imprentas y archivos de texto.',
-                  style: Styles.letterCustom(13, false),
-                ),
-              ),
-            ],
-          ),
-          totalActions(),
-          actionButtons(context),
-        ],
+  mostarCambio() {
+    final snackBar = SnackBar(
+      duration: const Duration(seconds: 1),
+      backgroundColor: const Color.fromRGBO(0, 0, 0, 1),
+      content: Text(
+        'Pedido modificado',
+        style: GoogleFonts.quicksand(
+          color: Colors.white,
+        ),
       ),
     );
-  }
 
-  Container totalActions() {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 10),
-      child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        Row(children: [
-          Container(
-            padding: const EdgeInsets.all(5),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(100),
-              color: Colors.white,
-            ),
-            child: const Icon(
-              Icons.remove,
-              size: 20,
-            ),
-          ),
-          Container(
-              margin: const EdgeInsets.symmetric(horizontal: 10),
-              child: Text('1', style: Styles.letterCustom(20, true, 0.8))),
-          Container(
-            padding: const EdgeInsets.all(5),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(100),
-              color: Colors.white,
-            ),
-            child: const Icon(
-              Icons.add,
-              size: 20,
-            ),
-          )
-        ]),
-        Row(
-          children: [
-            Text('Total : ', style: Styles.letterCustom(13, false, .3)),
-            const SizedBox(width: 5),
-            Text('\$45.00', style: Styles.letterCustom(25, true, 1)),
-          ],
-        )
-      ]),
-    );
-  }
-
-  Container actionButtons(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(top: 10, bottom: 10),
-      width: 400,
-      child: Row(
-        children: [
-          ClipRRect(
-            borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(30), bottomLeft: Radius.circular(30)),
-            child: SizedBox(
-                height: 45,
-                child: ElevatedButton(
-                    onPressed: () {},
-                    style: ButtonStyle(
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(0))),
-                      backgroundColor: MaterialStateProperty.all<Color>(
-                          const Color.fromRGBO(54, 202, 188, 1)),
-                    ),
-                    child: const Icon(Icons.bolt))),
-          ),
-          Expanded(
-            child: ClipRRect(
-              borderRadius: const BorderRadius.only(
-                  topRight: Radius.circular(30),
-                  bottomRight: Radius.circular(30)),
-              child: SizedBox(
-                  height: 45,
-                  child: ElevatedButton(
-                      onPressed: () {},
-                      style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStateProperty.all<Color>(Colors.black),
-                          shape:
-                              MaterialStateProperty.all<RoundedRectangleBorder>(
-                                  RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(0)))),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            'Agregar',
-                            style: Styles.letterCustom(20, true, -0.1),
-                          ),
-                          const SizedBox(width: 10),
-                          const Icon(Icons.moped_sharp),
-                        ],
-                      ))),
-            ),
-          ),
-        ],
-      ),
-    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 }

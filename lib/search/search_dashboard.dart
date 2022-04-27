@@ -52,35 +52,37 @@ class SearchBusqueda extends SearchDelegate<BusquedaResult> {
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    if (query.isEmpty) {
-      return Container(
-        width: 500,
-        color: Colors.white,
-        child: ListView(
-          // ignore: prefer_const_literals_to_create_immutables
-          children: [
-            ListTile(
-              leading: const Icon(
-                Icons.search,
+    return AnimatedSwitcher(
+        duration: const Duration(seconds: 1),
+        child: query.isEmpty
+            ? Container(
+                width: 500,
                 color: Colors.white,
-              ),
-              title: Text(
-                'Que buscamos ?',
-                style: GoogleFonts.quicksand(),
-              ),
-              /*onTap: () {
+                child: ListView(
+                  // ignore: prefer_const_literals_to_create_immutables
+                  children: [
+                    ListTile(
+                      leading: const Icon(
+                        Icons.search,
+                        color: Colors.white,
+                      ),
+                      title: Text(
+                        'Que buscamos ?',
+                        style: GoogleFonts.quicksand(),
+                      ),
+                      /*onTap: () {
                 close(context, BusquedaResult(cancelo: cancelo));
               },*/
-            )
-          ],
-        ),
-      );
-    }
-    return _construirResultadosSugerencias();
+                    )
+                  ],
+                ),
+              )
+            : _construirResultadosSugerencias());
   }
 
   Widget _construirResultadosSugerencias() {
     if (query.isEmpty) {
+      
       return Container();
     }
 
@@ -94,7 +96,7 @@ class SearchBusqueda extends SearchDelegate<BusquedaResult> {
             color: Colors.white,
             child: ListView(
               children: const [
-                 LinearProgressIndicator(
+                LinearProgressIndicator(
                   color: Color.fromRGBO(41, 199, 184, 1),
                   backgroundColor: Colors.white,
                 ),
@@ -152,71 +154,78 @@ class SearchBusqueda extends SearchDelegate<BusquedaResult> {
                     const SizedBox(
                       width: 10,
                     ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              '4,9',
-                              style: GoogleFonts.playfairDisplay(
-                                  height: 1,
-                                  fontWeight: FontWeight.w600,
-                                  color: const Color.fromRGBO(62, 204, 191, 1),
-                                  fontSize: 25),
-                            ),
-                            const SizedBox(width: 5),
-                            Text(
-                              tienda.nombre,
-                              style: GoogleFonts.playfairDisplay(
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.black.withOpacity(.7),
-                                  fontSize: 25),
-                            ),
-                          ],
-                        ),
-                        Text(
-                          'Restaurante',
-                          style: GoogleFonts.quicksand(
-                              color: Colors.black, fontSize: 12),
-                        ),
-                        const SizedBox(height: 5),
-                        RatingBar.builder(
-                          initialRating: 3.5,
-                          minRating: 1,
-                          direction: Axis.horizontal,
-                          allowHalfRating: true,
-                          itemCount: 5,
-                          itemPadding:
-                              const EdgeInsets.symmetric(horizontal: 0.0),
-                          itemBuilder: (context, _) => const Icon(
-                            Icons.attach_money,
-                            color: Colors.black,
+                    Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                '4,9',
+                                style: GoogleFonts.playfairDisplay(
+                                    height: 1,
+                                    fontWeight: FontWeight.w600,
+                                    color:
+                                        const Color.fromRGBO(62, 204, 191, 1),
+                                    fontSize: 25),
+                              ),
+                              const SizedBox(width: 5),
+                              Expanded(
+                                child: Text(
+                                  tienda.nombre,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: GoogleFonts.playfairDisplay(
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.black.withOpacity(.7),
+                                      fontSize: 25),
+                                ),
+                              ),
+                            ],
                           ),
-                          itemSize: 13,
-                          unratedColor: Colors.grey,
-                          onRatingUpdate: (rating) {},
-                        ),
-                        const SizedBox(height: 5),
-                        Row(
-                          children: [
-                            const Icon(
-                              Icons.place_outlined,
+                          Text(
+                            'Restaurante',
+                            style: GoogleFonts.quicksand(
+                                color: Colors.black, fontSize: 12),
+                          ),
+                          const SizedBox(height: 5),
+                          RatingBar.builder(
+                            initialRating: 3.5,
+                            minRating: 1,
+                            direction: Axis.horizontal,
+                            allowHalfRating: true,
+                            itemCount: 5,
+                            itemPadding:
+                                const EdgeInsets.symmetric(horizontal: 0.0),
+                            itemBuilder: (context, _) => const Icon(
+                              Icons.attach_money,
                               color: Colors.black,
-                              size: 15,
                             ),
-                            const SizedBox(width: 3),
-                            Text(
-                              '2.4 km Centro, Lagos de Moreno ',
-                              style: GoogleFonts.quicksand(
-                                  color: Colors.black, fontSize: 11),
-                            ),
-                          ],
-                        )
-                      ],
+                            itemSize: 13,
+                            unratedColor: Colors.grey,
+                            onRatingUpdate: (rating) {},
+                          ),
+                          const SizedBox(height: 5),
+                          Row(
+                            children: [
+                              const Icon(
+                                Icons.place_outlined,
+                                color: Colors.black,
+                                size: 15,
+                              ),
+                              const SizedBox(width: 3),
+                              Text(
+                                '2.4 km Centro, Lagos de Moreno ',
+                                style: GoogleFonts.quicksand(
+                                    color: Colors.black, fontSize: 11),
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
                     )
                   ],
                 ),

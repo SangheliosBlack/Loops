@@ -290,8 +290,8 @@ class _StoreIndividualState extends State<StoreIndividual> {
               future: tiendaService.obtenerProductos(),
               builder: (BuildContext context,
                   AsyncSnapshot<List<ListaProductosCategoria>> snapshot) {
-                return AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 800),
+                return AnimatedSize(
+                    duration: const Duration(milliseconds: 200),
                     child: snapshot.hasData
                         ? Container(
                             decoration: BoxDecoration(
@@ -313,18 +313,10 @@ class _StoreIndividualState extends State<StoreIndividual> {
                                       const SizedBox(height: 0),
                             ),
                           )
-                        : Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 40),
-                            child: ClipRRect(
-                              borderRadius: const BorderRadius.only(
-                                  bottomLeft: Radius.circular(50),
-                                  bottomRight: Radius.circular(50)),
-                              child: LinearProgressIndicator(
-                                color: Colors.white.withOpacity(1),
-                                backgroundColor:
-                                    const Color.fromRGBO(62, 204, 191, 1),
-                              ),
-                            ),
+                        : LinearProgressIndicator(
+                            color: Colors.white.withOpacity(1),
+                            backgroundColor:
+                                const Color.fromRGBO(62, 204, 191, 1),
                           ));
               },
             ),

@@ -54,7 +54,8 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       navigatorKey: navigationService.navigatorKey,
-      localizationsDelegates: const [GlobalMaterialLocalizations.delegate],
+      localizationsDelegates: const [GlobalMaterialLocalizations.delegate,GlobalCupertinoLocalizations.delegate,
+      GlobalWidgetsLocalizations.delegate],
       supportedLocales: const [Locale('es')],
       theme: ThemeData(
           colorScheme: ColorScheme.fromSwatch().copyWith(

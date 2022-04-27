@@ -18,7 +18,10 @@ class ProductoGeneral extends StatelessWidget {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const VerProductoView()),
+          MaterialPageRoute(
+              builder: (context) => VerProductoView(
+                    producto: producto,
+                  )),
         );
       },
       child: Stack(
@@ -31,12 +34,15 @@ class ProductoGeneral extends StatelessWidget {
                   decoration: Styles.containerCustom(8),
                   width: 100,
                   height: 100,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(15),
-                    child: const Image(
-                      image: NetworkImage(
-                          'https://saboryestilo.com.mx/wp-content/uploads/2019/09/platillos-tipicos-de-mexico1-1200x675.jpg'),
-                      fit: BoxFit.cover,
+                  child: Hero(
+                    tag: producto.id,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(15),
+                      child: const Image(
+                        image: NetworkImage(
+                            'https://www.pequeocio.com/wp-content/uploads/2010/11/hamburguesas-caseras-800x717.jpg'),
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
                 ),
@@ -60,7 +66,7 @@ class ProductoGeneral extends StatelessWidget {
                                   size: 12,
                                 ),
                                 const SizedBox(width: 5),
-                                Text('Nombre del lugar que envia',
+                                Text(producto.tienda,
                                     style: GoogleFonts.quicksand(
                                         fontSize: 12, color: Colors.grey)),
                               ],
@@ -129,7 +135,7 @@ class ProductoGeneral extends StatelessWidget {
                 ),
                 const SizedBox(width: 3),
                 Text(
-                  '54.00',
+                  producto.precio.toStringAsFixed(2),
                   style: GoogleFonts.quicksand(
                     fontSize: 25,
                     color: const Color.fromRGBO(47, 47, 47, .9),

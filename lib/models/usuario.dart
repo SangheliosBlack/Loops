@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:delivery/models/cesta.dart';
+
 Usuario usuarioFromJson(String str) => Usuario.fromJson(json.decode(str));
 
 class Usuario {
@@ -15,7 +17,9 @@ class Usuario {
         required this.updatedAt,
         required this.uid,
         this.profilePhotoKey,
-        required this.numeroCelular
+        required this.numeroCelular,
+        required this.customerID,
+        required this.cesta
     });
 
     bool online;
@@ -30,6 +34,9 @@ class Usuario {
     String uid;
     String? profilePhotoKey;
     String numeroCelular;
+    String customerID;
+    Cesta cesta;
+
 
     factory Usuario.fromJson(Map<String, dynamic> json) => Usuario(
         online: json["online"],
@@ -43,7 +50,9 @@ class Usuario {
         updatedAt: DateTime.parse(json["updatedAt"]),
         uid: json["uid"],
         profilePhotoKey: json["uid"] ?? "",
-        numeroCelular: json['numero_celular'] 
+        numeroCelular: json['numero_celular'],
+        customerID: json['customer_id'],
+        cesta:Cesta.fromJson(json['cesta'])
     );
     
 }

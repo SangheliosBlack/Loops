@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class DashboardView extends StatelessWidget {
   const DashboardView({Key? key}) : super(key: key);
@@ -32,98 +33,90 @@ class DashboardView extends StatelessWidget {
       child: AnnotatedRegion(
         value: SystemUiOverlayStyle.dark,
         child: Scaffold(
+          resizeToAvoidBottomInset: true,
           appBar: AppBar(
               toolbarHeight: 75,
-              centerTitle: true,
+              centerTitle: false,
               actions: [
                 Center(
-                  child: GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const NotificacionesView()),
-                      );
-                    },
-                    child: Stack(
-                      children: [
-                        Container(
-                          margin: const EdgeInsets.only(right: 15, bottom: 3),
-                          width: 45,
-                          height: 45,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(1000),
-                            child: const FadeInImage(
-                              image: NetworkImage(
-                                  'https://scontent.fagu2-1.fna.fbcdn.net/v/t1.6435-9/176949178_2858133404453229_857333007463047365_n.jpg?_nc_cat=104&ccb=1-5&_nc_sid=09cbfe&_nc_eui2=AeElgITRvUI8Cifv2j1PFGHEztI9OQNDPWLO0j05A0M9Yoq2Ymp4FtwDI5psIxxbEqnFCt1VOJJ-iJ8MAETHuS0t&_nc_ohc=lpDpHg2ftEMAX_zYaGt&_nc_ht=scontent.fagu2-1.fna&oh=00_AT8s9oQsw5eRABdTUwGPrG0P9sI7Yj_q-RlSRka06OV6mQ&oe=6251CB6A'),
-                              fit: BoxFit.cover,
-                              placeholder:
-                                  AssetImage('assets/images/place_holder.gif'),
-                            ),
+                  child: Row(
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    const NotificacionesView()),
+                          );
+                        },
+                        child: Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(100),
+                              color: const Color.fromRGBO(41, 199, 184, .03)),
+                          child: const Icon(
+                            Icons.notifications_outlined,
+                            size: 20,
+                            color: Color.fromRGBO(41, 199, 184, 1),
                           ),
                         ),
-                        Positioned(
-                            right: 5,
-                            bottom: 0,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(100),
-                                border:
-                                    Border.all(width: 4, color: Colors.white),
-                              ),
-                              child: Container(
-                                width: 13,
-                                height: 13,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(100),
-                                  color: const Color.fromRGBO(218, 85, 71, 1),
-                                ),
-                              ),
-                            ))
-                      ],
-                    ),
+                      ),
+                      Container(
+                        margin: const EdgeInsets.only(
+                            right: 15, bottom: 0, left: 10),
+                        width: 55,
+                        height: 55,
+                        child: Hero(
+                          tag: 'perfil123',
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(1000),
+                            child: const Image(
+                                image: AssetImage('assets/images/peeps.png')),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 )
               ],
-              leadingWidth: 112,
-              leading: GestureDetector(
+              leadingWidth: 190,
+              automaticallyImplyLeading: false,
+              titleSpacing: 0,
+              leading: null,
+              title: GestureDetector(
                   behavior: HitTestBehavior.translucent,
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const DrawerCustom()),
+                    );
+                  },
                   child: Container(
-                    margin: const EdgeInsets.only(left: 20),
+                    margin: const EdgeInsets.only(left: 25),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text('Mi perfil',
-                            style: GoogleFonts.quicksand(color: Colors.grey)),
-                        GestureDetector(
-                          onTap: (() {
-                            showModalBottomSheet(
-                                isScrollControlled: true,
-                                isDismissible: true,
-                                context: context,
-                                backgroundColor: Colors.white,
-                                elevation: 0,
-                                builder: (builder) {
-                                  return const DrawerCustom();
-                                });
-                          }),
-                          child: Row(
-                            children: [
-                              Text(
-                                nombre[0],
-                                style: GoogleFonts.quicksand(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black,
-                                    fontSize: 30),
-                              ),
-                              const Icon(
-                                Icons.expand_more,
-                                color: Colors.black,
-                              )
-                            ],
-                          ),
+                            style: GoogleFonts.quicksand(
+                                color: Colors.grey, fontSize: 15)),
+                        Row(
+                          children: [
+                            Text(
+                              nombre[0],
+                              style: GoogleFonts.quicksand(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                  fontSize: 30),
+                            ),
+                            const Icon(
+                              Icons.expand_more,
+                              color: Colors.black,
+                            )
+                          ],
                         )
                       ],
                     ),
@@ -168,6 +161,9 @@ class DashBoardMainView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final llenarPantallasService = Provider.of<LlenarPantallasService>(context);
+    PageController controller =
+        PageController(viewportFraction: 1, initialPage: 0);
     return SingleChildScrollView(
       physics: const BouncingScrollPhysics(),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -257,7 +253,7 @@ class DashBoardMainView extends StatelessWidget {
               children: [
                 Container(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                      const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
                   decoration: Styles.containerCustom(),
                   child: Row(
                     children: [
@@ -298,7 +294,29 @@ class DashBoardMainView extends StatelessWidget {
                 ),
               ],
             )),
-        const ListItemStore(),
+        Container(
+            padding: const EdgeInsets.symmetric(horizontal: 30),
+            margin: const EdgeInsets.only(bottom: 8),
+            child: llenarPantallasService.productos.isNotEmpty
+                ? SmoothPageIndicator(
+                    controller: controller, // PageController
+                    count: llenarPantallasService.productos.isNotEmpty
+                        ? llenarPantallasService.productos.length
+                        : 1,
+
+                    // forcing the indicator to use a specific direction
+                    textDirection: TextDirection.ltr,
+                    effect: ExpandingDotsEffect(
+                      dotHeight: 10,
+                      dotWidth: 10,
+                      activeDotColor: Colors.black.withOpacity(.8),
+                      dotColor: Colors.black.withOpacity(.2),
+                    ),
+                  )
+                : Container()),
+        ListItemStore(
+          controller: controller,
+        ),
       ]),
     );
   }

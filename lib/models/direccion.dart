@@ -38,17 +38,17 @@ class Direccion {
 
 class Coordenadas {
     Coordenadas({
-        required this.id,
+         this.id,
         required this.lat,
         required this.lng,
     });
 
-    String id;
+    String ?id;
     num lat;
     num lng;
 
     factory Coordenadas.fromJson(Map<String, dynamic> json) => Coordenadas(
-        id: json["_id"],
+        id: json["_id"] ?? '',
         lat: json["lat"],
         lng: json["lng"],
     );

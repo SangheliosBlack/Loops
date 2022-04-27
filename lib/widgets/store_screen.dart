@@ -353,8 +353,8 @@ class ListCategory extends StatelessWidget {
   Widget build(BuildContext context) {
     final llenarPantalla = Provider.of<LlenarPantallasService>(context);
     return Container(
-        margin: const EdgeInsets.symmetric(vertical: 15),
-        height: 40.0,
+        margin: const EdgeInsets.only(top: 15),
+        height: 40,
         child: AnimatedSwitcher(
             duration: const Duration(milliseconds: 3000),
             child: llenarPantalla.categorias.isEmpty
@@ -402,29 +402,16 @@ class ListCategory extends StatelessWidget {
         );
       },
       child: Container(
-        padding: const EdgeInsets.only(right: 10),
+        padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 25),
         decoration: BoxDecoration(
             color: const Color.fromRGBO(249, 250, 252, 1),
             borderRadius: BorderRadius.circular(15)),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Container(
-              margin: const EdgeInsets.all(5),
-              width: 40.0,
-              height: 40.0,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: const Color.fromRGBO(200, 201, 203, 1)),
-              child: const Icon(
-                Icons.info,
-                color: Colors.white,
-                size: 17,
-              ),
-            ),
             Text(
               titulo,
-              style: Styles.letterCustom(13, false, .5),
+              style: GoogleFonts.quicksand(color: Colors.black.withOpacity(.8)),
             )
           ],
         ),
@@ -446,20 +433,20 @@ Widget itemCategoryVoid(BuildContext context, String titulo, IconData icono) {
 }
 
 class ListItemStore extends StatelessWidget {
-  const ListItemStore({Key? key}) : super(key: key);
+  final PageController controller;
+  const ListItemStore({Key? key, required this.controller}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final llenarPantallasService = Provider.of<LlenarPantallasService>(context);
-    PageController controller = PageController(viewportFraction: 1);
+    final llenarPantallasService =
+        Provider.of<LlenarPantallasService>(context, listen: false);
     return Container(
       margin: const EdgeInsets.only(bottom: 20, top: 5),
-      height: 345,
+      height: 350,
       child: llenarPantallasService.productos.isEmpty
           ? PageView.builder(
               physics: const NeverScrollableScrollPhysics(),
               scrollDirection: Axis.horizontal,
-              controller: controller,
               itemCount: 1,
               itemBuilder: (BuildContext context, int index) => item1())
           : PageView.builder(

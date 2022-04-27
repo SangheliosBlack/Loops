@@ -58,7 +58,7 @@ class _DashboardLayoutState extends State<DashboardLayout>
         ChangeNotifierProvider(lazy: false, create: (_) => TiendasService()),
         ChangeNotifierProvider(lazy: false, create: (_) => GeneralActions()),
       ],
-      child: Scaffold(backgroundColor: Colors.white, body: widget.child),
+      child: widget.child,
     );
   }
 

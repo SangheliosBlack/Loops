@@ -1,5 +1,3 @@
-// ignore_for_file: unnecessary_this
-
 import 'dart:convert';
 
 import 'package:delivery/global/enviroment.dart';
@@ -19,7 +17,7 @@ class TarjetasService with ChangeNotifier {
   }
 
   set listaTarjetas(List<Tarjeta> tarjetas) {
-    this._listaTarjetas = tarjetas;
+    _listaTarjetas = tarjetas;
     notifyListeners();
   }
 
@@ -37,6 +35,31 @@ class TarjetasService with ChangeNotifier {
       listaTarjetas = tarjetas.paymentMethods.data;
     } catch (e) {
       debugPrint('error');
+    }
+  }
+
+  Future<bool> eliminarMetodoPago({required String id}) async {
+    final data = {"paymentMethodID": id};
+
+    try {
+      final resp = await http.post(
+          Uri.parse('${Statics.apiUrl}/stripe/eliminarMetodoPago'),
+          body: jsonEncode(data),
+          headers: {
+            'Content-Type': 'application/json',
+            'x-token': await AuthService.getToken()
+          });
+      if (resp.statusCode == 200) {
+        listaTarjetas.removeWhere(
+          (element) => element.id == id,
+        );
+        notifyListeners();
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      return false;
     }
   }
 
@@ -66,6 +89,7 @@ class TarjetasService with ChangeNotifier {
       if (resp.statusCode == 200) {
         final tarjeta = tarjetaFromJson(resp.body);
         listaTarjetas.insert(0, tarjeta);
+        notifyListeners();
 
         return true;
       } else {

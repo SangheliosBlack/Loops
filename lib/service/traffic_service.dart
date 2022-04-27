@@ -58,17 +58,16 @@ class TrafficService {
   }
 
   Future<SearchResponse> getResultadosPorQuery(String busqueda) async {
-    
     final data = {'query': busqueda};
 
     try {
       final resp = await http.post(
-        Uri.parse('${Statics.apiUrl}/google/busqueda'),
-        body: jsonEncode(data),
-        headers: {
-          'Content-Type': 'application/json',
-          'x-token': await AuthService.getToken()
-        });
+          Uri.parse('${Statics.apiUrl}/google/busqueda'),
+          body: jsonEncode(data),
+          headers: {
+            'Content-Type': 'application/json',
+            'x-token': await AuthService.getToken()
+          });
 
       final searchResponse = searchResponseFromJson(resp.body);
 
@@ -89,8 +88,9 @@ class TrafficService {
           'x-token': await AuthService.getToken()
         });
 
-
     final data = busquedaFromJson(resp.body);
+
+    print(data);
     return data;
   }
 

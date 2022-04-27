@@ -135,7 +135,7 @@ class TiendasView extends StatelessWidget {
                           child: Row(
                             children: [
                               Icon(
-                                FontAwesomeIcons.exchangeAlt,
+                                FontAwesomeIcons.rightLeft,
                                 size: 13,
                                 color: Theme.of(context).primaryColor,
                               ),

@@ -60,6 +60,31 @@ class DireccionesService with ChangeNotifier {
     }
   }
 
+  Future<bool> direccionPredeterminada(
+      {required String id, required String estado}) async {
+    final data = {'id': id, 'estado': estado};
+
+    try {
+      final resp = await http.post(
+          Uri.parse('${Statics.apiUrl}/direcciones/predeterminada'),
+          body: jsonEncode(data),
+          headers: {
+            'Content-Type': 'application/json',
+            'x-token': await AuthService.getToken()
+          });
+
+      if (resp.statusCode == 200) {
+        direcciones.removeWhere((element) => element.id == id);
+        notifyListeners();
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      return false;
+    }
+  }
+
   Future<bool> eliminarDireccion({required String id}) async {
     final data = {'id': id};
 
@@ -81,6 +106,53 @@ class DireccionesService with ChangeNotifier {
       }
     } catch (e) {
       return false;
+    }
+  }
+
+  calcularFavorito({required String id, required bool estado}) async {
+    final actual = direcciones.indexWhere((element) => element.predeterminado);
+    final nuevo = direcciones.indexWhere((element) => element.id == id);
+    final estadoInverso = !estado;
+    if (estadoInverso) {
+      if (actual != -1) {
+        direcciones[actual].predeterminado = false;
+      }
+      direcciones[nuevo].predeterminado = true;
+    } else {
+      direcciones[nuevo].predeterminado = false;
+    }
+
+    notifyListeners();
+
+    final data = {
+      'id': id,
+      'estado': estadoInverso,
+      'actual': actual != -1 ? direcciones[actual].id : 'NA'
+    };
+
+    try {
+      await http.post(Uri.parse('${Statics.apiUrl}/direcciones/predeterminada'),
+          body: jsonEncode(data),
+          headers: {
+            'Content-Type': 'application/json',
+            'x-token': await AuthService.getToken()
+          });
+      // ignore: empty_catches
+    } catch (e) {
+    }
+  }
+
+  int direccionFavorita() {
+    if (direcciones.isEmpty) {
+      return 0;
+    } else {
+      final busqueda =
+          direcciones.indexWhere((element) => element.predeterminado);
+      if (busqueda != -1) {
+        return 0;
+      } else {
+        return busqueda;
+      }
     }
   }
 

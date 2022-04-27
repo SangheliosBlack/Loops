@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-Future<bool> confirmarEliminacion(BuildContext context, String titulo) async {
+Future<bool> confirmarEliminacion(
+    {required BuildContext context,
+    required String titulo,
+    required num tipo}) async {
   return await showDialog(
       barrierColor: Colors.white,
       barrierDismissible: false,
@@ -22,8 +25,8 @@ Future<bool> confirmarEliminacion(BuildContext context, String titulo) async {
                     decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: Colors.grey.withOpacity(.05)),
-                    child: const Icon(
-                      Icons.place,
+                    child: Icon(
+                      tipo == 0 ? Icons.place : tipo == 1? Icons.credit_card : Icons.restaurant_menu,
                       size: 50,
                       color: Colors.grey,
                     ),

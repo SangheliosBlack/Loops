@@ -5,11 +5,9 @@ import 'package:google_fonts/google_fonts.dart';
 
 class DireccionBuildWidget extends StatelessWidget {
   final Direccion direccion;
-  final bool onlyShow;
 
   const DireccionBuildWidget({
     Key? key,
-    required this.onlyShow,
     required this.direccion,
   }) : super(key: key);
 
@@ -84,11 +82,7 @@ class DireccionBuildWidget extends StatelessWidget {
               top: -5,
               child: AnimatedOpacity(
                   duration: const Duration(milliseconds: 500),
-                  opacity: onlyShow
-                      ? 0
-                      : direccion.predeterminado
-                          ? 1
-                          : 0,
+                  opacity: direccion.predeterminado ? 1 : 0,
                   child: Container(
                       padding: const EdgeInsets.all(6),
                       child: Text(
