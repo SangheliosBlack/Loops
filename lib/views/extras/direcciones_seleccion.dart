@@ -63,16 +63,19 @@ class DireccionesSeleccion extends StatelessWidget {
                 } else {
                   if (obtenerFavorito(direccionesService.direcciones) == -1) {
                     return DireccionBuildWidget(
+                        isChangue: true,
                         direccion: direccionesService.direcciones[index]);
                   } else {
                     if (direccionesService
-                            .direcciones[
-                                obtenerFavorito(direccionesService.direcciones)]
-                            .titulo ==
-                        direccionesService.direcciones[index].titulo) {
+                                .direcciones[obtenerFavorito(
+                                    direccionesService.direcciones)]
+                                .titulo ==
+                            direccionesService.direcciones[index].titulo &&
+                        authService.usuario.cesta.direccion.titulo == '') {
                       return Container();
                     } else {
                       return DireccionBuildWidget(
+                          isChangue: true,
                           direccion: direccionesService.direcciones[index]);
                     }
                   }

@@ -27,7 +27,6 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
-  animate_do: ^2.0.0
   cupertino_icons: ^1.0.2
   dio: ^4.0.0
   easy_debounce: ^2.0.1
@@ -64,6 +63,10 @@ dependencies:
   slide_countdown: ^0.1.2
   custom_radio_grouped_button: ^2.1.2
   equatable: ^2.0.3
+  cached_network_image: ^3.2.0
+  animate_do: ^2.1.0
+  decorated_icon: ^1.2.1
+
 
 dev_dependencies:
   flutter_test:

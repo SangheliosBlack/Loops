@@ -21,7 +21,7 @@ class MenuInferior extends StatelessWidget {
           generalActions.controllerNavigate(valor);
         },
         currentIndex: generalActions.paginaActual,
-        elevation: 5,
+        elevation: 0,
         unselectedIconTheme: IconThemeData(color: Colors.black.withOpacity(.8)),
         type: BottomNavigationBarType.fixed,
         fixedColor: const Color.fromRGBO(41, 199, 184, 1),

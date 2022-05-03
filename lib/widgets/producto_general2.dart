@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:delivery/global/styles.dart';
 import 'package:delivery/models/productos.dart';
 import 'package:delivery/views/extras/ver_producto.dart';
@@ -19,7 +20,7 @@ class ProductoGeneral2 extends StatelessWidget {
           context,
           MaterialPageRoute(
               builder: (context) => VerProductoView(
-                    producto: producto,
+                    producto: producto,soloTienda: true,
                   )),
         );
       },
@@ -35,11 +36,11 @@ class ProductoGeneral2 extends StatelessWidget {
                   width: 100,
                   height: 100,
                   child: Hero(
-                    tag: producto.id,
+                    tag: producto.nombre,
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(15),
                       child: const Image(
-                        image: NetworkImage(
+                        image: CachedNetworkImageProvider(
                             'https://www.pequeocio.com/wp-content/uploads/2010/11/hamburguesas-caseras-800x717.jpg'),
                         fit: BoxFit.cover,
                       ),
@@ -48,7 +49,7 @@ class ProductoGeneral2 extends StatelessWidget {
                 ),
                 Expanded(
                   child: Container(
-                    height: 100,
+                    height: 95,
                     margin: const EdgeInsets.only(left: 15),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -62,6 +63,9 @@ class ProductoGeneral2 extends StatelessWidget {
                                 style: GoogleFonts.quicksand(
                                     color: Colors.black.withOpacity(.8),
                                     fontSize: 20)),
+                            const SizedBox(
+                              height: 3,
+                            ),
                             Text(producto.descripcion,
                                 maxLines: 3,
                                 overflow: TextOverflow.ellipsis,

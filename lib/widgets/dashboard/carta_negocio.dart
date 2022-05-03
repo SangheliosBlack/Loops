@@ -1,25 +1,27 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:delivery/helpers/haversine.dart';
+import 'package:delivery/models/direccion.dart';
 import 'package:delivery/models/tienda.dart';
+import 'package:delivery/service/auth_service.dart';
+import 'package:delivery/service/direcciones.service.dart';
 import 'package:delivery/views/tienda.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 class CartaNegocio extends StatelessWidget {
   final bool small;
   final Tienda tienda;
-  final int index;
 
-  const CartaNegocio(
-      {Key? key,
-      required this.index,
-      required this.tienda,
-      required this.small})
+  const CartaNegocio({Key? key, required this.tienda, required this.small})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    
-    double width = MediaQuery.of(context).size.width;
+    final authService = Provider.of<AuthService>(context);
+    final direccionesService = Provider.of<DireccionesService>(context);
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -30,278 +32,114 @@ class CartaNegocio extends StatelessWidget {
                   )),
         );
       },
-      child: LayoutBuilder(
-        builder: (BuildContext context, BoxConstraints constraints) {
-          return Container(
-            decoration: BoxDecoration(
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.00),
-                  spreadRadius: 5,
-                  blurRadius: 7,
-                  offset: const Offset(0, 5), // changes position of shadow
-                ),
-              ],
-            ),
-            width: 240,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(15),
-              child: Stack(
-                children: [
-                  Positioned.fill(
-                    child: Container(
-                      margin: const EdgeInsets.only(bottom: 12, right: 1),
-                      child: Stack(
-                        children: [
-                          SizedBox(
-                            width: constraints.maxWidth,
-                            height: 240,
-                            child: const Image(
-                              image: NetworkImage(
-                                  'https://images.otstatic.com/prod1/32412251/3/huge.jpg'),
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                          Positioned.fill(
-                            child: Container(
+      child: SizedBox(
+        width: 240,
+        child: Column(
+          children: [
+            Hero(
+              tag: tienda.uid,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(15),
+                child: SizedBox(
+                    width: double.infinity,
+                    height: 240,
+                    child: CachedNetworkImage(
+                        fit: BoxFit.cover,
+                        imageUrl:
+                            'https://images.otstatic.com/prod1/32412251/3/huge.jpg',
+                        imageBuilder: (context, imageProvider) => Container(
                               decoration: BoxDecoration(
-                                  gradient: LinearGradient(colors: [
-                                Colors.black.withOpacity(.6),
-                                Colors.white.withOpacity(.4),
-                              ])),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                      bottom: -15,
-                      child: SizedBox(
-                          height: 235,
-                          width: small ? width - 40 : 241,
-                          child: const HeaderWave())),
-                  /*Positioned(
-                  top: 0,
-                  child: SizedBox(
-                    width: 210,
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(6),
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(100)),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(100),
-                            child: Hero(
-                              tag: index,
-                              child: const SizedBox(
-                                height: 45,
-                                width: 45,
-                                child: SizedBox(
-                                  height: double.infinity,
-                                  child: Image(
-                                    image: NetworkImage(
-                                        'https://images.vexels.com/media/users/3/215185/raw/9975fac6938d6d19c33105e44655a3c8-diseno-de-logo-de-restaurante-cheff.jpg'),
-                                    fit: BoxFit.cover,
+                                image: DecorationImage(
+                                  image: imageProvider,
+                                  fit: BoxFit.cover,
+                                  colorFilter: ColorFilter.mode(
+                                    Colors.black.withOpacity(.15),
+                                    BlendMode.color,
                                   ),
                                 ),
                               ),
                             ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),*/
-                  Positioned(
-                    top: 125,
-                    left: 15,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          tienda.nombre,
-                          style: GoogleFonts.playfairDisplay(
-                              fontWeight: FontWeight.w600,
-                              color: Colors.white,
-                              fontSize: 25),
-                        ),
-                        Text(
-                          'Restaurante',
-                          style: GoogleFonts.quicksand(
-                              color: Colors.white, fontSize: 12),
-                        ),
-                        const SizedBox(height: 5),
-                        RatingBar.builder(
-                          initialRating: 3.5,
-                          minRating: 1,
-                          direction: Axis.horizontal,
-                          allowHalfRating: true,
-                          itemCount: 5,
-                          itemPadding:
-                              const EdgeInsets.symmetric(horizontal: 0.0),
-                          itemBuilder: (context, _) => const Icon(
-                            Icons.attach_money,
-                            color: Colors.white,
-                          ),
-                          itemSize: 13,
-                          unratedColor: Colors.grey,
-                          onRatingUpdate: (rating) {},
-                        ),
-                        const SizedBox(height: 5),
-                        Row(
-                          children: [
-                            const Icon(
-                              Icons.place_outlined,
-                              color: Colors.white,
-                              size: 15,
-                            ),
-                            const SizedBox(width: 3),
-                            Text(
-                              '2.4 km Centro, Lagos de Moreno ',
-                              style: GoogleFonts.quicksand(
-                                  color: Colors.white, fontSize: 11),
-                            ),
-                          ],
-                        )
-                      ],
-                    ),
-                  ),
-                  Positioned(
-                      bottom: 10,
-                      left: 12,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              const Icon(
-                                Icons.moped_sharp,
-                                size: 17,
-                                color: Colors.black,
-                              ),
-                              const SizedBox(width: 5),
-                              Text(
-                                '\$ 12',
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: GoogleFonts.quicksand(
-                                    color: Colors.grey, fontSize: 13),
-                              ),
-                              Container(
-                                margin:
-                                    const EdgeInsets.symmetric(horizontal: 10),
-                                child: Text(
-                                  '|',
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: GoogleFonts.quicksand(
-                                      color: Colors.black, fontSize: 15),
-                                ),
-                              ),
-                              const Icon(
-                                Icons.schedule,
-                                size: 15,
-                                color: Colors.black,
-                              ),
-                              const SizedBox(width: 5),
-                              Text(
-                                '15 - 30 min',
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: GoogleFonts.quicksand(
-                                    color: Colors.grey, fontSize: 13),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 5),
-                        ],
-                      ))
-                ],
+                        placeholder: (context, url) => Container(
+                            padding: const EdgeInsets.all(100),
+                            child: const CircularProgressIndicator(
+                              strokeWidth: 1,
+                              color: Colors.black,
+                            )),
+                        errorWidget: (context, url, error) {
+                          return const Icon(Icons.error);
+                        })),
               ),
             ),
-          );
-        },
+            Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  margin: const EdgeInsets.only(left: 4, top: 8),
+                  child: Text(
+                    tienda.nombre,
+                    style: GoogleFonts.quicksand(
+                        color: Colors.black.withOpacity(.8), fontSize: 16),
+                  ),
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+                Row(
+                  children: [
+                    RatingBar.builder(
+                      initialRating: 4.5,
+                      minRating: 1,
+                      direction: Axis.horizontal,
+                      allowHalfRating: true,
+                      itemCount: 5,
+                      itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
+                      itemBuilder: (context, _) => FaIcon(
+                        FontAwesomeIcons.solidStar,
+                        color: Colors.black.withOpacity(.8),
+                      ),
+                      itemSize: 13,
+                      unratedColor: Colors.grey.withOpacity(.2),
+                      onRatingUpdate: (rating) {},
+                    ),
+                    const SizedBox(width: 5),
+                    Text('(49)',
+                        style: GoogleFonts.quicksand(
+                            color: Colors.grey, fontSize: 11)),
+                  ],
+                ),
+                const SizedBox(
+                  height: 6,
+                ),
+                Container(
+                  margin: const EdgeInsets.only(left: 2),
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.place_outlined,
+                        color: Colors.black,
+                        size: 18,
+                      ),
+                      const SizedBox(width: 3),
+                      Text(
+                        '${(calculateDistance(lat1: tienda.coordenadas.latitud, lon1: tienda.coordenadas.longitud, lat2: direccionesService.direcciones[authService.usuario.cesta.direccion.titulo != '' ? direccionesService.direcciones.indexWhere((element) => authService.usuario.cesta.direccion.titulo == element.titulo) : obtenerFavorito(direccionesService.direcciones) != -1 ? obtenerFavorito(direccionesService.direcciones) : 0].coordenadas.lat, lon2: direccionesService.direcciones[authService.usuario.cesta.direccion.titulo != '' ? direccionesService.direcciones.indexWhere((element) => authService.usuario.cesta.direccion.titulo == element.titulo) : obtenerFavorito(direccionesService.direcciones) != -1 ? obtenerFavorito(direccionesService.direcciones) : 0].coordenadas.lng).toStringAsFixed(2))} km Centro, Lagos de Moreno ',
+                        style: GoogleFonts.quicksand(
+                            color: Colors.black, fontSize: 13),
+                      )
+                    ],
+                  ),
+                )
+              ],
+            )
+          ],
+        ),
       ),
     );
   }
-}
 
-class HeaderWave extends StatelessWidget {
-  const HeaderWave({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        // ignore: sized_box_for_whitespace
-        Container(
-          height: 270,
-          width: double.infinity,
-          child: CustomPaint(
-            painter: _HeaderWavePainter(),
-          ),
-        ),
-        Positioned(
-          bottom: 30,
-          right: 10,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Promedio',
-                style: GoogleFonts.quicksand(fontSize: 11, color: Colors.grey),
-              ),
-              Text(
-                '4,9',
-                style: GoogleFonts.playfairDisplay(
-                    height: .9,
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                    color: const Color.fromRGBO(47, 47, 47, .9)),
-              ),
-            ],
-          ),
-        )
-      ],
-    );
-  }
-}
-
-class _HeaderWavePainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final lapiz = Paint();
-
-    // Propiedades
-    lapiz.color = Colors.white;
-    lapiz.style = PaintingStyle.fill; // .fill .stroke
-    lapiz.strokeWidth = 5;
-
-    final path0 = Path();
-
-    // Dibujar con el path y el lapiz
-    path0.moveTo(0, size.height * 0.6714286);
-    path0.quadraticBezierTo(size.width * 0.1250000, size.height * 0.5717857,
-        size.width * 0.5008333, size.height * 0.6414286);
-    path0.quadraticBezierTo(size.width * 0.8335417, size.height * 0.6792857,
-        size.width * 0.9983333, size.height * 0.6);
-
-    path0.lineTo(size.width, size.height);
-    path0.lineTo(0, size.height);
-
-    canvas.drawPath(path0, lapiz);
-  }
-
-  @override
-  bool shouldRepaint(CustomPainter oldDelegate) {
-    return true;
+  obtenerFavorito(List<Direccion> direcciones) {
+    final busqueda =
+        direcciones.indexWhere((element) => element.predeterminado);
+    return busqueda;
   }
 }

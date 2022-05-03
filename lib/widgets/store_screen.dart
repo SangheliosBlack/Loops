@@ -1,17 +1,15 @@
 import 'dart:ui';
 
-import 'package:delivery/global/enviroment.dart';
 import 'package:delivery/global/styles.dart';
 import 'package:delivery/models/lista_separada.dart';
 import 'package:delivery/service/llenar_pantallas.dart';
 import 'package:delivery/views/categoria_view.dart';
-import 'package:delivery/widgets/place_holder.dart';
+import 'package:delivery/views/ver_todo.dart';
 import 'package:delivery/widgets/producto_general.dart';
-import 'package:delivery/widgets/store_individual.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class CustomButtonCategory extends StatelessWidget {
   final String titulo;
@@ -195,7 +193,7 @@ class OffertsCard2 extends StatelessWidget {
         children: [
           const SizedBox(
               height: double.infinity,
-              child: Shimmer(height: 200, width: 230, radius: 10)),
+              ),
           Positioned(
               bottom: 15.0,
               left: 15.0,
@@ -213,22 +211,14 @@ class OffertsCard2 extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Shimmer(height: 15, width: 150, radius: 10),
                         Container(
                           margin: const EdgeInsets.only(top: 10.0, bottom: 5),
-                          child:
-                              const Shimmer(height: 10, width: 150, radius: 10),
+                          
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Row(
-                              children: const [
-                                Shimmer(height: 15, width: 30, radius: 10),
-                                SizedBox(width: 5),
-                                Shimmer(height: 15, width: 40, radius: 10),
-                              ],
-                            ),
+                            
                             Container(
                               width: 60,
                               margin: const EdgeInsets.only(top: 5),
@@ -346,8 +336,8 @@ class PlaceCard extends StatelessWidget {
   }
 }
 
-class ListCategory extends StatelessWidget {
-  const ListCategory({Key? key}) : super(key: key);
+class ListadoCategorias extends StatelessWidget {
+  const ListadoCategorias({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -357,23 +347,7 @@ class ListCategory extends StatelessWidget {
         height: 40,
         child: AnimatedSwitcher(
             duration: const Duration(milliseconds: 3000),
-            child: llenarPantalla.categorias.isEmpty
-                ? ListView.separated(
-                    padding: const EdgeInsets.symmetric(horizontal: 25),
-                    itemBuilder: (BuildContext context, int index) =>
-                        itemCategoryVoid(
-                            context,
-                            Statics.listaCategorias[index]['titulo'],
-                            Statics.listaCategorias[index]['icono']),
-                    separatorBuilder: (BuildContext context, int index) =>
-                        const SizedBox(
-                      width: 10,
-                    ),
-                    itemCount: 4,
-                    scrollDirection: Axis.horizontal,
-                    physics: const NeverScrollableScrollPhysics(),
-                  )
-                : ListView.separated(
+            child:ListView.separated(
                     padding: const EdgeInsets.symmetric(horizontal: 25),
                     itemBuilder: (BuildContext context, int index) =>
                         itemCategory(
@@ -425,31 +399,90 @@ Widget itemCategoryVoid(BuildContext context, String titulo, IconData icono) {
       decoration: BoxDecoration(
           color: Colors.white, borderRadius: BorderRadius.circular(15)),
       padding: const EdgeInsets.all(8),
-      child: const Shimmer(
-        height: 50,
-        width: 120,
-        radius: 15,
-      ));
+      );
 }
 
-class ListItemStore extends StatelessWidget {
-  final PageController controller;
-  const ListItemStore({Key? key, required this.controller}) : super(key: key);
+class ListaProductos extends StatelessWidget {
+  const ListaProductos({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final llenarPantallasService =
-        Provider.of<LlenarPantallasService>(context, listen: false);
-    return Container(
-      margin: const EdgeInsets.only(bottom: 20, top: 5),
-      height: 350,
-      child: llenarPantallasService.productos.isEmpty
-          ? PageView.builder(
-              physics: const NeverScrollableScrollPhysics(),
-              scrollDirection: Axis.horizontal,
-              itemCount: 1,
-              itemBuilder: (BuildContext context, int index) => item1())
-          : PageView.builder(
+    PageController controller =
+        PageController(viewportFraction: 1, initialPage: 0);
+    final llenarPantallasService = Provider.of<LlenarPantallasService>(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+            padding: const EdgeInsets.symmetric(horizontal: 25),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+                  decoration: Styles.containerCustom(),
+                  child: Row(
+                    children: [
+                      Text(
+                        'Productos',
+                        style: GoogleFonts.quicksand(
+                          color: Colors.black.withOpacity(.7),
+                          fontSize: 20,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                OutlinedButton(
+                  style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 0, horizontal: 10),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15)),
+                      side: const BorderSide(width: 1, color: Colors.white),
+                      primary: Colors.white,
+                      backgroundColor: Colors.white),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const VerTodoView(
+                                titulo: 'Productos',
+                              )),
+                    );
+                  },
+                  child: Text(
+                    'Ver todo',
+                    style: GoogleFonts.quicksand(
+                      color: Colors.grey,
+                    ),
+                  ),
+                ),
+              ],
+            )),
+        Container(
+            padding: const EdgeInsets.symmetric(horizontal: 30),
+            margin: const EdgeInsets.only(bottom: 8),
+            child: llenarPantallasService.productos.isNotEmpty
+                ? SmoothPageIndicator(
+                    controller: controller,
+                    count: llenarPantallasService.productos.isNotEmpty
+                        ? llenarPantallasService.productos.length
+                        : 1,
+                    textDirection: TextDirection.ltr,
+                    effect: ExpandingDotsEffect(
+                      dotHeight: 10,
+                      dotWidth: 10,
+                      activeDotColor: Colors.black.withOpacity(.8),
+                      dotColor: Colors.black.withOpacity(.2),
+                    ),
+                  )
+                : Container()),
+        Container(
+          margin: const EdgeInsets.only(bottom: 20, top: 5),
+          height: 350,
+          child: PageView.builder(
               physics: const BouncingScrollPhysics(),
               scrollDirection: Axis.horizontal,
               controller: controller,
@@ -457,21 +490,8 @@ class ListItemStore extends StatelessWidget {
               itemBuilder: (BuildContext context, int index) {
                 return item2(lista: llenarPantallasService.productos[index]);
               }),
-    );
-  }
-
-  Widget item1() {
-    return Container(
-      margin: const EdgeInsets.only(right: 25, left: 25),
-      child: Column(
-        children: const [
-          ItemGeneralW(),
-          SizedBox(height: 10),
-          ItemGeneralW(),
-          SizedBox(height: 10),
-          ItemGeneralW(),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -485,99 +505,6 @@ class ListItemStore extends StatelessWidget {
         itemCount: lista.productos.length,
         separatorBuilder: (BuildContext context, int index) => const SizedBox(
           height: 10,
-        ),
-      ),
-    );
-  }
-}
-
-class ItemGeneralW extends StatelessWidget {
-  const ItemGeneralW({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        showInfo(context);
-      },
-      child: Container(
-        padding: const EdgeInsets.all(10),
-        decoration: Styles.containerCustom(),
-        child: Row(
-          children: [
-            Container(
-              decoration: Styles.containerCustom(8),
-              width: 90,
-              height: 90,
-              child: ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: const Shimmer(height: 90, width: 90, radius: 8)),
-            ),
-            Expanded(
-              child: Container(
-                margin: const EdgeInsets.only(left: 10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    const Shimmer(height: 15, width: 130, radius: 15),
-                    const SizedBox(height: 5),
-                    Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(4),
-                          decoration: BoxDecoration(
-                              color: Colors.black.withOpacity(.7),
-                              shape: BoxShape.circle),
-                          child: Text('0.0',
-                              style: Styles.letterCustom(10, false, -1.0)),
-                        ),
-                        RatingBar.builder(
-                          initialRating: 0,
-                          itemSize: 15,
-                          ignoreGestures: true,
-                          minRating: 1,
-                          direction: Axis.horizontal,
-                          allowHalfRating: true,
-                          itemCount: 5,
-                          itemPadding:
-                              const EdgeInsets.symmetric(horizontal: 4.0),
-                          itemBuilder: (context, _) => Icon(
-                            Icons.star,
-                            color: Theme.of(context).primaryColor,
-                          ),
-                          onRatingUpdate: (rating) {},
-                        ),
-                      ],
-                    ),
-                    Container(
-                      margin: const EdgeInsets.only(top: 5),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: const [
-                              Shimmer(height: 15, width: 35, radius: 10),
-                              SizedBox(width: 10),
-                              Shimmer(height: 20, width: 55, radius: 10),
-                            ],
-                          ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 5, horizontal: 10),
-                            decoration: Styles.containerCustom(),
-                            child: const Shimmer(
-                                height: 20, width: 50, radius: 15),
-                          ),
-                        ],
-                      ),
-                    )
-                  ],
-                ),
-              ),
-            )
-          ],
         ),
       ),
     );

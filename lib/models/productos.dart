@@ -31,7 +31,7 @@ class Producto {
   bool disponible;
   String tienda;
   List<Opcion> opciones;
-  num cantidad ;
+  num cantidad;
   String sku;
 
   factory Producto.fromJson(Map<String, dynamic> json) => Producto(
@@ -44,7 +44,7 @@ class Producto {
         descuentoC: json["descuentoC"],
         disponible: json["disponible"],
         tienda: json['tienda'],
-        sku:json['sku'] ?? '',
+        sku: json['sku'] ?? '',
         opciones:
             List<Opcion>.from(json["opciones"].map((x) => Opcion.fromJson(x))),
       );
@@ -65,18 +65,23 @@ class Producto {
 Opcion opcionFromJson(String str) => Opcion.fromJson(json.decode(str));
 
 class Opcion extends Equatable {
-  Opcion({
-    required this.titulo,
-    required this.listado,
-  });
+  Opcion(
+      {required this.titulo,
+      required this.listado,
+      required this.maximo,
+      required this.minimo});
 
   String titulo;
   List<Listado> listado;
+  num maximo;
+  num minimo;
 
   factory Opcion.fromJson(Map<String, dynamic> json) => Opcion(
         titulo: json["titulo"],
         listado:
             List<Listado>.from(json["listado"].map((x) => Listado.fromJson(x))),
+        minimo: json["minimo"],
+        maximo: json["maximo"],
       );
 
   @override

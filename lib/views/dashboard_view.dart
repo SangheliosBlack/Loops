@@ -1,11 +1,9 @@
-import 'package:delivery/global/styles.dart';
 import 'package:delivery/service/auth_service.dart';
 import 'package:delivery/service/hide_show_menu.dart';
 import 'package:delivery/service/llenar_pantallas.dart';
 import 'package:delivery/views/notificaciones_view.dart';
 import 'package:delivery/views/orden_view.dart';
 import 'package:delivery/views/socio/socio_dashboard_view.dart';
-import 'package:delivery/views/ver_todo.dart';
 import 'package:delivery/widgets/dot_navigation_bar_simple.dart';
 import 'package:delivery/widgets/drawe_custom.dart';
 import 'package:delivery/widgets/main.dart';
@@ -14,7 +12,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class DashboardView extends StatelessWidget {
   const DashboardView({Key? key}) : super(key: key);
@@ -100,7 +97,7 @@ class DashboardView extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Mi perfil',
+                        Text('Mi cuenta',
                             style: GoogleFonts.quicksand(
                                 color: Colors.grey, fontSize: 15)),
                         Row(
@@ -161,163 +158,23 @@ class DashBoardMainView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final llenarPantallasService = Provider.of<LlenarPantallasService>(context);
-    PageController controller =
-        PageController(viewportFraction: 1, initialPage: 0);
     return SingleChildScrollView(
       physics: const BouncingScrollPhysics(),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        const SizedBox(height: 25),
-        MenuItems(width: width),
-        const ListCategory(),
-        BottomWidgetMain(height: height, width: width),
-        /*Container(
-            padding: const EdgeInsets.symmetric(horizontal: 25),
-            width: width,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                  decoration: Styles.containerCustom(),
-                  child: Row(
-                    children: [
-                      Text(
-                        'Lo mas vendido',
-                        style: GoogleFonts.quicksand(
-                            color: Colors.black.withOpacity(.7),
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(width: 5),
-                      Icon(
-                        Icons.expand_more_rounded,
-                        color: Theme.of(context).primaryColor,
-                        size: 30,
-                      )
-                    ],
-                  ),
-                ),
-                OutlinedButton(
-                  style: OutlinedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15)),
-                      side: const BorderSide(width: 1, color: Colors.white),
-                      primary: Colors.white,
-                      backgroundColor: Colors.white),
-                  onPressed: () {},
-                  child: Text(
-                    'Ver todo',
-                    style: GoogleFonts.quicksand(
-                        fontWeight: FontWeight.w600,
-                        color: Theme.of(context).primaryColor),
-                  ),
-                )
-              ],
-            )),
-        Container(
-          margin: const EdgeInsets.only(top: 15),
-          height: 210.0,
-          child: llenarPantallasService.productos.isEmpty
-              ? ListView.separated(
-                  padding: const EdgeInsets.only(left: 25, right: 12),
-                  physics: const NeverScrollableScrollPhysics(),
-                  scrollDirection: Axis.horizontal,
-                  itemCount: 2,
-                  separatorBuilder: (BuildContext context, int index) =>
-                      const SizedBox(
-                    width: 15,
-                  ),
-                  itemBuilder: (BuildContext context, int index) =>
-                      const OffertsCard2(),
-                )
-              : ListView.separated(
-                  padding: const EdgeInsets.only(left: 25, right: 12),
-                  physics: const BouncingScrollPhysics(),
-                  scrollDirection: Axis.horizontal,
-                  itemCount: 2,
-                  separatorBuilder: (BuildContext context, int index) =>
-                      const SizedBox(
-                    width: 15,
-                  ),
-                  itemBuilder: (BuildContext context, int index) =>
-                      const OffertsCard(),
-                ),
-        ),*/
-        Container(
-            padding: const EdgeInsets.symmetric(horizontal: 25),
-            width: width,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-                  decoration: Styles.containerCustom(),
-                  child: Row(
-                    children: [
-                      Text(
-                        'Productos',
-                        style: GoogleFonts.quicksand(
-                          color: Colors.black.withOpacity(.7),
-                          fontSize: 20,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                OutlinedButton(
-                  style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 0, horizontal: 10),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15)),
-                      side: const BorderSide(width: 1, color: Colors.white),
-                      primary: Colors.white,
-                      backgroundColor: Colors.white),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const VerTodoView(
-                                titulo: 'Productos',
-                              )),
-                    );
-                  },
-                  child: Text(
-                    'Ver todo',
-                    style: GoogleFonts.quicksand(
-                      color: Colors.grey,
-                    ),
-                  ),
-                ),
-              ],
-            )),
-        Container(
-            padding: const EdgeInsets.symmetric(horizontal: 30),
-            margin: const EdgeInsets.only(bottom: 8),
-            child: llenarPantallasService.productos.isNotEmpty
-                ? SmoothPageIndicator(
-                    controller: controller, // PageController
-                    count: llenarPantallasService.productos.isNotEmpty
-                        ? llenarPantallasService.productos.length
-                        : 1,
-
-                    // forcing the indicator to use a specific direction
-                    textDirection: TextDirection.ltr,
-                    effect: ExpandingDotsEffect(
-                      dotHeight: 10,
-                      dotWidth: 10,
-                      activeDotColor: Colors.black.withOpacity(.8),
-                      dotColor: Colors.black.withOpacity(.2),
-                    ),
-                  )
-                : Container()),
-        ListItemStore(
-          controller: controller,
-        ),
-      ]),
+      child: AnimatedSize(
+        duration: const Duration(seconds: 1),
+        child: llenarPantallasService.tiendas.isNotEmpty &&
+                llenarPantallasService.categorias.isNotEmpty &&
+                llenarPantallasService.productos.isNotEmpty
+            ? Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                BaraBusqueda(width: width),
+                const ListadoCategorias(),
+                ListadoEstablecimientos(height: height, width: width),
+                const ListaProductos(),
+              ])
+            : const LinearProgressIndicator(
+                backgroundColor: Color.fromRGBO(41, 200, 182, 1),
+                color: Colors.white),
+      ),
     );
   }
 }

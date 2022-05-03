@@ -13,6 +13,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 
 class TiendasService with ChangeNotifier {
+  List<ListaProductos> _productosCategoria = [];
+  List<ListaProductos> get productosCategoria => _productosCategoria;
+
+  set productosCategoria(List<ListaProductos> catagorias) {
+    _productosCategoria = catagorias;
+    notifyListeners();
+  }
+
   late Tienda _tienda;
 
   Tienda get tienda => _tienda;
@@ -55,7 +63,6 @@ class TiendasService with ChangeNotifier {
       final dataParse = productoResponseFromJson(resp.body);
       return dataParse.productos;
     } catch (e) {
-      print(e);
       return [];
     }
   }
@@ -200,7 +207,14 @@ class TiendasService with ChangeNotifier {
     }
   }
 
-  Future<List<ListaProductosCategoria>> obtenerProductos() async {
+  int tiendaCache({required String nombre}) {
+    productosCategoria.indexWhere((element) => element.nombre == nombre);
+    return productosCategoria.indexWhere((element) => element.nombre == nombre);
+  }
+
+  Future<List<ListaProductosCategoria>> obtenerProductos(
+      {required String nombre}) async {
+    await Future.delayed(const Duration(seconds: 2));
     try {
       final resp = await http.get(
           Uri.parse('${Statics.apiUrl}/tiendas/obtenerProductosTienda'),
@@ -209,6 +223,10 @@ class TiendasService with ChangeNotifier {
             'x-token': await AuthService.getToken()
           });
       final cast = listaProductosFromJson(resp.body);
+      cast.nombre = nombre;
+      productosCategoria.add(cast);
+      notifyListeners();
+
       return cast.productos;
     } catch (e) {
       return [];

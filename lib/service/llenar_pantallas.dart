@@ -42,6 +42,7 @@ class LlenarPantallasService with ChangeNotifier {
   }
 
   pantallaPrincipalCategorias() async {
+    await Future.delayed(const Duration(seconds: 3));
     try {
       final resp = await http.get(
           Uri.parse(
@@ -62,6 +63,7 @@ class LlenarPantallasService with ChangeNotifier {
   }
 
   pantallaPrincipalProductos() async {
+    await Future.delayed(const Duration(seconds: 3));
     try {
       final resp = await http.get(
           Uri.parse(
@@ -82,6 +84,7 @@ class LlenarPantallasService with ChangeNotifier {
   }
 
   pantallaPrincipalTiendas() async {
+    await Future.delayed(const Duration(seconds: 3));
     try {
       final resp = await http.get(
           Uri.parse(
@@ -91,14 +94,12 @@ class LlenarPantallasService with ChangeNotifier {
             'x-token': await AuthService.getToken()
           });
 
-      print(resp.body);
       final pantallaResponse = tiendaResponseFromJson(resp.body);
 
       tiendas = pantallaResponse.tiendas;
 
       return pantallaResponse;
     } catch (e) {
-      print(e);
       return [];
     }
   }

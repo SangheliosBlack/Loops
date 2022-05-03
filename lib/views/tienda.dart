@@ -1,5 +1,12 @@
+import 'package:animate_do/animate_do.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:decorated_icon/decorated_icon.dart';
+import 'package:delivery/helpers/haversine.dart';
+import 'package:delivery/models/direccion.dart';
 import 'package:delivery/models/lista_productos.dart';
 import 'package:delivery/models/tienda.dart';
+import 'package:delivery/service/auth_service.dart';
+import 'package:delivery/service/direcciones.service.dart';
 import 'package:delivery/service/tiendas_service.dart';
 import 'package:delivery/widgets/producto_general2.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +29,8 @@ class _StoreIndividualState extends State<StoreIndividual> {
   @override
   Widget build(BuildContext context) {
     final tiendaService = Provider.of<TiendasService>(context);
+    final authService = Provider.of<AuthService>(context);
+    final direccionesService = Provider.of<DireccionesService>(context);
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -36,93 +45,169 @@ class _StoreIndividualState extends State<StoreIndividual> {
               forceElevated: true,
               actionsIconTheme: const IconThemeData(color: Colors.red),
               systemOverlayStyle: SystemUiOverlayStyle.light,
-              collapsedHeight: 80,
-              shape: const ContinuousRectangleBorder(
+              collapsedHeight: 85,
+              shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(70),
-                      bottomRight: Radius.circular(70))),
+                      bottomLeft: Radius.circular(40),
+                      bottomRight: Radius.circular(40))),
+              actions: [
+                Column(
+                  children: [
+                    const SizedBox(
+                      height: 14,
+                    ),
+                    Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 25),
+                        child: Stack(
+                          children: [
+                            const DecoratedIcon(
+                              Icons.shopping_bag,
+                              color: Colors.white,
+                              size: 40,
+                              shadows: [
+                                BoxShadow(
+                                  blurRadius: 5,
+                                  color: Colors.black,
+                                ),
+                              ],
+                            ),
+                            Positioned.fill(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const SizedBox(
+                                    height: 12,
+                                  ),
+                                  Text('${authService.totalPiezas()}',
+                                      style: GoogleFonts.quicksand(
+                                        color: Colors.black,
+                                        fontSize: 14,
+                                      )),
+                                ],
+                              ),
+                            ),
+                          ],
+                        )),
+                  ],
+                )
+              ],
               leading: GestureDetector(
                 behavior: HitTestBehavior.translucent,
                 onTap: () {
                   Navigator.pop(context);
                 },
-                child: Container(
-                  margin: const EdgeInsets.all(9),
-                  padding: const EdgeInsets.all(6),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15),
-                      color: Colors.white),
-                  child: Icon(
-                    Icons.arrow_back,
-                    color: Colors.black.withOpacity(.7),
-                    size: 17,
-                  ),
+                child: Column(
+                  children: [
+                    const SizedBox(
+                      height: 17,
+                    ),
+                    Container(
+                      margin: const EdgeInsets.only(left: 13),
+                      padding: const EdgeInsets.all(6),
+                      child: const DecoratedIcon(
+                        Icons.arrow_back,
+                        color: Colors.white,
+                        shadows: [
+                          BoxShadow(
+                            blurRadius: 5,
+                            color: Colors.black,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              backgroundColor: const Color.fromRGBO(62, 204, 191, 1),
+              backgroundColor: Colors.black,
               elevation: 0,
               pinned: true,
-              expandedHeight: 350,
+              expandedHeight: 600,
               flexibleSpace: LayoutBuilder(
                 builder: (ctx, cons) => FlexibleSpaceBar(
                   titlePadding: const EdgeInsets.all(20),
                   centerTitle: true,
-                  title: Row(
-                    children: [
-                      AnimatedContainer(
-                        margin: EdgeInsets.only(
-                            left: cons.biggest.height <= 200 ? 40 : 0),
-                        padding: const EdgeInsets.all(5),
-                        decoration: const BoxDecoration(
-                            color: Colors.white, shape: BoxShape.circle),
-                        duration: const Duration(milliseconds: 500),
-                        child: Stack(
-                          children: [
-                            AnimatedContainer(
-                              width: cons.biggest.height <= 190 ? 50 : 70,
-                              height: cons.biggest.height <= 190 ? 50 : 70,
-                              duration: const Duration(milliseconds: 300),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(100),
-                                child: const Image(
-                                  image: NetworkImage(
-                                      'https://images.vexels.com/media/users/3/215185/raw/9975fac6938d6d19c33105e44655a3c8-diseno-de-logo-de-restaurante-cheff.jpg'),
-                                  fit: BoxFit.cover,
+                  title: FadeInLeft(
+                    delay: const Duration(milliseconds: 50),
+                    child: Row(
+                      children: [
+                        AnimatedContainer(
+                          margin: EdgeInsets.only(
+                              left: cons.biggest.height <= 200 ? 40 : 0),
+                          padding: const EdgeInsets.all(5),
+                          decoration: const BoxDecoration(
+                              color: Colors.white, shape: BoxShape.circle),
+                          duration: const Duration(milliseconds: 500),
+                          child: Stack(
+                            children: [
+                              AnimatedContainer(
+                                width: cons.biggest.height <= 190 ? 50 : 70,
+                                height: cons.biggest.height <= 190 ? 50 : 70,
+                                duration: const Duration(milliseconds: 300),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(100),
+                                  child: CachedNetworkImage(
+                                      fit: BoxFit.cover,
+                                      imageUrl:
+                                          'https://images.vexels.com/media/users/3/215185/raw/9975fac6938d6d19c33105e44655a3c8-diseno-de-logo-de-restaurante-cheff.jpg',
+                                      imageBuilder: (context, imageProvider) =>
+                                          Container(
+                                            decoration: BoxDecoration(
+                                              image: DecorationImage(
+                                                image: imageProvider,
+                                                fit: BoxFit.cover,
+                                                colorFilter: ColorFilter.mode(
+                                                  Colors.black.withOpacity(.15),
+                                                  BlendMode.color,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                      placeholder: (context, url) => Container(
+                                          padding: const EdgeInsets.all(25),
+                                          child:
+                                              const CircularProgressIndicator(
+                                            strokeWidth: 1,
+                                            color: Colors.black,
+                                          )),
+                                      errorWidget: (context, url, error) {
+                                        return const Icon(Icons.error);
+                                      }),
                                 ),
                               ),
-                            ),
-                            Positioned(
-                              bottom: cons.biggest.height <= 190 ? 0 : 0,
-                              right: cons.biggest.height <= 190 ? 0 : 0,
-                              child: Container(
-                                padding: const EdgeInsets.all(3),
-                                decoration: const BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: Color.fromRGBO(0, 224, 242, 1)),
-                                child: const Icon(
-                                  Icons.check,
-                                  size: 10,
-                                  color: Colors.white,
+                              Positioned(
+                                bottom: cons.biggest.height <= 190 ? 0 : 0,
+                                right: cons.biggest.height <= 190 ? 0 : 0,
+                                child: Container(
+                                  padding: const EdgeInsets.all(3),
+                                  decoration: const BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: Color.fromRGBO(0, 224, 242, 1)),
+                                  child: const Icon(
+                                    Icons.check,
+                                    size: 10,
+                                    color: Colors.white,
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                      const SizedBox(
-                        width: 5,
-                      ),
-                      Expanded(
-                        child: Text(
-                          widget.tienda.nombre,
-                          overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.playfairDisplay(
-                              fontSize: 17,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.white),
+                        const SizedBox(
+                          width: 5,
                         ),
-                      )
-                    ],
+                        Expanded(
+                          child: Text(
+                            widget.tienda.nombre,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.playfairDisplay(
+                                fontSize: 17,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white),
+                          ),
+                        )
+                      ],
+                    ),
                   ),
                   collapseMode: CollapseMode.parallax,
                   background: Stack(
@@ -131,15 +216,38 @@ class _StoreIndividualState extends State<StoreIndividual> {
                       Positioned.fill(
                         child: Stack(
                           children: [
-                            const Positioned.fill(
+                            Positioned.fill(
                               child: ClipRRect(
                                 child: SizedBox(
                                   width: double.infinity,
-                                  child: Image(
-                                    image: NetworkImage(
-                                        'https://images.otstatic.com/prod1/32412251/3/huge.jpg'),
-                                    fit: BoxFit.cover,
+                                  child: Hero(
+                                    tag: widget.tienda.uid,
+                                    child: const Image(
+                                      image: CachedNetworkImageProvider(
+                                          'https://images.otstatic.com/prod1/32412251/3/huge.jpg'),
+                                      fit: BoxFit.cover,
+                                    ),
                                   ),
+                                ),
+                              ),
+                            ),
+                            Positioned.fill(
+                              child: FadeInUp(
+                                duration: const Duration(milliseconds: 1500),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                      gradient: LinearGradient(
+                                    stops: const [
+                                      0.4,
+                                      0.99,
+                                    ],
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter,
+                                    colors: [
+                                      Colors.black.withOpacity(0),
+                                      Colors.black.withOpacity(1)
+                                    ],
+                                  )),
                                 ),
                               ),
                             ),
@@ -148,14 +256,14 @@ class _StoreIndividualState extends State<StoreIndividual> {
                                 decoration: BoxDecoration(
                                     gradient: LinearGradient(
                                   stops: const [
-                                    0.4,
-                                    0.99,
+                                    0.0,
+                                    0.5,
                                   ],
                                   begin: Alignment.topCenter,
-                                  end: Alignment.bottomCenter,
+                                  end: Alignment.center,
                                   colors: [
-                                    Colors.black.withOpacity(0),
-                                    Colors.black.withOpacity(1)
+                                    Colors.black.withOpacity(.4),
+                                    Colors.black.withOpacity(0)
                                   ],
                                 )),
                               ),
@@ -165,7 +273,7 @@ class _StoreIndividualState extends State<StoreIndividual> {
                       ),
                       Positioned(
                         bottom: 100,
-                        left: 140,
+                        left: 145,
                         child: Row(
                           children: [
                             Container(
@@ -198,7 +306,7 @@ class _StoreIndividualState extends State<StoreIndividual> {
                         ),
                       ),
                       Positioned(
-                          bottom: 10,
+                          bottom: 25,
                           left: 150,
                           child: Column(
                             children: [
@@ -212,23 +320,6 @@ class _StoreIndividualState extends State<StoreIndividual> {
                                         color: Colors.white, fontSize: 12),
                                   ),
                                   const SizedBox(height: 5),
-                                  RatingBar.builder(
-                                    initialRating: 3.5,
-                                    minRating: 1,
-                                    direction: Axis.horizontal,
-                                    allowHalfRating: true,
-                                    itemCount: 5,
-                                    itemPadding: const EdgeInsets.symmetric(
-                                        horizontal: 0.0),
-                                    itemBuilder: (context, _) => const Icon(
-                                      Icons.attach_money,
-                                      color: Colors.white,
-                                    ),
-                                    itemSize: 13,
-                                    unratedColor: Colors.grey,
-                                    onRatingUpdate: (rating) {},
-                                  ),
-                                  const SizedBox(height: 5),
                                   Row(
                                     children: [
                                       const Icon(
@@ -238,10 +329,10 @@ class _StoreIndividualState extends State<StoreIndividual> {
                                       ),
                                       const SizedBox(width: 3),
                                       Text(
-                                        '2.4 km Centro, Lagos de Moreno ',
+                                        '${(calculateDistance(lat1: widget.tienda.coordenadas.latitud, lon1: widget.tienda.coordenadas.longitud, lat2: direccionesService.direcciones[authService.usuario.cesta.direccion.titulo != '' ? direccionesService.direcciones.indexWhere((element) => authService.usuario.cesta.direccion.titulo == element.titulo) : obtenerFavorito(direccionesService.direcciones) != -1 ? obtenerFavorito(direccionesService.direcciones) : 0].coordenadas.lat, lon2: direccionesService.direcciones[authService.usuario.cesta.direccion.titulo != '' ? direccionesService.direcciones.indexWhere((element) => authService.usuario.cesta.direccion.titulo == element.titulo) : obtenerFavorito(direccionesService.direcciones) != -1 ? obtenerFavorito(direccionesService.direcciones) : 0].coordenadas.lng).toStringAsFixed(2))} km Centro, Lagos de Moreno ',
                                         style: GoogleFonts.quicksand(
-                                            color: Colors.white, fontSize: 11),
-                                      ),
+                                            color: Colors.white, fontSize: 13),
+                                      )
                                     ],
                                   )
                                 ],
@@ -286,44 +377,65 @@ class _StoreIndividualState extends State<StoreIndividual> {
                 ),
               )),
           SliverToBoxAdapter(
-            child: FutureBuilder(
-              future: tiendaService.obtenerProductos(),
-              builder: (BuildContext context,
-                  AsyncSnapshot<List<ListaProductosCategoria>> snapshot) {
-                return AnimatedSize(
-                    duration: const Duration(milliseconds: 200),
-                    child: snapshot.hasData
-                        ? Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(40),
-                              color: Colors.white,
-                            ),
-                            child: ListView.separated(
-                              physics: const NeverScrollableScrollPhysics(),
-                              padding: const EdgeInsets.only(
-                                  right: 20, left: 20, top: 25, bottom: 45),
-                              shrinkWrap: true,
-                              itemBuilder: (BuildContext context, int index) =>
-                                  ItemPorCategoria(
-                                categoria: snapshot.data![index],
-                              ),
-                              itemCount: snapshot.data!.length,
-                              separatorBuilder:
-                                  (BuildContext context, int index) =>
-                                      const SizedBox(height: 0),
-                            ),
-                          )
-                        : LinearProgressIndicator(
+            child: AnimatedSize(
+                duration: const Duration(milliseconds: 200),
+                child: tiendaService.tiendaCache(
+                            nombre: widget.tienda.nombre) ==
+                        -1
+                    ? FutureBuilder(
+                        future: tiendaService.obtenerProductos(
+                            nombre: widget.tienda.nombre),
+                        builder: (BuildContext context,
+                            AsyncSnapshot<List<ListaProductosCategoria>>
+                                snapshot) {
+                          return LinearProgressIndicator(
                             color: Colors.white.withOpacity(1),
                             backgroundColor:
                                 const Color.fromRGBO(62, 204, 191, 1),
-                          ));
-              },
-            ),
+                          );
+                        },
+                      )
+                    : FadeInUp(
+                        delay: const Duration(milliseconds: 700),
+                        child: Container(
+                          height: 1200,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(40),
+                            color: Colors.white,
+                          ),
+                          child: ListView.separated(
+                            physics: const NeverScrollableScrollPhysics(),
+                            padding: const EdgeInsets.only(
+                                right: 20, left: 20, top: 25, bottom: 45),
+                            shrinkWrap: true,
+                            itemBuilder: (BuildContext context, int index) =>
+                                ItemPorCategoria(
+                              categoria: tiendaService
+                                  .productosCategoria[tiendaService.tiendaCache(
+                                      nombre: widget.tienda.nombre)]
+                                  .productos[index],
+                            ),
+                            itemCount: tiendaService
+                                .productosCategoria[tiendaService.tiendaCache(
+                                    nombre: widget.tienda.nombre)]
+                                .productos
+                                .length,
+                            separatorBuilder:
+                                (BuildContext context, int index) =>
+                                    const SizedBox(height: 0),
+                          ),
+                        ),
+                      )),
           )
         ],
       ),
     );
+  }
+
+  obtenerFavorito(List<Direccion> direcciones) {
+    final busqueda =
+        direcciones.indexWhere((element) => element.predeterminado);
+    return busqueda;
   }
 }
 

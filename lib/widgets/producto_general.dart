@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:delivery/global/styles.dart';
 import 'package:delivery/models/productos.dart';
 import 'package:delivery/views/extras/ver_producto.dart';
@@ -38,11 +39,32 @@ class ProductoGeneral extends StatelessWidget {
                     tag: producto.id,
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(15),
-                      child: const Image(
-                        image: NetworkImage(
-                            'https://www.pequeocio.com/wp-content/uploads/2010/11/hamburguesas-caseras-800x717.jpg'),
-                        fit: BoxFit.cover,
-                      ),
+                      child: CachedNetworkImage(
+                          key: UniqueKey(),
+                          fit: BoxFit.cover,
+                          imageUrl:
+                              'https://www.pequeocio.com/wp-content/uploads/2010/11/hamburguesas-caseras-800x717.jpg',
+                          imageBuilder: (context, imageProvider) => Container(
+                                decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                    image: imageProvider,
+                                    fit: BoxFit.cover,
+                                    colorFilter: ColorFilter.mode(
+                                      Colors.black.withOpacity(.15),
+                                      BlendMode.color,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                          placeholder: (context, url) => Container(
+                              padding: const EdgeInsets.all(30),
+                              child: const CircularProgressIndicator(
+                                strokeWidth: 1,
+                                color: Colors.black,
+                              )),
+                          errorWidget: (context, url, error) {
+                            return const Icon(Icons.error);
+                          }),
                     ),
                   ),
                 ),
@@ -60,30 +82,32 @@ class ProductoGeneral extends StatelessWidget {
                           children: [
                             Row(
                               children: [
-                                const Icon(
+                                Icon(
                                   Icons.place_outlined,
-                                  color: Colors.grey,
-                                  size: 12,
+                                  color: Colors.black.withOpacity(.8),
+                                  size: 15,
                                 ),
                                 const SizedBox(width: 5),
                                 Text(producto.tienda,
                                     style: GoogleFonts.quicksand(
-                                        fontSize: 12, color: Colors.grey)),
+                                        fontSize: 14,
+                                        color: Colors.black.withOpacity(.8))),
                               ],
                             ),
                             const SizedBox(height: 5),
                             Row(
                               children: [
                                 const SizedBox(width: 1),
-                                const Icon(
+                                Icon(
                                   Icons.schedule,
-                                  color: Colors.grey,
-                                  size: 10,
+                                  color: Colors.black.withOpacity(.8),
+                                  size: 13,
                                 ),
                                 const SizedBox(width: 5),
                                 Text('15 - 25 min',
                                     style: GoogleFonts.quicksand(
-                                        fontSize: 12, color: Colors.grey)),
+                                        fontSize: 14,
+                                        color: Colors.black.withOpacity(.8))),
                               ],
                             ),
                           ],
@@ -98,9 +122,9 @@ class ProductoGeneral extends StatelessWidget {
                               itemCount: 5,
                               itemPadding:
                                   const EdgeInsets.symmetric(horizontal: 4.0),
-                              itemBuilder: (context, _) => const FaIcon(
+                              itemBuilder: (context, _) => FaIcon(
                                 FontAwesomeIcons.solidStar,
-                                color: Color.fromRGBO(200, 201, 203, 1),
+                                color: Colors.black.withOpacity(.8),
                               ),
                               itemSize: 12,
                               unratedColor: Colors.grey.withOpacity(.2),

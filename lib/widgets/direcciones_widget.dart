@@ -1,27 +1,41 @@
 import 'package:delivery/models/direccion.dart';
+import 'package:delivery/service/auth_service.dart';
+import 'package:delivery/service/direcciones.service.dart';
 import 'package:delivery/views/extras/editar_direccion.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 class DireccionBuildWidget extends StatelessWidget {
   final Direccion direccion;
+  final bool isChangue;
 
   const DireccionBuildWidget({
     Key? key,
     required this.direccion,
+    this.isChangue = false,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final authService = Provider.of<AuthService>(context);
+    final direccionesService = Provider.of<DireccionesService>(context);
     return GestureDetector(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => EditarDireccionView(
-                    direccion: direccion,
-                  )),
-        );
+        if (isChangue) {
+          Navigator.pop(context);
+          authService.cambiarDireccionCesta(
+              direccion: direccion,
+              direcciones: direccionesService.direcciones);
+        } else {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => EditarDireccionView(
+                      direccion: direccion,
+                    )),
+          );
+        }
       },
       child: ClipRRect(
         borderRadius: BorderRadius.circular(15),
@@ -70,10 +84,12 @@ class DireccionBuildWidget extends StatelessWidget {
                       ],
                     ),
                   ),
-                  Container(
-                      margin: const EdgeInsets.only(left: 12),
-                      child: Icon(Icons.arrow_forward_ios,
-                          color: Colors.grey.withOpacity(.4), size: 20))
+                  isChangue
+                      ? Container()
+                      : Container(
+                          margin: const EdgeInsets.only(left: 12),
+                          child: Icon(Icons.arrow_forward_ios,
+                              color: Colors.grey.withOpacity(.4), size: 20))
                 ],
               ),
             ),

@@ -67,11 +67,10 @@ class VerTodoView extends StatelessWidget {
                                 SliverGridDelegateWithMaxCrossAxisExtent(
                                     mainAxisSpacing: 15,
                                     crossAxisSpacing: 15,
-                                    mainAxisExtent: 300,
+                                    mainAxisExtent: 311,
                                     maxCrossAxisExtent: width),
                             itemBuilder: (BuildContext context, int index) {
                               return CartaNegocio(
-                                index: index,
                                 tienda: snapshot.data![index],
                                 small: true,
                               );

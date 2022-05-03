@@ -56,10 +56,8 @@ class Tienda {
         uid: json["uid"] ?? json['_id'],
         horario: Horario.fromJson(json["horario"]),
         coordenadas: Coordenadas.fromJson(json["coordenadas"]),
-        listaProductos: List<Producto>.from(json["listaProductos"].map((x) {
-          print(x);
-          return Producto.fromJson(x);
-        })),
+        listaProductos: List<Producto>.from(
+            json["listaProductos"].map((x) => Producto.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {

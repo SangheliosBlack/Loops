@@ -42,7 +42,7 @@ class EditarPerfil extends StatelessWidget {
                           padding: const EdgeInsets.all(7),
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(1000),
-                            child: Image(
+                            child: const Image(
                                 image: AssetImage('assets/images/peeps.png')),
                           ),
                         ),

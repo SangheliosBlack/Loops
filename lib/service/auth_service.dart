@@ -1,9 +1,10 @@
 import 'dart:convert';
-import 'dart:ffi';
 import 'dart:io';
 
 import 'package:delivery/global/enviroment.dart';
+import 'package:delivery/models/direccion.dart';
 import 'package:delivery/models/image_response.dart';
+import 'package:delivery/models/lista_opciones.dart';
 import 'package:delivery/models/productos.dart';
 import 'package:delivery/models/usuario.dart';
 import 'package:flutter/foundation.dart';
@@ -33,6 +34,8 @@ class AuthService with ChangeNotifier {
     isLoggedIn();
   }
   late Usuario usuario;
+
+  List<ListadoOpcionesTemp> listadoTemp = [];
 
   /*Imagen*/
   late File image;
@@ -239,7 +242,7 @@ class AuthService with ChangeNotifier {
                   activo: e.tipo == eleccion1 || e.tipo == eleccion2
                       ? true
                       : false);
-            }).toList()))
+            }).toList(), maximo: e.maximo, minimo: e.minimo))
         .toList();
 
     var enCesta = productoAgregado(id: producto.id, opciones: opciones);
@@ -315,6 +318,74 @@ class AuthService with ChangeNotifier {
     await Future.delayed(const Duration(seconds: 1));
 
     usuario.cesta.productos.removeAt(pos);
+    notifyListeners();
+  }
+
+  bool cambiarTarjetaCesta(
+      {required String id, required String tarjetaPredeterminada}) {
+    if (tarjetaPredeterminada.isEmpty) {
+      usuario.cesta.tarjeta = id;
+      notifyListeners();
+    } else {
+      if (tarjetaPredeterminada == id) {
+        usuario.cesta.tarjeta = '';
+        notifyListeners();
+      } else {
+        usuario.cesta.tarjeta = id;
+        notifyListeners();
+      }
+    }
+
+    return true;
+  }
+
+  bool cambiarDireccionCesta(
+      {required Direccion direccion, required List<Direccion> direcciones}) {
+    final busqueda =
+        direcciones.indexWhere((element) => element.predeterminado);
+
+    if (busqueda == -1) {
+      var direccionPlus = Direccion(
+          id: direccion.id,
+          coordenadas: direccion.coordenadas,
+          predeterminado: direccion.predeterminado,
+          titulo: direccion.titulo);
+
+      usuario.cesta.direccion = direccionPlus;
+      notifyListeners();
+    } else {
+      if (direccion.id == direcciones[busqueda].id) {
+        usuario.cesta.direccion.titulo = '';
+        notifyListeners();
+      } else {
+        var direccionPlus = Direccion(
+            id: direccion.id,
+            coordenadas: direccion.coordenadas,
+            predeterminado: direccion.predeterminado,
+            titulo: direccion.titulo);
+
+        usuario.cesta.direccion = direccionPlus;
+        notifyListeners();
+      }
+    }
+
+    return true;
+  }
+
+  modificarListadoTemp({required String opcion, required int index}) {
+    if (listadoTemp.asMap().containsKey(index)) {
+      listadoTemp[index].listado.add(opcion);
+      notifyListeners();
+    } else {
+      final listado = [opcion];
+      final opcionNueva = ListadoOpcionesTemp(index: index, listado: listado);
+      listadoTemp.add(opcionNueva);
+      notifyListeners();
+    }
+  }
+
+  vaciarElementosTemp() {
+    listadoTemp = [];
     notifyListeners();
   }
 }

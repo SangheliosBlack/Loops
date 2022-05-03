@@ -10,14 +10,16 @@ class ListaProductos {
     ListaProductos({
         required this.ok,
         required this.productos,
+        required this.nombre
     });
 
     bool ok;
+    String nombre;
     List<ListaProductosCategoria> productos;
 
     factory ListaProductos.fromJson(Map<String, dynamic> json) => ListaProductos(
         ok: json["ok"],
-        productos: List<ListaProductosCategoria>.from(json["productos"].map((x) => ListaProductosCategoria.fromJson(x))),
+        productos: List<ListaProductosCategoria>.from(json["productos"].map((x) => ListaProductosCategoria.fromJson(x))), nombre: json['nombre'] ?? '',
     );
 
     Map<String, dynamic> toJson() => {

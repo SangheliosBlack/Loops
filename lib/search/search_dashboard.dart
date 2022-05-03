@@ -1,9 +1,14 @@
+import 'package:delivery/helpers/haversine.dart';
 import 'package:delivery/models/busqueda_response.dart';
 import 'package:delivery/models/busqueda_result.dart';
+import 'package:delivery/models/direccion.dart';
+import 'package:delivery/service/direcciones.service.dart';
 import 'package:delivery/service/traffic_service.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+
+import '../service/auth_service.dart';
 
 class SearchBusqueda extends SearchDelegate<BusquedaResult> {
   @override
@@ -82,7 +87,6 @@ class SearchBusqueda extends SearchDelegate<BusquedaResult> {
 
   Widget _construirResultadosSugerencias() {
     if (query.isEmpty) {
-      
       return Container();
     }
 
@@ -131,6 +135,9 @@ class SearchBusqueda extends SearchDelegate<BusquedaResult> {
             ),
             itemBuilder: (_, i) {
               final tienda = lugares[i];
+              final authService = Provider.of<AuthService>(context);
+              final direccionesService =
+                  Provider.of<DireccionesService>(context);
               return GestureDetector(
                 behavior: HitTestBehavior.translucent,
                 onTap: () {
@@ -159,6 +166,12 @@ class SearchBusqueda extends SearchDelegate<BusquedaResult> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          Text(
+                            'Restaurante',
+                            style: GoogleFonts.quicksand(
+                                color: Colors.black, fontSize: 12),
+                          ),
+                          const SizedBox(height: 0),
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -186,29 +199,7 @@ class SearchBusqueda extends SearchDelegate<BusquedaResult> {
                               ),
                             ],
                           ),
-                          Text(
-                            'Restaurante',
-                            style: GoogleFonts.quicksand(
-                                color: Colors.black, fontSize: 12),
-                          ),
-                          const SizedBox(height: 5),
-                          RatingBar.builder(
-                            initialRating: 3.5,
-                            minRating: 1,
-                            direction: Axis.horizontal,
-                            allowHalfRating: true,
-                            itemCount: 5,
-                            itemPadding:
-                                const EdgeInsets.symmetric(horizontal: 0.0),
-                            itemBuilder: (context, _) => const Icon(
-                              Icons.attach_money,
-                              color: Colors.black,
-                            ),
-                            itemSize: 13,
-                            unratedColor: Colors.grey,
-                            onRatingUpdate: (rating) {},
-                          ),
-                          const SizedBox(height: 5),
+                          const SizedBox(height: 8),
                           Row(
                             children: [
                               const Icon(
@@ -218,10 +209,10 @@ class SearchBusqueda extends SearchDelegate<BusquedaResult> {
                               ),
                               const SizedBox(width: 3),
                               Text(
-                                '2.4 km Centro, Lagos de Moreno ',
+                                '${(calculateDistance(lat1: tienda.coordenadas.latitud, lon1: tienda.coordenadas.longitud, lat2: direccionesService.direcciones[authService.usuario.cesta.direccion.titulo != '' ? direccionesService.direcciones.indexWhere((element) => authService.usuario.cesta.direccion.titulo == element.titulo) : obtenerFavorito(direccionesService.direcciones) != -1 ? obtenerFavorito(direccionesService.direcciones) : 0].coordenadas.lat, lon2: direccionesService.direcciones[authService.usuario.cesta.direccion.titulo != '' ? direccionesService.direcciones.indexWhere((element) => authService.usuario.cesta.direccion.titulo == element.titulo) : obtenerFavorito(direccionesService.direcciones) != -1 ? obtenerFavorito(direccionesService.direcciones) : 0].coordenadas.lng).toStringAsFixed(2))} km Centro, Lagos de Moreno ',
                                 style: GoogleFonts.quicksand(
-                                    color: Colors.black, fontSize: 11),
-                              ),
+                                    color: Colors.black, fontSize: 13),
+                              )
                             ],
                           )
                         ],
@@ -235,5 +226,11 @@ class SearchBusqueda extends SearchDelegate<BusquedaResult> {
         );
       },
     );
+  }
+
+  obtenerFavorito(List<Direccion> direcciones) {
+    final busqueda =
+        direcciones.indexWhere((element) => element.predeterminado);
+    return busqueda;
   }
 }

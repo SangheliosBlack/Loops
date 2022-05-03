@@ -90,7 +90,6 @@ class TrafficService {
 
     final data = busquedaFromJson(resp.body);
 
-    print(data);
     return data;
   }
 

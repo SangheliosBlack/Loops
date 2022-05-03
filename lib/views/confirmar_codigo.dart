@@ -54,170 +54,172 @@ class _ConfirmarCodigoState extends State<ConfirmarCodigo> with CodeAutoFill {
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     final authService = Provider.of<AuthService>(context);
-    return ListView(
-      physics: const BouncingScrollPhysics(),
-      shrinkWrap: true,
-      padding: const EdgeInsets.symmetric(vertical: 70),
-      children: [
-        Container(
-          padding: const EdgeInsets.only(left: 20, bottom: 20),
-          child: Row(
+    return Scaffold(
+      body: ListView(
+        physics: const BouncingScrollPhysics(),
+        shrinkWrap: true,
+        padding: const EdgeInsets.symmetric(vertical: 70),
+        children: [
+          Container(
+            padding: const EdgeInsets.only(left: 20, bottom: 20),
+            child: Row(
+              children: [
+                GestureDetector(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    behavior: HitTestBehavior.translucent,
+                    child: Row(
+                      children: [
+                        const Icon(Icons.arrow_back_ios_rounded),
+                        const SizedBox(width: 5),
+                        Text(
+                          'Regresar',
+                          style: GoogleFonts.quicksand(),
+                        )
+                      ],
+                    )),
+              ],
+            ),
+          ),
+          const SizedBox(height: 5),
+          Text(
+            'Codigo enviado al numero',
+            style: GoogleFonts.quicksand(color: Colors.grey, fontSize: 22),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 10),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              GestureDetector(
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                  behavior: HitTestBehavior.translucent,
-                  child: Row(
-                    children: [
-                      const Icon(Icons.arrow_back_ios_rounded),
-                      const SizedBox(width: 5),
-                      Text(
-                        'Regresar',
-                        style: GoogleFonts.quicksand(),
-                      )
-                    ],
-                  )),
+              Text(
+                '+52  ',
+                style: GoogleFonts.quicksand(
+                  color: Colors.black.withOpacity(.8),
+                  fontSize: 22,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              Text(
+                widget.numero,
+                style: GoogleFonts.quicksand(
+                  color: Colors.black.withOpacity(.8),
+                  fontSize: 22,
+                ),
+                textAlign: TextAlign.center,
+              ),
             ],
           ),
-        ),
-        const SizedBox(height: 5),
-        Text(
-          'Codigo enviado al numero',
-          style: GoogleFonts.quicksand(color: Colors.grey, fontSize: 22),
-          textAlign: TextAlign.center,
-        ),
-        const SizedBox(height: 10),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text(
-              '+52  ',
-              style: GoogleFonts.quicksand(
-                color: Colors.black.withOpacity(.8),
-                fontSize: 22,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            Text(
-              widget.numero,
-              style: GoogleFonts.quicksand(
-                color: Colors.black.withOpacity(.8),
-                fontSize: 22,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-        Container(
-          margin: const EdgeInsets.only(top: 30),
-          padding: const EdgeInsets.all(25),
-          child: PinFieldAutoFill(
-            keyboardType: TextInputType.number,
-            controller: controller,
-            onCodeChanged: (code) {},
-            currentCode: otpCode ?? '',
-            decoration: UnderlineDecoration(
-                hintText: '    ',
-                hintTextStyle: GoogleFonts.quicksand(
-                    color: Colors.grey.withOpacity(.2), fontSize: 30),
-                colorBuilder: FixedColorBuilder(Colors.grey.withOpacity(.2)),
-                textStyle: GoogleFonts.quicksand(
-                    color: Colors.black.withOpacity(.8), fontSize: 30)),
-            onCodeSubmitted: (valor) {},
-            codeLength: 4,
-          ),
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text(
-              'Reenvio de codigo en',
-              style: GoogleFonts.quicksand(color: Colors.grey),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(width: 2),
-            Column(
-              children: [
-                SlideCountdown(
-                  onDone: () {
-                    Navigator.pop(context);
-                  },
-                  fade: false,
-                  decoration: const BoxDecoration(color: Colors.white),
-                  duration: const Duration(minutes: 10),
+          Container(
+            margin: const EdgeInsets.only(top: 30),
+            padding: const EdgeInsets.all(25),
+            child: PinFieldAutoFill(
+              keyboardType: TextInputType.number,
+              controller: controller,
+              onCodeChanged: (code) {},
+              currentCode: otpCode ?? '',
+              decoration: UnderlineDecoration(
+                  hintText: '    ',
+                  hintTextStyle: GoogleFonts.quicksand(
+                      color: Colors.grey.withOpacity(.2), fontSize: 30),
+                  colorBuilder: FixedColorBuilder(Colors.grey.withOpacity(.2)),
                   textStyle: GoogleFonts.quicksand(
-                      color: Colors.grey.withOpacity(.7),
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14),
-                ),
-              ],
+                      color: Colors.black.withOpacity(.8), fontSize: 30)),
+              onCodeSubmitted: (valor) {},
+              codeLength: 4,
             ),
-          ],
-        ),
-        const SizedBox(height: 10),
-        Builder(builder: (_) {
-          return GestureDetector(
-            behavior: HitTestBehavior.translucent,
-            onTap: send
-                ? null
-                : () {
-                    if (controller.text.length == 4) {
-                      checkCode(
-                          codigo: controller.text,
-                          numero: widget.numero,
-                          authService: authService);
-                    } else {
-                      final snackBar = SnackBar(
-                        duration: const Duration(seconds: 2),
-                        backgroundColor: Colors.red,
-                        content: Text(
-                          'Codigo invalido',
-                          style: GoogleFonts.quicksand(
-                              fontWeight: FontWeight.bold),
-                        ),
-                      );
-
-                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                    }
-                  },
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                AnimatedContainer(
-                    duration: const Duration(milliseconds: 300),
-                    width: send ? 50 : width - 50,
-                    margin: const EdgeInsets.symmetric(horizontal: 25),
-                    alignment: Alignment.center,
-                    padding:
-                        const EdgeInsets.symmetric(vertical: 15, horizontal: 0),
-                    decoration: BoxDecoration(
-                        border: Border.all(
-                            width: 1, color: Colors.grey.withOpacity(.8)),
-                        borderRadius: send
-                            ? BorderRadius.circular(100)
-                            : BorderRadius.circular(25)),
-                    child: send
-                        ? const SizedBox(
-                            width: 19,
-                            height: 19,
-                            child: CircularProgressIndicator(
-                              color: Colors.black,
-                              strokeWidth: 1,
-                            ),
-                          )
-                        : Text('Verificar',
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                'Reenvio de codigo en',
+                style: GoogleFonts.quicksand(color: Colors.grey),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(width: 2),
+              Column(
+                children: [
+                  SlideCountdown(
+                    onDone: () {
+                      Navigator.pop(context);
+                    },
+                    fade: false,
+                    decoration: const BoxDecoration(color: Colors.white),
+                    duration: const Duration(minutes: 10),
+                    textStyle: GoogleFonts.quicksand(
+                        color: Colors.grey.withOpacity(.7),
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Builder(builder: (_) {
+            return GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onTap: send
+                  ? null
+                  : () {
+                      if (controller.text.length == 4) {
+                        checkCode(
+                            codigo: controller.text,
+                            numero: widget.numero,
+                            authService: authService);
+                      } else {
+                        final snackBar = SnackBar(
+                          duration: const Duration(seconds: 2),
+                          backgroundColor: Colors.red,
+                          content: Text(
+                            'Codigo invalido',
                             style: GoogleFonts.quicksand(
+                                fontWeight: FontWeight.bold),
+                          ),
+                        );
+    
+                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                      }
+                    },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  AnimatedContainer(
+                      duration: const Duration(milliseconds: 300),
+                      width: send ? 50 : width - 50,
+                      margin: const EdgeInsets.symmetric(horizontal: 25),
+                      alignment: Alignment.center,
+                      padding:
+                          const EdgeInsets.symmetric(vertical: 15, horizontal: 0),
+                      decoration: BoxDecoration(
+                          border: Border.all(
+                              width: 1, color: Colors.grey.withOpacity(.8)),
+                          borderRadius: send
+                              ? BorderRadius.circular(100)
+                              : BorderRadius.circular(25)),
+                      child: send
+                          ? const SizedBox(
+                              width: 19,
+                              height: 19,
+                              child: CircularProgressIndicator(
                                 color: Colors.black,
-                                fontWeight: FontWeight.w600))),
-              ],
-            ),
-          );
-        })
-      ],
+                                strokeWidth: 1,
+                              ),
+                            )
+                          : Text('Verificar',
+                              style: GoogleFonts.quicksand(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w600))),
+                ],
+              ),
+            );
+          })
+        ],
+      ),
     );
   }
 

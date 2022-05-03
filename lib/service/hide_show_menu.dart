@@ -10,11 +10,11 @@ class GeneralActions with ChangeNotifier {
     notifyListeners();
   }
 
-   PageController controller2 = PageController(initialPage: 0, keepPage: true);
+  PageController controller2 = PageController(initialPage: 0, keepPage: true);
 
   controllerNavigate(int page) {
     controller2.animateToPage(page,
-        duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
+        duration: const Duration(milliseconds: 100), curve: Curves.ease);
     paginaActual = page;
   }
 

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:delivery/global/styles.dart';
 import 'package:delivery/helpers/calculando_alerta.dart';
 import 'package:delivery/helpers/mostrar_carga.dart';
@@ -13,10 +14,10 @@ import 'package:delivery/service/stripe_service.dart';
 import 'package:delivery/service/tarjetas.service.dart';
 import 'package:delivery/views/extras/direcciones_seleccion.dart';
 import 'package:delivery/views/extras/metodo_predeterminado.dart';
+import 'package:delivery/views/extras/nuevo_metodo.dart';
 import 'package:delivery/views/extras/ver_producto.dart';
 import 'package:delivery/widgets/direcciones_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -178,11 +179,32 @@ class OrderItems extends StatelessWidget {
                 tag: producto.id,
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(15),
-                  child: const Image(
-                    image: NetworkImage(
-                        'https://www.pequeocio.com/wp-content/uploads/2010/11/hamburguesas-caseras-800x717.jpg'),
-                    fit: BoxFit.cover,
-                  ),
+                  child: CachedNetworkImage(
+                      key: UniqueKey(),
+                      fit: BoxFit.cover,
+                      imageUrl:
+                          'https://www.pequeocio.com/wp-content/uploads/2010/11/hamburguesas-caseras-800x717.jpg',
+                      imageBuilder: (context, imageProvider) => Container(
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                image: imageProvider,
+                                fit: BoxFit.cover,
+                                colorFilter: ColorFilter.mode(
+                                  Colors.black.withOpacity(.15),
+                                  BlendMode.color,
+                                ),
+                              ),
+                            ),
+                          ),
+                      placeholder: (context, url) => Container(
+                          padding: const EdgeInsets.all(30),
+                          child: const CircularProgressIndicator(
+                            strokeWidth: 1,
+                            color: Colors.black,
+                          )),
+                      errorWidget: (context, url, error) {
+                        return const Icon(Icons.error);
+                      }),
                 ),
               ),
             ),
@@ -246,6 +268,18 @@ class OrderItems extends StatelessWidget {
                     mostrarCarga(context);
                     await authService.eliminarProductoCesta(pos: index);
                     Navigator.pop(context);
+                    final snackBar = SnackBar(
+                      duration: const Duration(seconds: 2),
+                      backgroundColor: const Color.fromRGBO(0, 0, 0, 1),
+                      content: Text(
+                        '${producto.nombre} eliminado',
+                        style: GoogleFonts.quicksand(
+                          color: Colors.white,
+                        ),
+                      ),
+                    );
+
+                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
                   },
                   child: Container(
                     margin: const EdgeInsets.only(bottom: 13),
@@ -272,6 +306,18 @@ class OrderItems extends StatelessWidget {
                           mostrarCarga(context);
                           await authService.eliminarProductoCesta(pos: index);
                           Navigator.pop(context);
+                          final snackBar = SnackBar(
+                            duration: const Duration(seconds: 2),
+                            backgroundColor: const Color.fromRGBO(0, 0, 0, 1),
+                            content: Text(
+                              '${producto.nombre} eliminado',
+                              style: GoogleFonts.quicksand(
+                                color: Colors.white,
+                              ),
+                            ),
+                          );
+
+                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
                         } else {
                           authService.actulizarCantidad(
                               cantidad: (producto.cantidad - 1).toInt(),
@@ -435,7 +481,8 @@ class DeliveryOptionsContainer extends StatelessWidget {
     return DireccionBuildWidget(
       direccion: direccionesService.direcciones[
           authService.usuario.cesta.direccion.titulo != ''
-              ? authService.usuario.cesta.direccion
+              ? direccionesService.direcciones.indexWhere((element) =>
+                  authService.usuario.cesta.direccion.titulo == element.titulo)
               : obtenerFavorito(direccionesService.direcciones) != -1
                   ? obtenerFavorito(direccionesService.direcciones)
                   : 0],
@@ -557,12 +604,9 @@ class PaymentSummary extends StatelessWidget {
                         ),
                       ),
                     )
-                  : GestureDetector(
-                      behavior: HitTestBehavior.translucent,
-                      onTap: () {
-                        navigationService.navegarDraw(
-                            ruta: '/drawer/metodosPago');
-                      },
+                  : AnimatedOpacity(
+                      duration: const Duration(microseconds: 1),
+                      opacity: 0,
                       child: Container(
                           padding: const EdgeInsets.symmetric(
                               vertical: 5, horizontal: 0),
@@ -662,25 +706,62 @@ class PaymentSummary extends StatelessWidget {
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(
-                                        busqueda2 != -1
-                                            ? (tarjetasService
-                                                    .listaTarjetas[busqueda2]
-                                                    .card
-                                                    .brand)
-                                                .capitalize()
-                                            : (tarjetasService
-                                                    .listaTarjetas[
-                                                        busqueda != -1
-                                                            ? busqueda
-                                                            : 0]
-                                                    .card
-                                                    .brand)
-                                                .capitalize(),
-                                        style: GoogleFonts.quicksand(
-                                          fontSize: 17,
-                                          color: Colors.black.withOpacity(1),
-                                        )),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                            busqueda2 != -1
+                                                ? (tarjetasService
+                                                        .listaTarjetas[
+                                                            busqueda2]
+                                                        .card
+                                                        .brand)
+                                                    .capitalize()
+                                                : (tarjetasService
+                                                        .listaTarjetas[
+                                                            busqueda != -1
+                                                                ? busqueda
+                                                                : 0]
+                                                        .card
+                                                        .brand)
+                                                    .capitalize(),
+                                            style: GoogleFonts.quicksand(
+                                              fontSize: 17,
+                                              color:
+                                                  Colors.black.withOpacity(1),
+                                            )),
+                                        const SizedBox(
+                                          width: 5,
+                                        ),
+                                        Text(
+                                            busqueda2 != -1
+                                                ? tarjetasService
+                                                            .listaTarjetas[
+                                                                busqueda2]
+                                                            .id ==
+                                                        customerService
+                                                            .tarjetaPredeterminada
+                                                    ? 'Predeterminada'
+                                                    : ''
+                                                : tarjetasService
+                                                            .listaTarjetas[
+                                                                busqueda != -1
+                                                                    ? busqueda
+                                                                    : 0]
+                                                            .id ==
+                                                        customerService
+                                                            .tarjetaPredeterminada
+                                                    ? 'Predeterminada'
+                                                    : '',
+                                            style: GoogleFonts.quicksand(
+                                              fontSize: 11,
+                                              color: Colors.red,
+                                            )),
+                                      ],
+                                    ),
                                     Row(
                                       children: [
                                         Text(
@@ -723,8 +804,7 @@ class PaymentSummary extends StatelessWidget {
                                                     .last4,
                                             style: GoogleFonts.quicksand(
                                               fontSize: 14,
-                                              color:
-                                                  Colors.grey.withOpacity(.7),
+                                              color: Colors.grey.withOpacity(1),
                                             ))
                                       ],
                                     )
@@ -736,39 +816,62 @@ class PaymentSummary extends StatelessWidget {
                               activeColor: Colors.blue,
                               groupValue:
                                   authService.usuario.cesta.efectivo ? 2 : 1,
-                              onChanged: (value) {
-                                authService.cambiarMetodoDePago(
-                                    tipo: int.parse(value.toString()));
-                              },
+                              onChanged: tarjetasService.listaTarjetas.isEmpty
+                                  ? null
+                                  : (value) {
+                                      authService.cambiarMetodoDePago(
+                                          tipo: int.parse(value.toString()));
+                                    },
                               value: 1,
                             )
                           ],
                         ),
                       )
-                    : Container(
-                        margin: const EdgeInsets.only(top: 10, bottom: 10),
-                        padding: const EdgeInsets.symmetric(horizontal: 5),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                              children: [
-                                const SizedBox(
-                                  width: 5,
-                                ),
-                                const Icon(Icons.credit_card),
-                                const SizedBox(
-                                  width: 20,
-                                ),
-                                Text('Agregar tarjeta',
-                                    style: GoogleFonts.quicksand(
-                                      fontSize: 17,
-                                      color: Colors.black.withOpacity(.8),
-                                    ))
-                              ],
-                            ),
-                            const Icon(Icons.add)
-                          ],
+                    : GestureDetector(
+                        behavior: HitTestBehavior.translucent,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    const AgregarNuevoMetodo()),
+                          );
+                        },
+                        child: Container(
+                          margin: const EdgeInsets.only(top: 10, bottom: 10),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                children: [
+                                  Container(
+                                    width: 65,
+                                    height: 45,
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        color: Colors.black),
+                                    child: const Center(
+                                      child: Icon(
+                                        Icons.credit_card,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    width: 12,
+                                  ),
+                                  Text('Agregar tarjeta',
+                                      style: GoogleFonts.quicksand(
+                                        fontSize: 17,
+                                        color: Colors.black.withOpacity(.8),
+                                      ))
+                                ],
+                              ),
+                              Container(
+                                  margin: const EdgeInsets.only(right: 13),
+                                  child: const Icon(Icons.add))
+                            ],
+                          ),
                         ),
                       ),
                 const SizedBox(height: 5),
@@ -949,7 +1052,7 @@ class PaymentSummary extends StatelessWidget {
                 style: GoogleFonts.quicksand(),
               ),
               Text(
-                '\$ ${authService.calcularTotal() > 0 ? '19.00' : '0.00'}',
+                '\$ ${authService.calcularTotal() > 0 ? '18.00' : '0.00'}',
                 style: GoogleFonts.quicksand(fontSize: 18),
               )
             ],
@@ -963,7 +1066,7 @@ class PaymentSummary extends StatelessWidget {
                 style: GoogleFonts.quicksand(),
               ),
               Text(
-                '\$ ${authService.calcularTotal() > 0 ? '12.00' : '0.00'}',
+                '\$ ${authService.calcularTotal() > 0 ? '11.00' : '0.00'}',
                 style: GoogleFonts.quicksand(fontSize: 18),
               )
             ],
@@ -977,7 +1080,7 @@ class PaymentSummary extends StatelessWidget {
                 style: GoogleFonts.quicksand(),
               ),
               Text(
-                '\$ ${(authService.calcularTotal() + 12 + 19).toStringAsFixed(2)}',
+                '\$ ${authService.calcularTotal() == 0 ? "0.00" : (authService.calcularTotal() + 11 + 18).toStringAsFixed(2)}',
                 style: GoogleFonts.quicksand(fontSize: 18),
               )
             ],
