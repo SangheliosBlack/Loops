@@ -81,6 +81,7 @@ class VerTodoView extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: const [
                               LinearProgressIndicator(
+                                minHeight: 1,
                                 backgroundColor:
                                     Color.fromRGBO(234, 248, 248, 0),
                                 color: Color.fromRGBO(62, 204, 191, 1),

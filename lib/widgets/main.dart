@@ -147,17 +147,15 @@ class ListadoEstablecimientos extends StatelessWidget {
         children: [
           Expanded(
               child: ListView.separated(
-                  physics: const NeverScrollableScrollPhysics(),
+                  physics: const BouncingScrollPhysics(),
                   padding:
                       const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
                   scrollDirection: Axis.horizontal,
                   itemBuilder: (BuildContext context, int index) {
-                    return AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 200),
-                        child: CartaNegocio(
-                          tienda: llenarPantallaProvider.tiendas[index],
-                          small: false,
-                        ));
+                    return CartaNegocio(
+                      tienda: llenarPantallaProvider.tiendas[index],
+                      small: false,
+                    );
                   },
                   separatorBuilder: (BuildContext context, int index) =>
                       const SizedBox(width: 15),

@@ -20,6 +20,7 @@ class Producto {
       required this.tienda,
       required this.cantidad,
       required this.sku,
+      required this.extra,
       required this.opciones});
 
   String id;
@@ -32,6 +33,7 @@ class Producto {
   String tienda;
   List<Opcion> opciones;
   num cantidad;
+  num extra;
   String sku;
 
   factory Producto.fromJson(Map<String, dynamic> json) => Producto(
@@ -45,6 +47,7 @@ class Producto {
         disponible: json["disponible"],
         tienda: json['tienda'],
         sku: json['sku'] ?? '',
+        extra: json['extra'] ?? 0,
         opciones:
             List<Opcion>.from(json["opciones"].map((x) => Opcion.fromJson(x))),
       );
@@ -57,8 +60,11 @@ class Producto {
         "descuentoP": descuentoP,
         "descuentoC": descuentoC,
         "disponible": disponible,
+        "tienda": tienda,
+        "cantidad": cantidad,
+        "extra": extra,
         "sku": sku,
-        "opciones": opciones
+        "opciones": List<dynamic>.from(opciones.map((x) => x.toJson()))
       };
 }
 
@@ -73,8 +79,8 @@ class Opcion extends Equatable {
 
   String titulo;
   List<Listado> listado;
-  num maximo;
-  num minimo;
+  int maximo;
+  int minimo;
 
   factory Opcion.fromJson(Map<String, dynamic> json) => Opcion(
         titulo: json["titulo"],
@@ -84,25 +90,44 @@ class Opcion extends Equatable {
         maximo: json["maximo"],
       );
 
+  Map<String, dynamic> toJson() => {
+        "titulo": titulo,
+        "listado": listado,
+        "maximo": maximo,
+        "minimo": minimo,
+      };
+
   @override
   List<Object?> get props => [titulo, listado];
 }
 
 class Listado extends Equatable {
-  Listado({required this.precio, required this.tipo, required this.activo});
+  Listado(
+      {required this.precio,
+      required this.tipo,
+      required this.activo,
+      required this.auto,
+      required this.fijo});
 
   int precio;
   String tipo;
   bool activo;
+  bool auto;
+  bool fijo;
 
   factory Listado.fromJson(Map<String, dynamic> json) => Listado(
+      auto: json["auto"] ?? false,
       precio: json["precio"],
-      tipo: json["tipo"],
-      activo: json['activo'] ?? false);
+      tipo: json["tipo"] ?? false,
+      activo: json['activo'] ?? false,
+      fijo: json['fijo'] ?? false);
 
   Map<String, dynamic> toJson() => {
         "precio": precio,
         "tipo": tipo,
+        "auto": auto,
+        "activo": activo,
+        "fijo": fijo
       };
 
   @override

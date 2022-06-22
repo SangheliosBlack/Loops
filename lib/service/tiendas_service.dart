@@ -21,19 +21,6 @@ class TiendasService with ChangeNotifier {
     notifyListeners();
   }
 
-  late Tienda _tienda;
-
-  Tienda get tienda => _tienda;
-
-  set tienda(Tienda tiendas) {
-    _tienda = tiendas;
-    notifyListeners();
-  }
-
-  TiendasService() {
-    /*getTienda();*/
-  }
-
   Future<List<Tienda>> verTodoTienda() async {
     await Future.delayed(const Duration(seconds: 1));
     try {
@@ -103,8 +90,6 @@ class TiendasService with ChangeNotifier {
           });
 
       if (resp.statusCode == 200) {
-        tienda.horario.apertura = DateTime.parse('2020-01-01T' + apertura);
-        tienda.horario.cierre = DateTime.parse('2020-01-01T' + cierre);
         return true;
       } else {
         return false;
@@ -116,8 +101,6 @@ class TiendasService with ChangeNotifier {
 
   Future<bool> cambiarStatus(String id, bool disponible) async {
     final data = {"tienda": id, "disponible": disponible};
-
-    tienda.disponible = disponible;
 
     try {
       final resp = await http.post(
@@ -151,8 +134,6 @@ class TiendasService with ChangeNotifier {
           });
 
       if (resp.statusCode == 200) {
-        tienda.aniversario = DateTime.parse(aniversario);
-
         notifyListeners();
 
         return true;
@@ -194,16 +175,25 @@ class TiendasService with ChangeNotifier {
     }
   }
 
-  getTienda() async {
+  Future<Tienda?> getTienda({required String tienda}) async {
+    final data = {"tienda": tienda};
+
+    await Future.delayed(const Duration(seconds: 1));
     try {
-      final resp = await http
-          .get(Uri.parse('${Statics.apiUrl}/tiendas/obtenerTienda'), headers: {
-        'Content-Type': 'application/json',
-        'x-token': await AuthService.getToken()
-      });
-      tienda = tiendaFromJson(resp.body);
+      final resp = await http.post(
+          Uri.parse('${Statics.apiUrl}/tiendas/obtenerTienda'),
+          body: jsonEncode(data),
+          headers: {
+            'Content-Type': 'application/json',
+            'x-token': await AuthService.getToken()
+          });
+      final tienda = tiendaFromJson(resp.body);
+
+      print(tienda.nombre);
+
+      return tienda;
     } catch (e) {
-      debugPrint(e.toString());
+      return null;
     }
   }
 
@@ -213,11 +203,15 @@ class TiendasService with ChangeNotifier {
   }
 
   Future<List<ListaProductosCategoria>> obtenerProductos(
-      {required String nombre}) async {
+      {required String nombre, required String id}) async {
     await Future.delayed(const Duration(seconds: 2));
+
+    final data = {"id": id};
+
     try {
-      final resp = await http.get(
+      final resp = await http.post(
           Uri.parse('${Statics.apiUrl}/tiendas/obtenerProductosTienda'),
+          body: jsonEncode(data),
           headers: {
             'Content-Type': 'application/json',
             'x-token': await AuthService.getToken()

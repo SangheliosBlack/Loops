@@ -1,3 +1,4 @@
+import 'package:delivery/widgets/avatar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -30,20 +31,17 @@ class EditarPerfil extends StatelessWidget {
             Stack(
               children: [
                 Container(
+                  color: Colors.blue,
                   margin: const EdgeInsets.only(right: 25),
                   child: Hero(
                     tag: 'perfil123',
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(1000),
                       child: SizedBox(
-                        width: 100,
-                        height: 100,
-                        child: Container(
-                          padding: const EdgeInsets.all(7),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(1000),
-                            child: const Image(
-                                image: AssetImage('assets/images/peeps.png')),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(1000),
+                          child: const AvatarWidget(
+                            small: false,
                           ),
                         ),
                       ),
@@ -53,14 +51,18 @@ class EditarPerfil extends StatelessWidget {
                 Positioned(
                     bottom: 0,
                     right: 0,
-                    child: Container(
-                      padding: const EdgeInsets.all(7),
-                      decoration: BoxDecoration(
-                          color: Colors.grey[100], shape: BoxShape.circle),
-                      child: const Icon(
-                        Icons.edit,
-                        size: 15,
-                        color: Colors.black,
+                    child: GestureDetector(
+                      behavior: HitTestBehavior.translucent,
+                      onTap: () {},
+                      child: Container(
+                        padding: const EdgeInsets.all(7),
+                        decoration: BoxDecoration(
+                            color: Colors.grey[100], shape: BoxShape.circle),
+                        child: const Icon(
+                          Icons.edit,
+                          size: 15,
+                          color: Colors.black,
+                        ),
                       ),
                     ))
               ],
@@ -106,10 +108,20 @@ class EditarPerfil extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  '+ ' + authService.usuario.numeroCelular,
-                  style: GoogleFonts.quicksand(
-                      color: Colors.black.withOpacity(.8), fontSize: 18),
+                Row(
+                  children: [
+                    Text(
+                      authService.usuario.dialCode,
+                      style: GoogleFonts.quicksand(
+                          color: Colors.blue, fontSize: 18),
+                    ),
+                    const SizedBox(width: 7),
+                    Text(
+                      authService.usuario.numeroCelular,
+                      style: GoogleFonts.quicksand(
+                          color: Colors.black.withOpacity(.8), fontSize: 18),
+                    ),
+                  ],
                 ),
                 Text(
                   'Verificado',

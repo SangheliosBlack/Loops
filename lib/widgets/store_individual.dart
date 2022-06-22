@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:image_stack/image_stack.dart';
 
 
 showInfo(BuildContext context) async => showModalBottomSheet(
@@ -299,13 +298,7 @@ class HeaderStoreIndividual extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<String> images = [
-      "https://img.freepik.com/foto-gratis/hombre-guapo-caucasico-aislado-pared-beige-dando-gesto-pulgares-arriba_1368-92335.jpg?size=626&ext=jpg",
-      "https://img.freepik.com/foto-gratis/hombre-guapo-caucasico-aislado-pared-beige-dando-gesto-pulgares-arriba_1368-92335.jpg?size=626&ext=jpg",
-      "https://img.freepik.com/foto-gratis/hombre-guapo-caucasico-aislado-pared-beige-dando-gesto-pulgares-arriba_1368-92335.jpg?size=626&ext=jpg",
-      "https://img.freepik.com/foto-gratis/hombre-guapo-caucasico-aislado-pared-beige-dando-gesto-pulgares-arriba_1368-92335.jpg?size=626&ext=jpg"
-    ];
-
+    
     return Container(
       margin: const EdgeInsets.only(top: 90),
       padding: const EdgeInsets.symmetric(horizontal: 25),
@@ -429,15 +422,7 @@ class HeaderStoreIndividual extends StatelessWidget {
                   const SizedBox(width: 6),
                   Text('Reseñas', style: Styles.letterCustom(13, false, .6))
                 ]),
-                ImageStack(
-                    showTotalCount: true,
-                    extraCountTextStyle: GoogleFonts.quicksand(
-                        fontSize: 12, color: Theme.of(context).primaryColor),
-                    imageRadius: 30,
-                    imageBorderColor: Colors.white,
-                    imageCount: 7,
-                    imageList: images,
-                    totalCount: 20)
+                
               ],
             ),
           )

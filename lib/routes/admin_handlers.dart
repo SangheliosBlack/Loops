@@ -1,5 +1,6 @@
 import 'package:delivery/service/auth_service.dart';
 import 'package:delivery/service/permission_status.dart';
+import 'package:delivery/views/admin/admin_dasboard.dart';
 import 'package:delivery/views/allow_gps_permission.dart';
 import 'package:delivery/views/autentificar_celular.dart';
 import 'package:delivery/views/confirmar_codigo.dart';
@@ -7,6 +8,7 @@ import 'package:delivery/views/dashboard_view.dart';
 import 'package:delivery/views/gps_disable_view.dart';
 import 'package:delivery/views/register_view.dart';
 import 'package:fluro/fluro.dart';
+import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
 
 class AdminHandlers {
@@ -16,6 +18,13 @@ class AdminHandlers {
     if (authService.authStatus == AuthStatus.notAuthenticated) {
       return const AutentificarCelular();
     } else {
+      if (kIsWeb) {
+        if (authService.usuario.numeroCelular == '4741030509') {
+          return const AdminDashBoard();
+        } else {
+          return const DashboardView();
+        }
+      }
       if (permissionService.isGranted) {
         if (permissionService.isEnabled) {
           return const DashboardView();
@@ -49,7 +58,10 @@ class AdminHandlers {
     final authService = Provider.of<AuthService>(context!);
     final permissionService = Provider.of<PermissionStatusProvider>(context);
     if (authService.authStatus == AuthStatus.notAuthenticated) {
-      return ConfirmarCodigo(numero: params['numero']![0]);
+      return ConfirmarCodigo(
+        numero: params['numero']![0],
+        codigo: params['codigo']![0],
+      );
     } else {
       if (permissionService.isGranted) {
         if (permissionService.isEnabled) {
@@ -68,6 +80,7 @@ class AdminHandlers {
     if (authService.authStatus == AuthStatus.notAuthenticated) {
       return RegisterView(
         numero: params['numero']![0],
+        dialCode: params['dialCode']![0],
       );
     } else {
       return const DashboardView();

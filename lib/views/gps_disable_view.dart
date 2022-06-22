@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:delivery/service/permission_status.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -87,8 +88,8 @@ class _GpsDisableViewState extends State<GpsDisableView> {
                         decoration: BoxDecoration(
                             color:
                                 Theme.of(context).primaryColor.withOpacity(.3)),
-                        child:
-                            const Image(image: AssetImage('assets/images/gps.png')))),
+                        child: const Image(
+                            image: AssetImage('assets/images/gps.png')))),
               ),
             ),
             const SizedBox(height: 20),
@@ -131,7 +132,6 @@ class _GpsDisableViewState extends State<GpsDisableView> {
                       primary: Theme.of(context).primaryColor),
                   onPressed: () async {
                     Geolocator.openLocationSettings();
-                    
                   },
                   child: Text(
                     'Activar',
@@ -155,7 +155,9 @@ class _GpsDisableViewState extends State<GpsDisableView> {
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(15)),
                       primary: Colors.white),
-                  onPressed: () {},
+                  onPressed: () {
+                    SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+                  },
                   child: Text(
                     'Salir',
                     style: GoogleFonts.quicksand(

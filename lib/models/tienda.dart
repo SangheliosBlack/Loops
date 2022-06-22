@@ -18,14 +18,17 @@ class Tienda {
       required this.disponible,
       required this.productos,
       required this.aniversario,
+      required this.direccion,
       required this.createdAt,
       required this.updatedAt,
       required this.uid,
       required this.horario,
       required this.coordenadas,
+      required this.online,
+      required this.imagenPerfil,
       required this.listaProductos});
 
-  List<dynamic> fotografias;
+  String fotografias;
   List<dynamic> inventario;
   List<dynamic> equipo;
   List<dynamic> ventas;
@@ -37,12 +40,15 @@ class Tienda {
   DateTime createdAt;
   DateTime updatedAt;
   String uid;
+  String direccion;
   Horario horario;
+  bool online;
   Coordenadas coordenadas;
   List<Producto> listaProductos;
+  String imagenPerfil;
 
   factory Tienda.fromJson(Map<String, dynamic> json) => Tienda(
-        fotografias: List<dynamic>.from(json["fotografias"].map((x) => x)),
+        fotografias: json['fotografias'],
         inventario: List<dynamic>.from(json["inventario"].map((x) => x)),
         equipo: List<dynamic>.from(json["equipo"].map((x) => x)),
         ventas: List<dynamic>.from(json["ventas"].map((x) => x)),
@@ -58,10 +64,13 @@ class Tienda {
         coordenadas: Coordenadas.fromJson(json["coordenadas"]),
         listaProductos: List<Producto>.from(
             json["listaProductos"].map((x) => Producto.fromJson(x))),
+        imagenPerfil: json['imagen_perfil'],
+        direccion: json['direccion'],
+        online: json['online'],
       );
 
   Map<String, dynamic> toJson() => {
-        "fotografias": List<dynamic>.from(fotografias.map((x) => x)),
+        "fotografias": fotografias,
         "inventario": List<dynamic>.from(inventario.map((x) => x)),
         "equipo": List<dynamic>.from(equipo.map((x) => x)),
         "ventas": List<dynamic>.from(ventas.map((x) => x)),
@@ -73,6 +82,7 @@ class Tienda {
         "createdAt": createdAt.toIso8601String(),
         "updatedAt": updatedAt.toIso8601String(),
         "uid": uid,
+        "online": online,
         "horario": horario.toJson(),
         "coordenadas": coordenadas.toJson(),
         "listaProductos":

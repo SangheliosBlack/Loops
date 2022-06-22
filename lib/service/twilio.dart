@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:delivery/global/enviroment.dart';
+import 'package:delivery/models/twilio_response.dart';
 import 'package:http/http.dart' as http;
 
 class TwilioService {
@@ -10,8 +11,8 @@ class TwilioService {
     return _instace;
   }
 
-  Future<bool> enviarSms(String numero, String hash) async {
-    final data = {'to': numero, 'hash': hash};
+  Future<bool> enviarSms(String numero, String hash, String codigo) async {
+    final data = {'to': numero, 'hash': hash, 'codigo': codigo};
     try {
       final resp = await http.post(
           Uri.parse('${Statics.apiUrl}/twilio/enviarSMS'),
@@ -28,8 +29,9 @@ class TwilioService {
       return false;
     }
   }
-  Future<bool> confirmarSms(String numero, String codigo) async {
-    final data = {'to': numero, 'code': codigo};
+
+  Future<bool> confirmarSms(String numero, String codigo, String area) async {
+    final data = {'to': numero, 'code': codigo, 'codigo': area};
     try {
       final resp = await http.post(
           Uri.parse('${Statics.apiUrl}/twilio/verificarSms'),
@@ -38,7 +40,12 @@ class TwilioService {
             'Content-Type': 'application/json',
           });
       if (resp.statusCode == 200) {
-        return true;
+        final dataParse = twilioResponseFromJson(resp.body);
+        if (dataParse.valid) {
+          return true;
+        } else {
+          return false;
+        }
       } else {
         return false;
       }
@@ -46,5 +53,4 @@ class TwilioService {
       return false;
     }
   }
- 
 }

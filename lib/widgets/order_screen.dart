@@ -12,12 +12,15 @@ import 'package:delivery/service/navigator_service.dart';
 import 'package:delivery/service/permission_status.dart';
 import 'package:delivery/service/stripe_service.dart';
 import 'package:delivery/service/tarjetas.service.dart';
+import 'package:delivery/service/ventas_service.dart';
 import 'package:delivery/views/extras/direcciones_seleccion.dart';
+import 'package:delivery/views/extras/done.dart';
 import 'package:delivery/views/extras/metodo_predeterminado.dart';
 import 'package:delivery/views/extras/nuevo_metodo.dart';
 import 'package:delivery/views/extras/ver_producto.dart';
 import 'package:delivery/widgets/direcciones_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -39,6 +42,7 @@ class SectionOrder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final direccionesService = Provider.of<DireccionesService>(context);
+    final authService = Provider.of<AuthService>(context);
     return Container(
       margin: EdgeInsets.only(
           top: 15,
@@ -103,7 +107,41 @@ class SectionOrder extends StatelessWidget {
                                   ],
                                 )),
                           )
-                    : Container()
+                    : titulo == 'Resumen de orden' &&
+                            authService.usuario.cesta.productos.isNotEmpty
+                        ? GestureDetector(
+                            behavior: HitTestBehavior.translucent,
+                            onTap: () async {
+                              mostrarCarga(context);
+                              await authService.eliminarCesta();
+                              Navigator.pop(context);
+                              final snackBar = SnackBar(
+                                duration: const Duration(seconds: 2),
+                                backgroundColor:
+                                    const Color.fromRGBO(0, 0, 0, 1),
+                                content: Text(
+                                  'Cesta eliminada',
+                                  style: GoogleFonts.quicksand(
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              );
+
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(snackBar);
+                            },
+                            child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 5, horizontal: 0),
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10)),
+                                child: Text(
+                                  'Eliminar todo',
+                                  style: GoogleFonts.quicksand(
+                                      color: Colors.black.withOpacity(.8)),
+                                )),
+                          )
+                        : Container()
               ],
             ),
           ),
@@ -173,8 +211,8 @@ class OrderItems extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SizedBox(
-              height: 80,
-              width: 80,
+              height: 95,
+              width: 95,
               child: Hero(
                 tag: producto.id,
                 child: ClipRRect(
@@ -210,7 +248,7 @@ class OrderItems extends StatelessWidget {
             ),
             Expanded(
               child: Container(
-                height: 80,
+                height: 95,
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -220,21 +258,31 @@ class OrderItems extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
+                          producto.tienda,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.quicksand(
+                            color: Colors.blue,
+                            fontSize: 11,
+                          ),
+                        ),
+                        Text(
                           producto.nombre,
-                          maxLines: 2,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                           style: GoogleFonts.quicksand(
                             color: Colors.black.withOpacity(.8),
-                            fontSize: 16,
+                            fontSize: 17,
                           ),
                         ),
                       ],
                     ),
                     Text(
                       elecciones(producto: producto),
-                      maxLines: 1,
+                      maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: GoogleFonts.quicksand(
-                          color: Colors.grey, fontSize: 13),
+                          color: Colors.grey, fontSize: 12),
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -249,7 +297,10 @@ class OrderItems extends StatelessWidget {
                                       color: Colors.black.withOpacity(.8))),
                             ),
                             const SizedBox(width: 2),
-                            Text(producto.precio.toStringAsFixed(2),
+                            Text(
+                                ((producto.precio + producto.extra) *
+                                        producto.cantidad)
+                                    .toStringAsFixed(2),
                                 style: GoogleFonts.quicksand(
                                     fontSize: 24,
                                     color: Colors.black.withOpacity(.8))),
@@ -284,7 +335,7 @@ class OrderItems extends StatelessWidget {
                   child: Container(
                     margin: const EdgeInsets.only(bottom: 13),
                     padding:
-                        const EdgeInsets.symmetric(vertical: 7, horizontal: 33),
+                        const EdgeInsets.symmetric(vertical: 7, horizontal: 27),
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
@@ -319,9 +370,11 @@ class OrderItems extends StatelessWidget {
 
                           ScaffoldMessenger.of(context).showSnackBar(snackBar);
                         } else {
-                          authService.actulizarCantidad(
+                          mostrarCarga(context);
+                          await authService.actulizarCantidad(
                               cantidad: (producto.cantidad - 1).toInt(),
                               index: index);
+                          Navigator.pop(context);
                         }
                       },
                       child: Container(
@@ -342,8 +395,8 @@ class OrderItems extends StatelessWidget {
                           )),
                     ),
                     Container(
-                        width: 43,
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        width: 37,
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
                         child: Center(
                           child: Text(
                             producto.cantidad.toString(),
@@ -352,13 +405,30 @@ class OrderItems extends StatelessWidget {
                         )),
                     GestureDetector(
                       behavior: HitTestBehavior.translucent,
-                      onTap: () {
-                        if (producto.cantidad < 15) {
-                          authService.actulizarCantidad(
-                              cantidad: (producto.cantidad + 1).toInt(),
-                              index: index);
-                        }
-                      },
+                      onTap: producto.cantidad < 15
+                          ? () async {
+                              mostrarCarga(context);
+                              await authService.actulizarCantidad(
+                                  cantidad: (producto.cantidad + 1).toInt(),
+                                  index: index);
+                              Navigator.pop(context);
+                            }
+                          : () {
+                              final snackBar = SnackBar(
+                                duration: const Duration(seconds: 2),
+                                backgroundColor:
+                                    const Color.fromRGBO(0, 0, 0, 1),
+                                content: Text(
+                                  'Cantidad maxima alcanzada',
+                                  style: GoogleFonts.quicksand(
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              );
+
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(snackBar);
+                            },
                       child: Container(
                           padding: const EdgeInsets.all(12),
                           decoration: const BoxDecoration(
@@ -383,23 +453,20 @@ class OrderItems extends StatelessWidget {
   String elecciones({required Producto producto}) {
     String valor = '';
 
-    try {
-      for (var element in producto.opciones[0].listado) {
-        if (element.activo) {
-          valor = valor + element.tipo;
+    for (var i = 0; i < producto.opciones.length; i++) {
+      try {
+        for (var element in producto.opciones[i].listado) {
+          if (element.activo) {
+            if (valor.isEmpty) {
+              valor = element.tipo;
+            } else {
+              valor = valor + '  |  ' + element.tipo;
+            }
+          }
         }
-      }
-      // ignore: empty_catches
-    } catch (e) {}
-
-    try {
-      for (var element in producto.opciones[1].listado) {
-        if (element.activo) {
-          valor = valor + '  |  ' + element.tipo;
-        }
-      }
-      // ignore: empty_catches
-    } catch (e) {}
+        // ignore: empty_catches
+      } catch (e) {}
+    }
 
     return valor;
   }
@@ -549,19 +616,31 @@ class PaymenthMethodsFinal extends StatelessWidget {
   }
 }
 
-class PaymentSummary extends StatelessWidget {
-  const PaymentSummary({Key? key}) : super(key: key);
+class PaymentSummary extends StatefulWidget {
+  final ScrollController controller;
 
+  const PaymentSummary({Key? key, required this.controller}) : super(key: key);
+
+  @override
+  State<PaymentSummary> createState() => _PaymentSummaryState();
+}
+
+class _PaymentSummaryState extends State<PaymentSummary> {
   @override
   Widget build(BuildContext context) {
     final tarjetasService = Provider.of<TarjetasService>(context);
     final customerService = Provider.of<StripeService>(context);
+    final direccionesService = Provider.of<DireccionesService>(context);
     final authService = Provider.of<AuthService>(context, listen: true);
+    final pedidosService = Provider.of<PedidosService>(context, listen: true);
 
     final busqueda = tarjetasService.listaTarjetas.indexWhere(
         (element) => element.id == customerService.tarjetaPredeterminada);
     final busqueda2 = tarjetasService.listaTarjetas.indexWhere(
         (element) => element.id == authService.usuario.cesta.tarjeta);
+
+    final controller = TextEditingController();
+    final nombre = authService.usuario.nombreCodigo.split(' ');
 
     return Container(
       margin: const EdgeInsets.only(top: 10),
@@ -673,7 +752,9 @@ class PaymentSummary extends StatelessWidget {
                                       borderRadius: BorderRadius.circular(10)),
                                   child: Row(
                                     children: [
-                                      SizedBox(
+                                      Container(
+                                        color: Colors.transparent,
+                                        height: 55,
                                         width: 55,
                                         child: SvgPicture.asset(
                                           busqueda2 != -1
@@ -695,8 +776,7 @@ class PaymentSummary extends StatelessWidget {
                                                       'visa'
                                                   ? 'assets/images/visa_color.svg'
                                                   : 'assets/images/mc.svg',
-                                          height: 45,
-                                          width: 45,
+                                          fit: BoxFit.cover,
                                         ),
                                       ),
                                     ],
@@ -906,7 +986,11 @@ class PaymentSummary extends StatelessWidget {
                       ),
                       Radio(
                         activeColor: Colors.blue,
-                        groupValue: authService.usuario.cesta.efectivo ? 2 : 0,
+                        groupValue: authService.usuario.cesta.efectivo
+                            ? 2
+                            : tarjetasService.listaTarjetas.isEmpty
+                                ? 2
+                                : 0,
                         onChanged: (value) {
                           authService.cambiarMetodoDePago(
                               tipo: int.parse(value.toString()));
@@ -968,7 +1052,7 @@ class PaymentSummary extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 5),
-          /*Row(
+          Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
@@ -987,10 +1071,63 @@ class PaymentSummary extends StatelessWidget {
                   height: 50,
                   width: 130,
                   child: TextFormField(
+                    controller: controller,
+                    onFieldSubmitted: (d) async {
+                      if (authService.usuario.cesta.productos.isEmpty) {
+                        final snackBar = SnackBar(
+                          duration: const Duration(seconds: 2),
+                          backgroundColor: const Color.fromRGBO(0, 0, 0, 1),
+                          content: Text(
+                            'Cesta vacia, descuento incalculable',
+                            style: GoogleFonts.quicksand(
+                              color: Colors.white,
+                            ),
+                          ),
+                        );
+                        controller.text = '';
+                        await Future.delayed(const Duration(milliseconds: 300));
+                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                      } else {
+                        mostrarCarga(context);
+                        var codigo = await authService.aplicarCupon(codigo: d);
+                        controller.text = '';
+                        Navigator.pop(context);
+                        if (codigo.ok == false) {
+                          final snackBar = SnackBar(
+                            duration: const Duration(seconds: 2),
+                            backgroundColor: const Color.fromRGBO(0, 0, 0, 1),
+                            content: Text(
+                              codigo.msg,
+                              style: GoogleFonts.quicksand(
+                                color: Colors.white,
+                              ),
+                            ),
+                          );
+
+                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                        } else {
+                          final nombre = codigo.usuario.split(' ');
+                          final snackBar = SnackBar(
+                            duration: const Duration(seconds: 2),
+                            backgroundColor: const Color.fromRGBO(0, 0, 0, 1),
+                            content: Text(
+                              '${nombre[0]} invita el envio ',
+                              style: GoogleFonts.quicksand(
+                                color: Colors.white,
+                              ),
+                            ),
+                          );
+                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                          await Future.delayed(
+                              const Duration(milliseconds: 600));
+                          scrollListView(controller: widget.controller);
+                        }
+                      }
+                    },
                     style: GoogleFonts.quicksand(color: Colors.blue),
                     enableSuggestions: false,
                     textCapitalization: TextCapitalization.characters,
-                    inputFormatters: [LengthLimitingTextInputFormatter(7)],
+                    inputFormatters: [LengthLimitingTextInputFormatter(9)],
                     decoration: InputDecoration(
                       contentPadding:
                           const EdgeInsets.only(bottom: 25, left: 15),
@@ -1007,29 +1144,123 @@ class PaymentSummary extends StatelessWidget {
                     ),
                   ),
                 ),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 25),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: Colors.grey.withOpacity(.1)),
-                  height: 50,
-                  child: Center(
-                    child: Text(
-                      'Aplicar',
-                      style: GoogleFonts.quicksand(
-                          color: Colors.black.withOpacity(.8)),
+                GestureDetector(
+                  onTap: () async {
+                    FocusManager.instance.primaryFocus?.unfocus();
+                    if (authService.usuario.cesta.productos.isEmpty) {
+                      final snackBar = SnackBar(
+                        duration: const Duration(seconds: 2),
+                        backgroundColor: const Color.fromRGBO(0, 0, 0, 1),
+                        content: Text(
+                          'Cesta vacia, descuento incalculable',
+                          style: GoogleFonts.quicksand(
+                            color: Colors.white,
+                          ),
+                        ),
+                      );
+                      controller.text = '';
+                      await Future.delayed(const Duration(milliseconds: 300));
+                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                    } else {
+                      mostrarCarga(context);
+                      var codigo = await authService.aplicarCupon(
+                          codigo: controller.text);
+                      controller.text = '';
+                      Navigator.pop(context);
+                      if (codigo.ok == false) {
+                        final snackBar = SnackBar(
+                          duration: const Duration(seconds: 2),
+                          backgroundColor: const Color.fromRGBO(0, 0, 0, 1),
+                          content: Text(
+                            codigo.msg,
+                            style: GoogleFonts.quicksand(
+                              color: Colors.white,
+                            ),
+                          ),
+                        );
+
+                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                      } else {
+                        final nombre = codigo.usuario.split(' ');
+                        final snackBar = SnackBar(
+                          duration: const Duration(seconds: 2),
+                          backgroundColor: const Color.fromRGBO(0, 0, 0, 1),
+                          content: Text(
+                            '${nombre[0]} invita el envio ',
+                            style: GoogleFonts.quicksand(
+                              color: Colors.white,
+                            ),
+                          ),
+                        );
+                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                        await Future.delayed(const Duration(milliseconds: 600));
+                        scrollListView(controller: widget.controller);
+                      }
+                    }
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 25),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        color: Colors.grey.withOpacity(.1)),
+                    height: 50,
+                    child: Center(
+                      child: Text(
+                        'Aplicar',
+                        style: GoogleFonts.quicksand(
+                            color: Colors.black.withOpacity(.8)),
+                      ),
                     ),
                   ),
                 )
               ],
             ),
-          ),*/
+          ),
           Container(
             width: double.infinity,
             height: 2,
             color: Colors.black.withOpacity(.02),
           ),
           const SizedBox(height: 20),
+          AnimatedSize(
+            duration: const Duration(milliseconds: 400),
+            child: authService.calcularTiendas() > 1
+                ? GestureDetector(
+                    onTap: () {},
+                    child: Container(
+                      margin: const EdgeInsets.only(bottom: 10),
+                      child: RichText(
+                          text: TextSpan(
+                              style: GoogleFonts.quicksand(color: Colors.grey),
+                              children: [
+                            const TextSpan(
+                                text:
+                                    'Envio y cuota de servicio aumentado en modo multi-envio en la misma compra ( '),
+                            TextSpan(
+                                style: GoogleFonts.quicksand(
+                                    color: Colors.black.withOpacity(.8),
+                                    fontWeight: FontWeight.bold),
+                                text: authService
+                                    .calcularTiendasNombres()
+                                    .toString()
+                                    .replaceAll('[', '')
+                                    .replaceAll(']', '')
+                                    .replaceAll('(', '')
+                                    .replaceAll(')', '')),
+                            TextSpan(
+                                text: ' ).',
+                                style: GoogleFonts.quicksand(
+                                    color: Colors.black.withOpacity(.8))),
+                            TextSpan(
+                                text:
+                                    ' Mas informaciona acerca de multi-envios.',
+                                style: GoogleFonts.quicksand(
+                                    color: Colors.blue.withOpacity(.8))),
+                          ])),
+                    ),
+                  )
+                : Container(),
+          ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -1051,9 +1282,22 @@ class PaymentSummary extends StatelessWidget {
                 'Envio',
                 style: GoogleFonts.quicksand(),
               ),
-              Text(
-                '\$ ${authService.calcularTotal() > 0 ? '18.00' : '0.00'}',
-                style: GoogleFonts.quicksand(fontSize: 18),
+              Row(
+                children: [
+                  authService.calcularTiendas() > 1
+                      ? Container(
+                          margin: const EdgeInsets.only(right: 5),
+                          child: const Icon(
+                            Icons.info,
+                            color: Colors.blue,
+                          ),
+                        )
+                      : Container(),
+                  Text(
+                    '\$ ${authService.calcularTotal() > 0 ? (18 * authService.calcularTiendas()).toStringAsFixed(2) : '0.00'}',
+                    style: GoogleFonts.quicksand(fontSize: 18),
+                  ),
+                ],
               )
             ],
           ),
@@ -1065,11 +1309,64 @@ class PaymentSummary extends StatelessWidget {
                 'Servicio',
                 style: GoogleFonts.quicksand(),
               ),
-              Text(
-                '\$ ${authService.calcularTotal() > 0 ? '11.00' : '0.00'}',
-                style: GoogleFonts.quicksand(fontSize: 18),
+              Row(
+                children: [
+                  authService.calcularTiendas() > 1
+                      ? Container(
+                          margin: const EdgeInsets.only(right: 5),
+                          child: const Icon(
+                            Icons.info,
+                            color: Colors.blue,
+                          ),
+                        )
+                      : Container(),
+                  Text(
+                    '\$ ${authService.calcularTotal() > 0 ? ((11 * authService.calcularTiendas()) + (authService.calcularTiendas() > 1 ? 4 * authService.calcularTiendas() : 0)).toStringAsFixed(2) : '0.00'}',
+                    style: GoogleFonts.quicksand(fontSize: 18),
+                  ),
+                ],
               )
             ],
+          ),
+          AnimatedSize(
+            duration: const Duration(milliseconds: 500),
+            child: authService.usuario.cesta.codigo != ''
+                ? Column(
+                    children: [
+                      const SizedBox(height: 10),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            '${nombre[0]} invita el envio',
+                            style: GoogleFonts.quicksand(),
+                          ),
+                          Row(
+                            children: [
+                              GestureDetector(
+                                behavior: HitTestBehavior.translucent,
+                                onTap: () {
+                                  authService.eliminarCupon();
+                                },
+                                child: Text(
+                                  'Eliminar',
+                                  style:
+                                      GoogleFonts.quicksand(color: Colors.grey),
+                                ),
+                              ),
+                              const SizedBox(width: 6),
+                              Text(
+                                '- \$ ${authService.calcularTotal() > 0 ? (18 * authService.calcularTiendas()).toStringAsFixed(2) : '0.00'}',
+                                style: GoogleFonts.quicksand(
+                                    fontSize: 18, color: Colors.blue),
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
+                    ],
+                  )
+                : Container(),
           ),
           const SizedBox(height: 10),
           Row(
@@ -1080,7 +1377,7 @@ class PaymentSummary extends StatelessWidget {
                 style: GoogleFonts.quicksand(),
               ),
               Text(
-                '\$ ${authService.calcularTotal() == 0 ? "0.00" : (authService.calcularTotal() + 11 + 18).toStringAsFixed(2)}',
+                '\$ ${authService.calcularTotal() == 0 ? "0.00" : ((authService.calcularTiendas() > 1 ? 4 * authService.calcularTiendas() : 0) + -(authService.usuario.cesta.codigo != '' ? 18 * authService.calcularTiendas() : 0) + authService.calcularTotal() + (11 * authService.calcularTiendas()) + (18 * authService.calcularTiendas())).toStringAsFixed(2)}',
                 style: GoogleFonts.quicksand(fontSize: 18),
               )
             ],
@@ -1089,32 +1386,145 @@ class PaymentSummary extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: Container(
-                    margin: const EdgeInsets.only(top: 20, bottom: 10),
-                    padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(30),
-                        border: Border.all(width: 1, color: Colors.black)),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Icon(
-                          Icons.moped,
-                          color: Colors.black,
-                        ),
-                        const SizedBox(width: 10),
-                        Text(
-                          'Ordenar',
-                          style: GoogleFonts.quicksand(
-                              color: Colors.black, fontSize: 20),
-                        ),
-                      ],
-                    )),
+                child: GestureDetector(
+                  onTap: authService.usuario.cesta.productos.isEmpty ||
+                          direccionesService.direcciones.isEmpty
+                      ? null
+                      : () async {
+                          calculandoAlerta(context);
+                          /*NotificationApi.showNotification(
+                              title: 'Titulos',
+                              body: 'Body',
+                              payload: 'sarah.abs');*/
+                          /*socketService.emit('mensaje-personal', {
+                            'direccion': direccionesService.direcciones[
+                                authService.usuario.cesta.direccion.titulo != ''
+                                    ? direccionesService.direcciones.indexWhere(
+                                        (element) =>
+                                            authService.usuario.cesta.direccion
+                                                .titulo ==
+                                            element.titulo)
+                                    : obtenerFavorito(direccionesService
+                                                .direcciones) !=
+                                            -1
+                                        ? obtenerFavorito(
+                                            direccionesService.direcciones)
+                                        : 0],
+                            'tarjeta': busqueda2 != -1
+                                ? tarjetasService.listaTarjetas[busqueda2].id
+                                : tarjetasService
+                                    .listaTarjetas[
+                                        busqueda != -1 ? busqueda : 0]
+                                    .id,
+                            'customer_id': authService.usuario.customerID,
+                            'efectivo': authService.usuario.cesta.efectivo,
+                            'prodcutos': authService.usuario.cesta.productos
+                          });*/
+                          final busqueda = tarjetasService.listaTarjetas
+                              .indexWhere((element) =>
+                                  element.id ==
+                                  customerService.tarjetaPredeterminada);
+                          final busqueda2 = tarjetasService.listaTarjetas
+                              .indexWhere((element) =>
+                                  element.id ==
+                                  authService.usuario.cesta.tarjeta);
+                          final venta = await authService.crearPedido(
+                              direccion: direccionesService.direcciones[
+                                  authService.usuario.cesta.direccion.titulo !=
+                                          ''
+                                      ? direccionesService.direcciones
+                                          .indexWhere((element) =>
+                                              authService.usuario.cesta
+                                                  .direccion.titulo ==
+                                              element.titulo)
+                                      : obtenerFavorito(direccionesService
+                                                  .direcciones) !=
+                                              -1
+                                          ? obtenerFavorito(
+                                              direccionesService.direcciones)
+                                          : 0],
+                              tarjeta: busqueda2 != -1
+                                  ? tarjetasService.listaTarjetas[busqueda2].id
+                                  : tarjetasService.listaTarjetas.isNotEmpty ? tarjetasService
+                                      .listaTarjetas[busqueda != -1 ? busqueda : 0]
+                                      .id : '',
+                              customer: customerService.customer);
+
+                          if (venta != null) {
+                            pedidosService.agregarCompra(venta: venta);
+                            scrollListView2(controller: widget.controller);
+                            Navigator.pop(context);
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => DoneView(
+                                        venta: venta,
+                                      )),
+                            );
+                          } else {
+                            final snackBar = SnackBar(
+                              duration: const Duration(seconds: 2),
+                              backgroundColor: const Color.fromRGBO(0, 0, 0, 1),
+                              content: Text(
+                                'Error desconocido',
+                                style: GoogleFonts.quicksand(
+                                  color: Colors.white,
+                                ),
+                              ),
+                            );
+
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(snackBar);
+                          }
+                        },
+                  child: AnimatedOpacity(
+                    duration: const Duration(milliseconds: 400),
+                    opacity: authService.usuario.cesta.productos.isEmpty ||
+                            direccionesService.direcciones.isEmpty
+                        ? .1
+                        : 1,
+                    child: Container(
+                        margin: const EdgeInsets.only(top: 20, bottom: 10),
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(30),
+                            border: Border.all(width: 1, color: Colors.black)),
+                        child: Center(
+                          child: Text(
+                            'Ordenar',
+                            style: GoogleFonts.quicksand(
+                                color: Colors.black, fontSize: 20),
+                          ),
+                        )),
+                  ),
+                ),
               ),
             ],
           )
         ],
       ),
+    );
+  }
+
+  obtenerFavorito(List<Direccion> direcciones) {
+    final busqueda =
+        direcciones.indexWhere((element) => element.predeterminado);
+    return busqueda;
+  }
+
+  scrollListView({required ScrollController controller}) {
+    controller.animateTo(
+      controller.position.maxScrollExtent,
+      duration: const Duration(seconds: 2),
+      curve: Curves.fastOutSlowIn,
+    );
+  }
+
+  scrollListView2({required ScrollController controller}) {
+    controller.animateTo(
+      controller.position.minScrollExtent,
+      duration: const Duration(milliseconds: 100),
+      curve: Curves.fastOutSlowIn,
     );
   }
 

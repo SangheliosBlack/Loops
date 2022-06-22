@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:delivery/helpers/haversine.dart';
 import 'package:delivery/models/busqueda_response.dart';
 import 'package:delivery/models/busqueda_result.dart';
@@ -101,6 +102,7 @@ class SearchBusqueda extends SearchDelegate<BusquedaResult> {
             child: ListView(
               children: const [
                 LinearProgressIndicator(
+                  minHeight: 1,
                   color: Color.fromRGBO(41, 199, 184, 1),
                   backgroundColor: Colors.white,
                 ),
@@ -148,14 +150,33 @@ class SearchBusqueda extends SearchDelegate<BusquedaResult> {
                   children: [
                     ClipRRect(
                       borderRadius: BorderRadius.circular(100),
-                      child: const SizedBox(
+                      child: SizedBox(
                         width: 85,
                         height: 85,
-                        child: Image(
-                          image: NetworkImage(
-                              'https://images.vexels.com/media/users/3/215185/raw/9975fac6938d6d19c33105e44655a3c8-diseno-de-logo-de-restaurante-cheff.jpg'),
-                          fit: BoxFit.cover,
-                        ),
+                        child: CachedNetworkImage(
+                            fit: BoxFit.cover,
+                            imageUrl: tienda.imagenPerfil,
+                            imageBuilder: (context, imageProvider) => Container(
+                                  decoration: BoxDecoration(
+                                    image: DecorationImage(
+                                      image: imageProvider,
+                                      fit: BoxFit.cover,
+                                      colorFilter: ColorFilter.mode(
+                                        Colors.black.withOpacity(.15),
+                                        BlendMode.color,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                            placeholder: (context, url) => Container(
+                                padding: const EdgeInsets.all(10),
+                                child: const CircularProgressIndicator(
+                                  strokeWidth: 1,
+                                  color: Colors.black,
+                                )),
+                            errorWidget: (context, url, error) {
+                              return const Icon(Icons.error);
+                            }),
                       ),
                     ),
                     const SizedBox(
@@ -204,15 +225,21 @@ class SearchBusqueda extends SearchDelegate<BusquedaResult> {
                             children: [
                               const Icon(
                                 Icons.place_outlined,
-                                color: Colors.black,
+                                color: Colors.red,
                                 size: 15,
                               ),
                               const SizedBox(width: 3),
-                              Text(
-                                '${(calculateDistance(lat1: tienda.coordenadas.latitud, lon1: tienda.coordenadas.longitud, lat2: direccionesService.direcciones[authService.usuario.cesta.direccion.titulo != '' ? direccionesService.direcciones.indexWhere((element) => authService.usuario.cesta.direccion.titulo == element.titulo) : obtenerFavorito(direccionesService.direcciones) != -1 ? obtenerFavorito(direccionesService.direcciones) : 0].coordenadas.lat, lon2: direccionesService.direcciones[authService.usuario.cesta.direccion.titulo != '' ? direccionesService.direcciones.indexWhere((element) => authService.usuario.cesta.direccion.titulo == element.titulo) : obtenerFavorito(direccionesService.direcciones) != -1 ? obtenerFavorito(direccionesService.direcciones) : 0].coordenadas.lng).toStringAsFixed(2))} km Centro, Lagos de Moreno ',
-                                style: GoogleFonts.quicksand(
-                                    color: Colors.black, fontSize: 13),
-                              )
+                              Expanded(
+                                  child:
+                                      direccionesService.direcciones.isNotEmpty
+                                          ? Text(
+                                              '${(calculateDistance(lat1: tienda.coordenadas.latitud, lon1: tienda.coordenadas.longitud, lat2: direccionesService.direcciones[authService.usuario.cesta.direccion.titulo != '' ? direccionesService.direcciones.indexWhere((element) => authService.usuario.cesta.direccion.titulo == element.titulo) : obtenerFavorito(direccionesService.direcciones) != -1 ? obtenerFavorito(direccionesService.direcciones) : 0].coordenadas.lat, lon2: direccionesService.direcciones[authService.usuario.cesta.direccion.titulo != '' ? direccionesService.direcciones.indexWhere((element) => authService.usuario.cesta.direccion.titulo == element.titulo) : obtenerFavorito(direccionesService.direcciones) != -1 ? obtenerFavorito(direccionesService.direcciones) : 0].coordenadas.lng).toStringAsFixed(2))} km | ${tienda.direccion} ',
+                                              overflow: TextOverflow.ellipsis,
+                                              style: GoogleFonts.quicksand(
+                                                  color: Colors.black,
+                                                  fontSize: 13),
+                                            )
+                                          : Container())
                             ],
                           )
                         ],

@@ -37,70 +37,74 @@ class MenuInferior extends StatelessWidget {
 
     return [
       const BottomNavigationBarItem(
-        activeIcon: Icon(Icons.home),
-        icon: Icon(Icons.home_outlined),
+        activeIcon: Icon(
+          Icons.home,
+          size: 30,
+        ),
+        icon: Icon(
+          Icons.home_outlined,
+          size: 30,
+        ),
         label: 'Calls',
       ),
       BottomNavigationBarItem(
         activeIcon: SizedBox(
-          height: 60,
-          width: 90,
           child: Stack(
             alignment: Alignment.center,
             children: [
-              const Icon(Icons.shopping_bag),
-              Positioned(
-                top: 0,
-                right: 0,
-                child: AnimatedOpacity(
-                  opacity: authService.totalPiezas() > 0 ? 1 : 0,
-                  duration: const Duration(milliseconds: 200),
-                  child: Container(
-                    width: 30,
-                    padding: const EdgeInsets.all(9),
-                    decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Color.fromRGBO(41, 200, 182, 1)),
-                    child: Center(
+              const Icon(
+                Icons.shopping_bag,
+                size: 30,
+              ),
+              AnimatedOpacity(
+                opacity: authService.totalPiezas() > 0 ? 1 : 0,
+                duration: const Duration(milliseconds: 200),
+                child: Column(
+                  children: [
+                    const SizedBox(
+                      height: 8,
+                    ),
+                    Center(
                       child: Text(
                         authService.totalPiezas().toString(),
                         style: GoogleFonts.quicksand(
-                            color: Colors.white, fontSize: 12),
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold),
                       ),
                     ),
-                  ),
+                  ],
                 ),
               )
             ],
           ),
         ),
         icon: SizedBox(
-          height: 60,
-          width: 90,
           child: Stack(
             alignment: Alignment.center,
             children: [
-              const Icon(Icons.shopping_bag_outlined),
-              Positioned(
-                top: 0,
-                right: 0,
-                child: AnimatedOpacity(
-                  opacity: authService.totalPiezas() > 0 ? 1 : 0,
-                  duration: const Duration(milliseconds: 200),
-                  child: Container(
-                    width: 30,
-                    padding: const EdgeInsets.all(9),
-                    decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Color.fromRGBO(41, 200, 182, 1)),
-                    child: Center(
+              const Icon(
+                Icons.shopping_bag_outlined,
+                size: 30,
+              ),
+              AnimatedOpacity(
+                opacity: authService.totalPiezas() > 0 ? 1 : 0,
+                duration: const Duration(milliseconds: 200),
+                child: Column(
+                  children: [
+                    const SizedBox(
+                      height: 8,
+                    ),
+                    Center(
                       child: Text(
                         authService.totalPiezas().toString(),
                         style: GoogleFonts.quicksand(
-                            color: Colors.white, fontSize: 12),
+                            color: Colors.black,
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold),
                       ),
                     ),
-                  ),
+                  ],
                 ),
               )
             ],

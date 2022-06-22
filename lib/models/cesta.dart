@@ -4,6 +4,7 @@ import 'package:delivery/models/direccion.dart';
 import 'package:delivery/models/productos.dart';
 
 Cesta cestaFromJson(String str) => Cesta.fromJson(json.decode(str));
+String cestaToJson(Cesta data) => json.encode(data.toJson());
 
 class Cesta {
   Cesta(
@@ -22,10 +23,20 @@ class Cesta {
   String codigo;
 
   factory Cesta.fromJson(Map<String, dynamic> json) => Cesta(
-      productos: List<Producto>.from(json["productos"].map((x) => x)),
+      productos: List<Producto>.from(
+          json["productos"].map((x) => Producto.fromJson(x))),
       total: json["total"],
       tarjeta: json["tarjeta"],
       direccion: Direccion.fromJson(json["direccion"]),
       efectivo: json["efectivo"],
       codigo: json['codigo']);
+
+  Map<String, dynamic> toJson() => {
+        'total': total,
+        'tarjeta': tarjeta,
+        'direccion': direccion,
+        'efectivo': efectivo,
+        'codigo': codigo,
+        "productos": List<dynamic>.from(productos.map((x) => x.toJson())),
+      };
 }

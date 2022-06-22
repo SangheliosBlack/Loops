@@ -36,6 +36,8 @@ class Flurorouter {
   static String agregarNuevaTiendaRoute = '/extras/agregarNuevaTienda';
   static String editarDireccionesRoute = '/extras/editarDirecciones/:uid';
 
+  static String notificacionPedido = '/extras/notificacionPedido';
+
   static void configureRoutes() {
     /*DRAWER*/
 
@@ -78,8 +80,6 @@ class Flurorouter {
     router.define(loginRoute,
         handler: AdminHandlers.login, transitionType: TransitionType.none);
 
-    
-
     router.define(allowGpsPermissionRoute,
         handler: DashBoardHandlers.allowGpsPermission,
         transitionType: TransitionType.none);
@@ -107,14 +107,16 @@ class Flurorouter {
         transitionDuration: const Duration(milliseconds: 500),
         transitionType: TransitionType.native);
 
-    
-
     router.define(editarMenuRoute,
         handler: ExtrasHandlers.editarMenu,
         transitionType: TransitionType.cupertinoFullScreenDialog);
 
     router.define(agregarNuevaTiendaRoute,
         handler: ExtrasHandlers.agregarTienda,
+        transitionType: TransitionType.none);
+
+    router.define(notificacionPedido,
+        handler: ExtrasHandlers.notificacionPedido,
         transitionType: TransitionType.none);
 
     router.notFoundHandler = NoPageFoundHandlers.noPageFound;

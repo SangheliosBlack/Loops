@@ -1,9 +1,7 @@
 import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
-import 'package:delivery/service/tiendas_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 
 class AgregarProductoView extends StatefulWidget {
   const AgregarProductoView({Key? key}) : super(key: key);
@@ -23,7 +21,6 @@ class _AgregarProductoViewState extends State<AgregarProductoView> {
 
   @override
   Widget build(BuildContext context) {
-    final tiendasService = Provider.of<TiendasService>(context, listen: true);
     return Container(
       color: Colors.white,
       child: ListView(
@@ -301,7 +298,7 @@ class _AgregarProductoViewState extends State<AgregarProductoView> {
           const SizedBox(
             height: 20,
           ),
-          SizedBox(
+          /*SizedBox(
             height: 50,
             child: ElevatedButton(
               onPressed: uno && dos && tres
@@ -328,7 +325,7 @@ class _AgregarProductoViewState extends State<AgregarProductoView> {
                       borderRadius: BorderRadius.circular(25)),
                   primary: Theme.of(context).primaryColor),
             ),
-          ),
+          ),*/
           const SizedBox(
             height: 20,
           ),

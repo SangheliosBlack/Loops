@@ -85,8 +85,24 @@ class MetodoPredeterminado extends StatelessWidget {
                       }
                     }
                   },
-                  separatorBuilder: (BuildContext context, int index) =>
-                      const SizedBox(width: 15),
+                  separatorBuilder: (BuildContext context, int index) {
+                    if (authService.usuario.cesta.tarjeta == '') {
+                      if (stripeService.tarjetaPredeterminada ==
+                          tarjetasService.listaTarjetas[index].id) {
+                        return Container();
+                      } else {
+                        return const SizedBox(width: 25);
+                      }
+                    } else {
+                      if (stripeService.tarjetaPredeterminada ==
+                              tarjetasService.listaTarjetas[index].id &&
+                          authService.usuario.cesta.tarjeta == '') {
+                        return Container();
+                      } else {
+                        return const SizedBox(width: 25);
+                      }
+                    }
+                  },
                   itemCount: tarjetasService.listaTarjetas.length),
             ),
             const SizedBox(

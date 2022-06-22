@@ -67,7 +67,7 @@ class _AgregarNuevoMetodoState extends State<AgregarNuevoMetodo> {
                 Container(
                   margin:
                       const EdgeInsets.symmetric(horizontal: 30, vertical: 0),
-                  child: Container(
+                  child: AnimatedContainer(
                       width: double.infinity,
                       height: 190,
                       decoration: BoxDecoration(
@@ -76,21 +76,22 @@ class _AgregarNuevoMetodoState extends State<AgregarNuevoMetodo> {
                             ? checkBrand(valorUno) == 1
                                 ? const Color.fromRGBO(232, 241, 254, 1)
                                 : const Color.fromRGBO(251, 231, 220, 1)
-                            : Colors.transparent,
+                            : Colors.white,
                       ),
+                      duration: const Duration(seconds: 1),
                       child: Stack(children: [
                         Positioned(
                           left: 17,
                           bottom: 70,
                           child: Text(valorUno,
                               style: GoogleFonts.inconsolata(
-                                  color: checkBrand(valorUno) != 0
-                                      ? checkBrand(valorUno) == 1
-                                          ? Colors.blue
-                                          : Colors.orange
-                                      : Colors.transparent,
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold)),
+                                color: checkBrand(valorUno) != 0
+                                    ? checkBrand(valorUno) == 1
+                                        ? Colors.blue
+                                        : Colors.orange
+                                    : Colors.transparent,
+                                fontSize: 24,
+                              )),
                         ),
                         Positioned(
                           bottom: 100,
@@ -150,13 +151,13 @@ class _AgregarNuevoMetodoState extends State<AgregarNuevoMetodo> {
                                 Text(
                                   valorDos,
                                   style: GoogleFonts.inconsolata(
-                                      color: checkBrand(valorUno) != 0
-                                          ? checkBrand(valorUno) == 1
-                                              ? Colors.blue
-                                              : Colors.orange
-                                          : Colors.transparent,
-                                      fontSize: 24,
-                                      fontWeight: FontWeight.bold),
+                                    color: checkBrand(valorUno) != 0
+                                        ? checkBrand(valorUno) == 1
+                                            ? Colors.blue
+                                            : Colors.orange
+                                        : Colors.transparent,
+                                    fontSize: 24,
+                                  ),
                                 ),
                               ],
                             )),
@@ -180,13 +181,13 @@ class _AgregarNuevoMetodoState extends State<AgregarNuevoMetodo> {
                                 Text(
                                   valorTres,
                                   style: GoogleFonts.inconsolata(
-                                      color: checkBrand(valorUno) != 0
-                                          ? checkBrand(valorUno) == 1
-                                              ? Colors.blue
-                                              : Colors.orange
-                                          : Colors.transparent,
-                                      fontSize: 24,
-                                      fontWeight: FontWeight.bold),
+                                    color: checkBrand(valorUno) != 0
+                                        ? checkBrand(valorUno) == 1
+                                            ? Colors.blue
+                                            : Colors.orange
+                                        : Colors.transparent,
+                                    fontSize: 24,
+                                  ),
                                 ),
                               ],
                             ))
@@ -232,13 +233,13 @@ class _AgregarNuevoMetodoState extends State<AgregarNuevoMetodo> {
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 25),
                               child: TextFormField(
-                                autofocus: true,
                                 initialValue: valorUno,
                                 textInputAction: TextInputAction.next,
                                 enableInteractiveSelection: false,
+                                maxLength: 19,
                                 inputFormatters: [
-                                  CreditCardNumberInputFormatter(),
-                                  LengthLimitingTextInputFormatter(19),
+                                  FilteringTextInputFormatter.digitsOnly,
+                                  CardNumberFormatter(),
                                 ],
                                 onChanged: (valor) {
                                   if (mounted) {
@@ -248,19 +249,19 @@ class _AgregarNuevoMetodoState extends State<AgregarNuevoMetodo> {
                                   }
                                 },
                                 onEditingComplete: () {
-                                  if (cero) {
-                                    FocusManager.instance.primaryFocus
-                                        ?.unfocus();
-                                    if (mounted) {
-                                      setState(() {
-                                        pagina = 1;
-                                      });
-                                    }
-                                    controller2.animateToPage(1,
-                                        duration:
-                                            const Duration(milliseconds: 200),
-                                        curve: Curves.easeOut);
-                                  }
+                                  // if (cero) {
+                                  //   FocusManager.instance.primaryFocus
+                                  //       ?.unfocus();
+                                  //   if (mounted) {
+                                  //     setState(() {
+                                  //       pagina = 1;
+                                  //     });
+                                  //   }
+                                  //   controller2.animateToPage(1,
+                                  //       duration:
+                                  //           const Duration(milliseconds: 200),
+                                  //       curve: Curves.easeOut);
+                                  // }
                                 },
                                 validator: (valor) {
                                   final String newValue =
@@ -359,22 +360,22 @@ class _AgregarNuevoMetodoState extends State<AgregarNuevoMetodo> {
                                   }
                                 },
                                 onEditingComplete: () {
-                                  if (uno) {
-                                    if (mounted) {
-                                      setState(() {
-                                        pagina = 2;
-                                      });
-                                    }
-                                    FocusManager.instance.primaryFocus
-                                        ?.unfocus();
-                                    controller2.animateToPage(2,
-                                        duration:
-                                            const Duration(milliseconds: 200),
-                                        curve: Curves.easeOut);
-                                  }
+                                  // if (uno) {
+                                  //   if (mounted) {
+                                  //     setState(() {
+                                  //       pagina = 2;
+                                  //     });
+                                  //   }
+                                  //   FocusManager.instance.primaryFocus
+                                  //       ?.unfocus();
+                                  //   controller2.animateToPage(2,
+                                  //       duration:
+                                  //           const Duration(milliseconds: 200),
+                                  //       curve: Curves.easeOut);
+                                  // }
                                 },
                                 style: GoogleFonts.quicksand(
-                                  color: Colors.grey,
+                                  color: Colors.black,
                                 ),
                                 keyboardType: TextInputType.number,
                                 decoration: InputDecoration(
@@ -449,7 +450,7 @@ class _AgregarNuevoMetodoState extends State<AgregarNuevoMetodo> {
                                   CreditCardCvcInputFormatter()
                                 ],
                                 style: GoogleFonts.quicksand(
-                                  color: Colors.grey,
+                                  color: Colors.black,
                                 ),
                                 keyboardType: TextInputType.number,
                                 decoration: InputDecoration(
@@ -508,6 +509,8 @@ class _AgregarNuevoMetodoState extends State<AgregarNuevoMetodo> {
                           onTap: pagina >= 1
                               ? !send
                                   ? () async {
+                                      FocusManager.instance.primaryFocus
+                                          ?.unfocus();
                                       if (mounted) {
                                         setState(() {
                                           pagina = pagina - 1;
@@ -545,6 +548,7 @@ class _AgregarNuevoMetodoState extends State<AgregarNuevoMetodo> {
                       GestureDetector(
                         onTap: pagina != 2
                             ? () async {
+                                FocusManager.instance.primaryFocus?.unfocus();
                                 if (pagina == 0) {
                                   if (cero) {
                                     if (mounted) {
@@ -589,6 +593,19 @@ class _AgregarNuevoMetodoState extends State<AgregarNuevoMetodo> {
                                     if (tarjeta) {
                                       Navigator.pop(context);
                                       Navigator.pop(context);
+                                      final snackBar = SnackBar(
+                                        duration: const Duration(seconds: 2),
+                                        backgroundColor: Colors.black,
+                                        content: Text(
+                                          'Metodo creado con exito',
+                                          style: GoogleFonts.quicksand(
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      );
+
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(snackBar);
                                     } else {
                                       setState(() {
                                         send = false;
@@ -756,5 +773,36 @@ class _AgregarNuevoMetodoState extends State<AgregarNuevoMetodo> {
     } else {
       return false;
     }
+  }
+}
+
+class CardNumberFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    var inputText = newValue.text;
+
+    if (newValue.selection.baseOffset == 0) {
+      return newValue;
+    }
+
+    var bufferString = StringBuffer();
+    for (int i = 0; i < inputText.length; i++) {
+      bufferString.write(inputText[i]);
+      var nonZeroIndexValue = i + 1;
+      if (nonZeroIndexValue % 4 == 0 && nonZeroIndexValue != inputText.length) {
+        bufferString.write(' ');
+      }
+    }
+
+    var string = bufferString.toString();
+    return newValue.copyWith(
+      text: string,
+      selection: TextSelection.collapsed(
+        offset: string.length,
+      ),
+    );
   }
 }

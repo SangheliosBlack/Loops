@@ -3,9 +3,11 @@ import 'package:delivery/service/hide_show_menu.dart';
 import 'package:delivery/service/llenar_pantallas.dart';
 import 'package:delivery/service/navigator_service.dart';
 import 'package:delivery/service/permission_status.dart';
+import 'package:delivery/service/puto_dial.dart';
 import 'package:delivery/service/stripe_service.dart';
 import 'package:delivery/service/tarjetas.service.dart';
 import 'package:delivery/service/tiendas_service.dart';
+import 'package:delivery/service/ventas_service.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
@@ -23,13 +25,13 @@ class _DashboardLayoutState extends State<DashboardLayout>
     with WidgetsBindingObserver {
   @override
   void initState() {
-    WidgetsBinding.instance!.addObserver(this);
+    WidgetsBinding.instance?.addObserver(this);
     super.initState();
   }
 
   @override
   void dispose() {
-    WidgetsBinding.instance!.removeObserver(this);
+    WidgetsBinding.instance?.removeObserver(this);
     super.dispose();
   }
 
@@ -49,6 +51,7 @@ class _DashboardLayoutState extends State<DashboardLayout>
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider(lazy: false, create: (_) => PedidosService()),
         ChangeNotifierProvider(lazy: false, create: (_) => TarjetasService()),
         ChangeNotifierProvider(lazy: false, create: (_) => StripeService()),
         ChangeNotifierProvider(
@@ -57,6 +60,7 @@ class _DashboardLayoutState extends State<DashboardLayout>
             lazy: false, create: (_) => LlenarPantallasService()),
         ChangeNotifierProvider(lazy: false, create: (_) => TiendasService()),
         ChangeNotifierProvider(lazy: false, create: (_) => GeneralActions()),
+        ChangeNotifierProvider(lazy: false, create: (_) => PutoDial()),
       ],
       child: widget.child,
     );

@@ -59,7 +59,10 @@ class DireccionesSeleccion extends StatelessWidget {
               itemBuilder: (BuildContext context, int index) {
                 if (authService.usuario.cesta.direccion.titulo ==
                     direccionesService.direcciones[index].titulo) {
-                  return Container();
+                  return Container(
+                    padding: const EdgeInsets.all(0),
+                    margin: const EdgeInsets.all(0),
+                  );
                 } else {
                   if (obtenerFavorito(direccionesService.direcciones) == -1) {
                     return DireccionBuildWidget(
@@ -72,7 +75,10 @@ class DireccionesSeleccion extends StatelessWidget {
                                 .titulo ==
                             direccionesService.direcciones[index].titulo &&
                         authService.usuario.cesta.direccion.titulo == '') {
-                      return Container();
+                      return Container(
+                        padding: const EdgeInsets.all(0),
+                        margin: const EdgeInsets.all(0),
+                      );
                     } else {
                       return DireccionBuildWidget(
                           isChangue: true,
@@ -81,12 +87,35 @@ class DireccionesSeleccion extends StatelessWidget {
                   }
                 }
               },
-              separatorBuilder: (BuildContext context, int index) => Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 30),
-                    child: Divider(
-                      color: Colors.grey.withOpacity(0),
-                    ),
-                  ),
+              separatorBuilder: (BuildContext context, int index) {
+                if (authService.usuario.cesta.direccion.titulo ==
+                    direccionesService.direcciones[index].titulo) {
+                  return Container(
+                    padding: const EdgeInsets.all(0),
+                    margin: const EdgeInsets.all(0),
+                  );
+                } else {
+                  if (obtenerFavorito(direccionesService.direcciones) == -1) {
+                    return Divider(color: Colors.grey.withOpacity(0));
+                  } else {
+                    if (direccionesService
+                                .direcciones[obtenerFavorito(
+                                    direccionesService.direcciones)]
+                                .titulo ==
+                            direccionesService.direcciones[index].titulo &&
+                        authService.usuario.cesta.direccion.titulo == '') {
+                      return Container(
+                        padding: const EdgeInsets.all(0),
+                        margin: const EdgeInsets.all(0),
+                      );
+                    } else {
+                      return Divider(
+                        color: Colors.grey.withOpacity(0),
+                      );
+                    }
+                  }
+                }
+              },
               itemCount: direccionesService.direcciones.length),
         ),
       ],

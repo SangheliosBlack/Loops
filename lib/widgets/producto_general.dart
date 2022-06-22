@@ -33,8 +33,8 @@ class ProductoGeneral extends StatelessWidget {
               children: [
                 Container(
                   decoration: Styles.containerCustom(8),
-                  width: 100,
-                  height: 100,
+                  width: 85,
+                  height: 85,
                   child: Hero(
                     tag: producto.id,
                     child: ClipRRect(
@@ -70,14 +70,21 @@ class ProductoGeneral extends StatelessWidget {
                 ),
                 Expanded(
                   child: Container(
-                    height: 92,
-                    margin: const EdgeInsets.only(left: 15),
+                    height: 90,
+                    margin: const EdgeInsets.only(left: 10),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(producto.nombre,
-                            style: GoogleFonts.quicksand(fontSize: 20)),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text(producto.nombre,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: GoogleFonts.quicksand(fontSize: 18)),
+                            ),
+                          ],
+                        ),
                         Column(
                           children: [
                             Row(
@@ -88,10 +95,15 @@ class ProductoGeneral extends StatelessWidget {
                                   size: 15,
                                 ),
                                 const SizedBox(width: 5),
-                                Text(producto.tienda,
+                                Expanded(
+                                  child: Text(
+                                    producto.tienda,
                                     style: GoogleFonts.quicksand(
                                         fontSize: 14,
-                                        color: Colors.black.withOpacity(.8))),
+                                        color: Colors.black.withOpacity(.8)),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
                               ],
                             ),
                             const SizedBox(height: 5),
@@ -115,7 +127,7 @@ class ProductoGeneral extends StatelessWidget {
                         Row(
                           children: [
                             RatingBar.builder(
-                              initialRating: 4.5,
+                              initialRating: 5,
                               minRating: 1,
                               direction: Axis.horizontal,
                               allowHalfRating: true,
@@ -126,14 +138,14 @@ class ProductoGeneral extends StatelessWidget {
                                 FontAwesomeIcons.solidStar,
                                 color: Colors.black.withOpacity(.8),
                               ),
-                              itemSize: 12,
+                              itemSize: 11,
                               unratedColor: Colors.grey.withOpacity(.2),
                               onRatingUpdate: (rating) {},
                             ),
-                            const SizedBox(width: 5),
-                            Text('(49)',
-                                style: GoogleFonts.quicksand(
-                                    color: Colors.grey, fontSize: 11)),
+                            // const SizedBox(width: 5),
+                            // Text('(49)',
+                            //     style: GoogleFonts.quicksand(
+                            //         color: Colors.grey, fontSize: 11)),
                           ],
                         )
                       ],

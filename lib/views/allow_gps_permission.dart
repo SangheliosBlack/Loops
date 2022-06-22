@@ -5,6 +5,7 @@ import 'dart:async';
 import 'package:delivery/service/permission_status.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
@@ -117,6 +118,7 @@ class _AllowGpsPermissionViewState extends State<AllowGpsPermissionView> {
             ),
             const SizedBox(height: 20),
             Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const Icon(Icons.gps_fixed),
                 const SizedBox(width: 10),
@@ -149,8 +151,8 @@ class _AllowGpsPermissionViewState extends State<AllowGpsPermissionView> {
               ]),
               child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                      padding:
-                          const EdgeInsets.symmetric(vertical: 15, horizontal: 35),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 15, horizontal: 35),
                       elevation: 0,
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(25)),
@@ -184,7 +186,9 @@ class _AllowGpsPermissionViewState extends State<AllowGpsPermissionView> {
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(15)),
                       primary: Colors.white),
-                  onPressed: () {},
+                  onPressed: () {
+                    SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+                  },
                   child: Text(
                     'Salir',
                     style: GoogleFonts.quicksand(

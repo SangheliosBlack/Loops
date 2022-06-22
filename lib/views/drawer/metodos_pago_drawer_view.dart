@@ -48,10 +48,8 @@ class _MetodosPagoViewState extends State<MetodosPagoView> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          'Monedero virtual',
-                          style: Styles.letterCustom(15, false, .7),
-                        ),
+                        Text('Monedero virtual',
+                            style: GoogleFonts.quicksand(fontSize: 20)),
                         const SizedBox(height: 5),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -131,10 +129,10 @@ class _MetodosPagoViewState extends State<MetodosPagoView> {
                     ),
                   ),
                   Container(
-                    padding: const EdgeInsets.only(left: 25, bottom: 25),
+                    padding: const EdgeInsets.only(left: 25, bottom: 10),
                     child: Text(
                       'Mis tarjetas',
-                      style: Styles.letterCustom(15, false, .7),
+                      style: GoogleFonts.quicksand(fontSize: 20),
                     ),
                   ),
                   SizedBox(

@@ -15,11 +15,6 @@ class CategoriaView extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        /*actions: [
-          Container(
-              margin: const EdgeInsets.only(right: 20),
-              child: const Icon(Icons.search))
-        ],*/
         centerTitle: true,
         title: Text(
           titulo,
@@ -54,6 +49,7 @@ class CategoriaView extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: const [
                         LinearProgressIndicator(
+                          minHeight: 1,
                           backgroundColor: Color.fromRGBO(234, 248, 248, 0),
                           color: Color.fromRGBO(62, 204, 191, 1),
                         )

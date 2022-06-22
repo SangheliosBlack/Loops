@@ -4,18 +4,12 @@ import 'package:delivery/widgets/main.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:image_stack/image_stack.dart';
 
 class PlaceHolderStoreView extends StatelessWidget {
   const PlaceHolderStoreView({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    List<String> images = [
-      "https://img.freepik.com/foto-gratis/hombre-guapo-caucasico-aislado-pared-beige-dando-gesto-pulgares-arriba_1368-92335.jpg?size=626&ext=jpg",
-      "https://img.freepik.com/foto-gratis/hombre-guapo-caucasico-aislado-pared-beige-dando-gesto-pulgares-arriba_1368-92335.jpg?size=626&ext=jpg",
-      "https://img.freepik.com/foto-gratis/hombre-guapo-caucasico-aislado-pared-beige-dando-gesto-pulgares-arriba_1368-92335.jpg?size=626&ext=jpg",
-      "https://img.freepik.com/foto-gratis/hombre-guapo-caucasico-aislado-pared-beige-dando-gesto-pulgares-arriba_1368-92335.jpg?size=626&ext=jpg"
-    ];
+    
     PageController controller = PageController(viewportFraction: .85);
     return SingleChildScrollView(
       physics: const BouncingScrollPhysics(),
@@ -182,18 +176,7 @@ class PlaceHolderStoreView extends StatelessWidget {
                               Text('Reviews',
                                   style: Styles.letterCustom(15, false, 0.4))
                             ]),
-                            ImageStack(
-                                backgroundColor: Theme.of(context).primaryColor,
-                                showTotalCount: true,
-                                extraCountTextStyle:
-                                    Styles.letterCustom(11, false, -0.1),
-                                extraCountBorderColor:
-                                    Theme.of(context).primaryColor,
-                                imageRadius: 33,
-                                imageBorderColor: Colors.white,
-                                imageCount: 7,
-                                imageList: images,
-                                totalCount: 20)
+                            
                           ],
                         ),
                       ),

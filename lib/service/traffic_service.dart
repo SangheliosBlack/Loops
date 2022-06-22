@@ -6,11 +6,8 @@ import 'dart:convert';
 import 'package:delivery/global/enviroment.dart';
 import 'package:delivery/models/busqueda_response.dart';
 import 'package:delivery/models/search_response.dart';
-import 'package:delivery/models/traffic_response.dart';
 import 'package:delivery/service/auth_service.dart';
-import 'package:dio/dio.dart';
 import 'package:easy_debounce/easy_debounce.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart' show LatLng;
 import 'package:http/http.dart' as http;
 
 class TrafficService {
@@ -20,7 +17,6 @@ class TrafficService {
     return _instance;
   }
 
-  final _dio = Dio();
 
   // ignore: close_sinks
   final StreamController<SearchResponse> _sugerenciasStreamController =
@@ -34,28 +30,9 @@ class TrafficService {
 
   Stream<Busqueda> get busquedaStream => _busquedaStreamController.stream;
 
-  final _baseUrlDir = 'https://api.mapbox.com/directions/v5';
-  final _apiKey =
-      'pk.eyJ1IjoianVsaW9qYW1vbjMwMDAiLCJhIjoiY2t1MDNpOW02M2lzNDJ3bzJvanZpcTIydyJ9.2Anx0T9p97v-j57728PO9g';
+  
 
-  Future<DrivingResponse> getCoordsInicioYFin(
-      LatLng? inicio, LatLng? destino) async {
-    final coordString =
-        '${inicio!.longitude},${inicio.latitude};${destino!.longitude},${destino.latitude}';
-    final url = '$_baseUrlDir/mapbox/driving/$coordString';
-
-    final resp = await _dio.get(url, queryParameters: {
-      'alternatives': 'true',
-      'geometries': 'polyline6',
-      'steps': 'false',
-      'access_token': _apiKey,
-      'language': 'es',
-    });
-
-    final data = DrivingResponse.fromJson(resp.data);
-
-    return data;
-  }
+  
 
   Future<SearchResponse> getResultadosPorQuery(String busqueda) async {
     final data = {'query': busqueda};

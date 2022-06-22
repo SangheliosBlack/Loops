@@ -2,6 +2,7 @@ import 'package:delivery/global/enviroment.dart';
 import 'package:delivery/global/styles.dart';
 import 'package:delivery/service/auth_service.dart';
 import 'package:delivery/service/navigator_service.dart';
+import 'package:delivery/service/socket_service.dart';
 import 'package:delivery/views/editar_perfil.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -44,20 +45,15 @@ class _DrawerCustomState extends State<DrawerCustom> {
                   children: [
                     const SizedBox(height: 35),
                     const SizedBox(height: 50),
-                    Hero(
-                      tag: 'perfil123',
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(1000),
-                        child: SizedBox(
-                          width: 100,
-                          height: 100,
-                          child: Container(
-                            padding: const EdgeInsets.all(7),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(1000),
-                              child: const Image(
-                                  image: AssetImage('assets/images/peeps.png')),
-                            ),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(1000),
+                      child: SizedBox(
+                        width: 100,
+                        height: 100,
+                        child: Container(
+                          padding: const EdgeInsets.all(7),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(1000),
                           ),
                         ),
                       ),
@@ -144,6 +140,7 @@ class _DrawerCustomState extends State<DrawerCustom> {
       required IconData icono,
       required String ruta}) {
     final authService = Provider.of<AuthService>(context);
+    final socketService = Provider.of<SocketService>(context);
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
       onTap: () {
@@ -151,7 +148,7 @@ class _DrawerCustomState extends State<DrawerCustom> {
           navigationService.navigateTo('/');
           Navigator.pop(context);
           Navigator.pop(context);
-
+          socketService.disconnect();
           authService.logout();
         } else {
           navigationService.navegarDraw(ruta: ruta);

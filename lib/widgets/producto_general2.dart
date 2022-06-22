@@ -20,7 +20,8 @@ class ProductoGeneral2 extends StatelessWidget {
           context,
           MaterialPageRoute(
               builder: (context) => VerProductoView(
-                    producto: producto,soloTienda: true,
+                    producto: producto,
+                    soloTienda: true,
                   )),
         );
       },

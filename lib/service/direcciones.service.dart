@@ -138,8 +138,7 @@ class DireccionesService with ChangeNotifier {
             'x-token': await AuthService.getToken()
           });
       // ignore: empty_catches
-    } catch (e) {
-    }
+    } catch (e) {}
   }
 
   int direccionFavorita() {

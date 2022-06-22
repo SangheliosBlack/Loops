@@ -192,8 +192,8 @@ class OffertsCard2 extends StatelessWidget {
       child: Stack(
         children: [
           const SizedBox(
-              height: double.infinity,
-              ),
+            height: double.infinity,
+          ),
           Positioned(
               bottom: 15.0,
               left: 15.0,
@@ -213,12 +213,10 @@ class OffertsCard2 extends StatelessWidget {
                       children: [
                         Container(
                           margin: const EdgeInsets.only(top: 10.0, bottom: 5),
-                          
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            
                             Container(
                               width: 60,
                               margin: const EdgeInsets.only(top: 5),
@@ -347,21 +345,20 @@ class ListadoCategorias extends StatelessWidget {
         height: 40,
         child: AnimatedSwitcher(
             duration: const Duration(milliseconds: 3000),
-            child:ListView.separated(
-                    padding: const EdgeInsets.symmetric(horizontal: 25),
-                    itemBuilder: (BuildContext context, int index) =>
-                        itemCategory(
-                      context,
-                      llenarPantalla.categorias[index],
-                    ),
-                    separatorBuilder: (BuildContext context, int index) =>
-                        const SizedBox(
-                      width: 10,
-                    ),
-                    itemCount: llenarPantalla.categorias.length,
-                    scrollDirection: Axis.horizontal,
-                    physics: const BouncingScrollPhysics(),
-                  )));
+            child: ListView.separated(
+              padding: const EdgeInsets.symmetric(horizontal: 25),
+              itemBuilder: (BuildContext context, int index) => itemCategory(
+                context,
+                llenarPantalla.categorias[index],
+              ),
+              separatorBuilder: (BuildContext context, int index) =>
+                  const SizedBox(
+                width: 10,
+              ),
+              itemCount: llenarPantalla.categorias.length,
+              scrollDirection: Axis.horizontal,
+              physics: const BouncingScrollPhysics(),
+            )));
   }
 
   Widget itemCategory(BuildContext context, String titulo) {
@@ -396,10 +393,10 @@ class ListadoCategorias extends StatelessWidget {
 
 Widget itemCategoryVoid(BuildContext context, String titulo, IconData icono) {
   return Container(
-      decoration: BoxDecoration(
-          color: Colors.white, borderRadius: BorderRadius.circular(15)),
-      padding: const EdgeInsets.all(8),
-      );
+    decoration: BoxDecoration(
+        color: Colors.white, borderRadius: BorderRadius.circular(15)),
+    padding: const EdgeInsets.all(8),
+  );
 }
 
 class ListaProductos extends StatelessWidget {
@@ -481,7 +478,7 @@ class ListaProductos extends StatelessWidget {
                 : Container()),
         Container(
           margin: const EdgeInsets.only(bottom: 20, top: 5),
-          height: 350,
+          height: 305,
           child: PageView.builder(
               physics: const BouncingScrollPhysics(),
               scrollDirection: Axis.horizontal,
@@ -504,7 +501,7 @@ class ListaProductos extends StatelessWidget {
             ProductoGeneral(producto: lista.productos[index]),
         itemCount: lista.productos.length,
         separatorBuilder: (BuildContext context, int index) => const SizedBox(
-          height: 10,
+          height: 0,
         ),
       ),
     );

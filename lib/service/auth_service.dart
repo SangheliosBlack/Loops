@@ -2,11 +2,15 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:delivery/global/enviroment.dart';
+import 'package:delivery/models/cesta.dart';
+import 'package:delivery/models/codigo_response.dart';
+import 'package:delivery/models/customer.dart';
 import 'package:delivery/models/direccion.dart';
 import 'package:delivery/models/image_response.dart';
 import 'package:delivery/models/lista_opciones.dart';
 import 'package:delivery/models/productos.dart';
 import 'package:delivery/models/usuario.dart';
+import 'package:delivery/models/venta_response.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:delivery/models/auth.dart';
@@ -18,6 +22,7 @@ import 'package:mime/mime.dart';
 import 'local_storage.dart';
 
 enum AuthStatus { checking, authenticated, notAuthenticated }
+
 enum ButtonStatus { autenticando, disponible, pressed }
 
 class AuthService with ChangeNotifier {
@@ -30,9 +35,6 @@ class AuthService with ChangeNotifier {
 
   AuthStatus authStatus = AuthStatus.checking;
 
-  AuthService() {
-    isLoggedIn();
-  }
   late Usuario usuario;
 
   List<ListadoOpcionesTemp> listadoTemp = [];
@@ -89,7 +91,7 @@ class AuthService with ChangeNotifier {
   /*Imagen*/
 
   Future register(String nombre, String email, String password, String numero,
-      String passwordCheck) async {
+      String passwordCheck, String dialCode) async {
     buttonStatus = ButtonStatus.autenticando;
     await Future.delayed(const Duration(milliseconds: 500));
     List<Errore> lista = [];
@@ -98,7 +100,8 @@ class AuthService with ChangeNotifier {
       'correo': email,
       'contrasena': password,
       'confirmar_contrasena': passwordCheck,
-      'numero_celular': numero
+      'numero_celular': numero,
+      'dialCode': dialCode,
     };
 
     try {
@@ -149,7 +152,7 @@ class AuthService with ChangeNotifier {
   }
 
   Future<bool> logInCelular({required String numero}) async {
-    final data = {'numero': '52$numero'};
+    final data = {'numero': numero.replaceAll(' ', '')};
     try {
       final resp = await http.post(
           Uri.parse('${Statics.apiUrl}/autentificacion/iniciarUsuarioTelefono'),
@@ -172,18 +175,27 @@ class AuthService with ChangeNotifier {
   }
 
   Future<bool> isLoggedIn() async {
-    final token = LocalStorage.prefs.getString('token');
-    final resp = await http.get(
-        Uri.parse('${Statics.apiUrl}/autentificacion/renovarCodigo'),
-        headers: {'Content-Type': 'application/json', 'x-token': token ?? ''});
-    if (resp.statusCode == 200) {
-      final loginResponse = loginResponseFromJson(resp.body);
-      usuario = loginResponse.usuario;
-      await _guardarToken(loginResponse.token);
-      await Future.delayed(const Duration(milliseconds: 750));
-      return true;
-    } else {
-      logout();
+    try {
+      final token = LocalStorage.prefs.getString('token');
+      final resp = await http.get(
+          Uri.parse('${Statics.apiUrl}/autentificacion/renovarCodigo'),
+          headers: {
+            'Content-Type': 'application/json',
+            'x-token': token ?? ''
+          });
+      if (resp.statusCode == 200) {
+        final loginResponse = loginResponseFromJson(resp.body);
+        usuario = loginResponse.usuario;
+
+        await _guardarToken(loginResponse.token);
+        await Future.delayed(const Duration(milliseconds: 750));
+        return true;
+      } else {
+        logout();
+        return false;
+      }
+    } catch (e) {
+      print(e);
       return false;
     }
   }
@@ -228,10 +240,8 @@ class AuthService with ChangeNotifier {
   Future<bool> agregarProductoCesta(
       {required Producto producto,
       required num cantidad,
-      required String eleccion1,
-      required String eleccion2}) async {
+      required List<String> listado}) async {
     await Future.delayed(const Duration(seconds: 1));
-
     List<Opcion> opciones = producto.opciones
         .map((e) => Opcion(
             titulo: e.titulo,
@@ -239,10 +249,12 @@ class AuthService with ChangeNotifier {
               return Listado(
                   precio: e.precio,
                   tipo: e.tipo,
-                  activo: e.tipo == eleccion1 || e.tipo == eleccion2
-                      ? true
-                      : false);
-            }).toList(), maximo: e.maximo, minimo: e.minimo))
+                  activo: listado.contains(e.tipo) ? true : false,
+                  auto: e.auto,
+                  fijo: e.fijo);
+            }).toList(),
+            maximo: e.maximo,
+            minimo: e.minimo))
         .toList();
 
     var enCesta = productoAgregado(id: producto.id, opciones: opciones);
@@ -250,12 +262,39 @@ class AuthService with ChangeNotifier {
     if (enCesta!.isNotEmpty) {
       int index = usuario.cesta.productos
           .indexWhere((element) => element.sku == enCesta);
-      usuario.cesta.productos[index].cantidad =
-          usuario.cesta.productos[index].cantidad + cantidad > 15
-              ? 15
-              : usuario.cesta.productos[index].cantidad + cantidad;
-      notifyListeners();
-      return true;
+
+      final data = {
+        'id': producto.id,
+        'cantidad': usuario.cesta.productos[index].cantidad + cantidad > 15
+            ? 15
+            : usuario.cesta.productos[index].cantidad + cantidad
+      };
+
+      try {
+        final resp = await http.post(
+            Uri.parse(
+                '${Statics.apiUrl}/usuario/modificarCantidadProductoCesta'),
+            body: jsonEncode(data),
+            headers: {
+              'Content-Type': 'application/json',
+              'x-token': await AuthService.getToken()
+            });
+
+        if (resp.statusCode == 200) {
+          usuario.cesta.productos[index].cantidad =
+              usuario.cesta.productos[index].cantidad + cantidad > 15
+                  ? 15
+                  : usuario.cesta.productos[index].cantidad + cantidad;
+          calcularTotal();
+          vaciarElementosTemp();
+          notifyListeners();
+          return true;
+        } else {
+          return false;
+        }
+      } catch (e) {
+        return false;
+      }
     } else {
       final Producto newProducto = Producto(
           id: producto.id,
@@ -267,15 +306,34 @@ class AuthService with ChangeNotifier {
           disponible: producto.disponible,
           tienda: producto.tienda,
           cantidad: cantidad,
+          extra: calcularOpcionesExtra(opciones: opciones),
           opciones: opciones,
-          sku: producto.id + eleccion1 + eleccion2);
+          sku: producto.id + listado.toString());
 
       newProducto.cantidad = cantidad;
       usuario.cesta.productos.insert(0, newProducto);
 
-      calcularTotal();
-      notifyListeners();
-      return true;
+      try {
+        final data = {'producto': newProducto.toJson()};
+
+        final resp = await http.post(
+            Uri.parse('${Statics.apiUrl}/usuario/agregarProductoCesta'),
+            body: jsonEncode(data),
+            headers: {
+              'Content-Type': 'application/json',
+              'x-token': await AuthService.getToken()
+            });
+
+        if (resp.statusCode == 200) {
+          calcularTotal();
+          vaciarElementosTemp();
+          return true;
+        } else {
+          return false;
+        }
+      } catch (e) {
+        return false;
+      }
     }
   }
 
@@ -299,8 +357,46 @@ class AuthService with ChangeNotifier {
     var valores = usuario.cesta.productos.fold<num>(
         0,
         (previousValue, element) =>
-            (element.cantidad * element.precio) + previousValue);
+            (element.cantidad * (element.precio + element.extra)) +
+            previousValue);
     return valores == 0 ? 0 : valores;
+  }
+
+  num calcularOpcionesExtra({required List<Opcion> opciones}) {
+    if (opciones.isEmpty) {
+      return 0;
+    } else {
+      List<int> errorValores = [];
+      List<List<String>> listado = [];
+      for (var element in listadoTemp) {
+        listado.add(element.listado);
+      }
+
+      for (var i = 0; i < listado.length; i++) {
+        if (listado[i].length >= opciones[i].minimo) {
+          errorValores.add(i);
+        } else {
+          errorValores.removeWhere((element) => element == i);
+        }
+      }
+
+      var listaExpanded = listado.expand((x) => x).toList();
+
+      var listaMap = opciones.map((e) => e.listado
+          .map((e2) => listaExpanded.contains(e2.tipo) ? e2.precio : 0));
+
+      var listadoMapExpanded = listaMap.expand((x) => x).toList();
+
+      for (var element in errorValores) {
+        listadoMapExpanded.add(
+            (opciones[element].minimo) * -opciones[element].listado[0].precio);
+      }
+
+      var listadpMapReduce =
+          listadoMapExpanded.reduce((value, element) => value + element);
+
+      return listadpMapReduce;
+    }
   }
 
   num totalPiezas() {
@@ -309,16 +405,81 @@ class AuthService with ChangeNotifier {
     return totaltem;
   }
 
-  void actulizarCantidad({required int cantidad, required int index}) {
-    usuario.cesta.productos[index].cantidad = cantidad;
-    notifyListeners();
+  Future<bool> actulizarCantidad(
+      {required int cantidad, required int index}) async {
+    await Future.delayed(const Duration(seconds: 1));
+    final data = {
+      'id': usuario.cesta.productos[index].id,
+      'cantidad': cantidad
+    };
+
+    try {
+      final resp = await http.post(
+          Uri.parse('${Statics.apiUrl}/usuario/modificarCantidadProductoCesta'),
+          body: jsonEncode(data),
+          headers: {
+            'Content-Type': 'application/json',
+            'x-token': await AuthService.getToken()
+          });
+      if (resp.statusCode == 200) {
+        usuario.cesta.productos[index].cantidad = cantidad;
+        notifyListeners();
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      return false;
+    }
   }
 
-  Future<void> eliminarProductoCesta({required int pos}) async {
+  Future<bool> eliminarProductoCesta({required int pos}) async {
     await Future.delayed(const Duration(seconds: 1));
 
-    usuario.cesta.productos.removeAt(pos);
-    notifyListeners();
+    final data = {"id": usuario.cesta.productos[pos].id};
+
+    try {
+      final resp = await http.post(
+          Uri.parse('${Statics.apiUrl}/usuario/eliminarProductoCesta'),
+          body: jsonEncode(data),
+          headers: {
+            'Content-Type': 'application/json',
+            'x-token': await AuthService.getToken()
+          });
+
+      if (resp.statusCode == 200) {
+        usuario.cesta.productos.removeAt(pos);
+        notifyListeners();
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<bool> eliminarCesta() async {
+    await Future.delayed(const Duration(seconds: 1));
+
+    try {
+      final resp = await http.post(
+          Uri.parse('${Statics.apiUrl}/usuario/eliminarCestaProductos'),
+          headers: {
+            'Content-Type': 'application/json',
+            'x-token': await AuthService.getToken()
+          });
+
+      if (resp.statusCode == 200) {
+        usuario.cesta.productos = [];
+        notifyListeners();
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      return false;
+    }
   }
 
   bool cambiarTarjetaCesta(
@@ -372,10 +533,33 @@ class AuthService with ChangeNotifier {
     return true;
   }
 
-  modificarListadoTemp({required String opcion, required int index}) {
-    if (listadoTemp.asMap().containsKey(index)) {
-      listadoTemp[index].listado.add(opcion);
-      notifyListeners();
+  eliminarOpcionExtraMisma({required int index, required String opcion}) {
+    listadoTemp[listadoTemp.indexWhere((element) => element.index == index)]
+        .listado
+        .removeWhere((element) => element == opcion);
+    notifyListeners();
+  }
+
+  modificarListadoTemp({
+    required String opcion,
+    required int index,
+    required bool permitido,
+  }) {
+    if (listadoTemp.indexWhere((element) => element.index == index) != -1) {
+      if (permitido) {
+        listadoTemp[listadoTemp.indexWhere((element) => element.index == index)]
+            .listado
+            .removeAt(0);
+        listadoTemp[listadoTemp.indexWhere((element) => element.index == index)]
+            .listado
+            .add(opcion);
+        notifyListeners();
+      } else {
+        listadoTemp[listadoTemp.indexWhere((element) => element.index == index)]
+            .listado
+            .add(opcion);
+        notifyListeners();
+      }
     } else {
       final listado = [opcion];
       final opcionNueva = ListadoOpcionesTemp(index: index, listado: listado);
@@ -387,5 +571,111 @@ class AuthService with ChangeNotifier {
   vaciarElementosTemp() {
     listadoTemp = [];
     notifyListeners();
+  }
+
+  Future<Venta?> crearPedido(
+      {required Direccion direccion,
+      String tarjeta = '',
+      required Customer customer}) async {
+    Cesta cestaEnvio = Cesta(
+        productos: usuario.cesta.productos,
+        total: (calcularTiendas() > 1 ? 4 * calcularTiendas() : 0) +
+            -(usuario.cesta.codigo != '' ? 18 * calcularTiendas() : 0) +
+            calcularTotal() +
+            (11 * calcularTiendas()) +
+            (18 * calcularTiendas()),
+        tarjeta: tarjeta,
+        direccion: direccion,
+        efectivo: usuario.cesta.efectivo,
+        codigo: usuario.cesta.codigo);
+    final data = {
+      'servicio': (11 * calcularTiendas()) +
+          (calcularTiendas() > 1 ? 4 * calcularTiendas() : 0),
+      'envio': 18 * calcularTiendas(),
+      'usuario': usuario.uid,
+      'customer': customer.id,
+      'cesta': cestaToJson(cestaEnvio)
+    };
+
+    try {
+      final resp = await http.post(
+          Uri.parse('${Statics.apiUrl}/tiendas/crearPedido'),
+          body: jsonEncode(data),
+          headers: {
+            'Content-Type': 'application/json',
+            'x-token': await AuthService.getToken()
+          });
+
+      var respJson = ventoFromJson(resp.body);
+
+      if (resp.statusCode == 200) {
+        usuario.cesta.productos = [];
+        usuario.cesta.codigo = '';
+        notifyListeners();
+        return respJson;
+      } else {
+        return null;
+      }
+    } catch (e) {
+      return null;
+    }
+  }
+
+  calcularTiendas() {
+    List<String> listado = [];
+    for (var element in usuario.cesta.productos) {
+      if (listado.contains(element.tienda)) {
+      } else {
+        listado.add(element.tienda);
+      }
+    }
+    return listado.length;
+  }
+
+  List<String> calcularTiendasNombres() {
+    List<String> listado = [];
+    for (var element in usuario.cesta.productos) {
+      if (listado.contains(element.tienda)) {
+      } else {
+        listado.add(element.tienda);
+      }
+    }
+    return listado;
+  }
+
+  eliminarCupon() {
+    usuario.cesta.codigo = '';
+    notifyListeners();
+  }
+
+  Future<CodigoResponse> aplicarCupon({required String codigo}) async {
+    await Future.delayed(const Duration(seconds: 1));
+
+    final data = {"codigo": codigo.toUpperCase()};
+
+    try {
+      final resp = await http.post(
+          Uri.parse('${Statics.apiUrl}/usuario/buscarCodigo'),
+          body: jsonEncode(data),
+          headers: {
+            'Content-Type': 'application/json',
+            'x-token': await AuthService.getToken()
+          });
+
+      var respJson = codigoResponseFromJson(resp.body);
+
+      if (respJson.ok) {
+        usuario.cesta.codigo = codigo;
+        usuario.nombreCodigo = respJson.usuario;
+        usuario.idCodigo = respJson.id;
+
+        notifyListeners();
+        return respJson;
+      } else {
+        return respJson;
+      }
+    } catch (e) {
+      return CodigoResponse(ok: false, usuario: '', id: '', msg: '');
+    }
   }
 }

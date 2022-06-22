@@ -1,15 +1,20 @@
+import 'package:delivery/service/puto_dial.dart';
 import 'package:delivery/service/twilio.dart';
 import 'package:delivery/views/confirmar_codigo.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'package:sms_autofill/sms_autofill.dart';
 
 class BotonAutentificar extends StatefulWidget {
   final GlobalKey<FormState> formKey;
   final TextEditingController controller;
-  const BotonAutentificar(
-      {Key? key, required this.formKey, required this.controller})
-      : super(key: key);
+  const BotonAutentificar({
+    Key? key,
+    required this.formKey,
+    required this.controller,
+  }) : super(key: key);
 
   @override
   State<BotonAutentificar> createState() => _BotonAutentificarState();
@@ -20,23 +25,27 @@ class _BotonAutentificarState extends State<BotonAutentificar> {
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
+    final putoDial = Provider.of<PutoDial>(context);
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
       onTap: send
           ? null
           : () async {
               var validar = widget.formKey.currentState!.validate();
+              FocusManager.instance.primaryFocus?.unfocus();
               if (validar) {
                 setState(() {
                   send = true;
                 });
-                await Future.delayed(const Duration(seconds: 5));
+                await Future.delayed(const Duration(seconds: 1));
 
-                FocusManager.instance.primaryFocus?.unfocus();
-                final signCode = await SmsAutoFill().getAppSignature;
+                String signCode = '';
 
+                if (!kIsWeb) {
+                  signCode = await SmsAutoFill().getAppSignature;
+                }
                 final estado = await TwilioService()
-                    .enviarSms(widget.controller.text, signCode);
+                    .enviarSms(widget.controller.text, signCode, putoDial.dial);
                 setState(() {
                   send = false;
                 });
@@ -48,6 +57,7 @@ class _BotonAutentificarState extends State<BotonAutentificar> {
                     MaterialPageRoute(
                         builder: (context) => ConfirmarCodigo(
                               numero: numero,
+                              codigo: putoDial.dial,
                             )),
                   );
                 } else {

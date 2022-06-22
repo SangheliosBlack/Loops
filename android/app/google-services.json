@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "101948232468",
+    "project_id": "flluter-push-notifications",
+    "storage_bucket": "flluter-push-notifications.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:101948232468:android:b8c485204773113526e801",
+        "android_client_info": {
+          "package_name": "com.example.delivery"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "101948232468-4v6bd78g8kbgblv9hqj62klrm6k5rck3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyClvNzWajMMrFjnEKGl3xOMleULaaAcL1Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "101948232468-4v6bd78g8kbgblv9hqj62klrm6k5rck3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

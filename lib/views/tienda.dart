@@ -1,12 +1,12 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:decorated_icon/decorated_icon.dart';
 import 'package:delivery/helpers/haversine.dart';
 import 'package:delivery/models/direccion.dart';
 import 'package:delivery/models/lista_productos.dart';
 import 'package:delivery/models/tienda.dart';
 import 'package:delivery/service/auth_service.dart';
 import 'package:delivery/service/direcciones.service.dart';
+import 'package:delivery/service/hide_show_menu.dart';
 import 'package:delivery/service/tiendas_service.dart';
 import 'package:delivery/widgets/producto_general2.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +14,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class StoreIndividual extends StatefulWidget {
@@ -31,7 +32,8 @@ class _StoreIndividualState extends State<StoreIndividual> {
     final tiendaService = Provider.of<TiendasService>(context);
     final authService = Provider.of<AuthService>(context);
     final direccionesService = Provider.of<DireccionesService>(context);
-
+    double width = MediaQuery.of(context).size.width;
+    final generalActions = Provider.of<GeneralActions>(context);
     return Scaffold(
       backgroundColor: Colors.black,
       body: CustomScrollView(
@@ -56,39 +58,42 @@ class _StoreIndividualState extends State<StoreIndividual> {
                     const SizedBox(
                       height: 14,
                     ),
-                    Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 25),
-                        child: Stack(
-                          children: [
-                            const DecoratedIcon(
-                              Icons.shopping_bag,
-                              color: Colors.white,
-                              size: 40,
-                              shadows: [
-                                BoxShadow(
-                                  blurRadius: 5,
-                                  color: Colors.black,
-                                ),
-                              ],
-                            ),
-                            Positioned.fill(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  const SizedBox(
-                                    height: 12,
-                                  ),
-                                  Text('${authService.totalPiezas()}',
-                                      style: GoogleFonts.quicksand(
-                                        color: Colors.black,
-                                        fontSize: 14,
-                                      )),
-                                ],
+                    GestureDetector(
+                      onTap: () async {
+                        Navigator.pop(context);
+                        await Future.delayed(const Duration(milliseconds: 300));
+                        generalActions.controllerNavigate(1);
+                      },
+                      child: Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 25),
+                          child: Stack(
+                            children: [
+                              const Icon(
+                                Icons.shopping_bag,
+                                color: Colors.white,
+                                size: 40,
+                                
                               ),
-                            ),
-                          ],
-                        )),
+                              Positioned.fill(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    const SizedBox(
+                                      height: 13,
+                                    ),
+                                    Text('${authService.totalPiezas()}',
+                                        style: GoogleFonts.quicksand(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 14,
+                                        )),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          )),
+                    ),
                   ],
                 )
               ],
@@ -105,15 +110,10 @@ class _StoreIndividualState extends State<StoreIndividual> {
                     Container(
                       margin: const EdgeInsets.only(left: 13),
                       padding: const EdgeInsets.all(6),
-                      child: const DecoratedIcon(
+                      child: const Icon(
                         Icons.arrow_back,
                         color: Colors.white,
-                        shadows: [
-                          BoxShadow(
-                            blurRadius: 5,
-                            color: Colors.black,
-                          ),
-                        ],
+                        
                       ),
                     ),
                   ],
@@ -144,35 +144,38 @@ class _StoreIndividualState extends State<StoreIndividual> {
                                 width: cons.biggest.height <= 190 ? 50 : 70,
                                 height: cons.biggest.height <= 190 ? 50 : 70,
                                 duration: const Duration(milliseconds: 300),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(100),
-                                  child: CachedNetworkImage(
-                                      fit: BoxFit.cover,
-                                      imageUrl:
-                                          'https://images.vexels.com/media/users/3/215185/raw/9975fac6938d6d19c33105e44655a3c8-diseno-de-logo-de-restaurante-cheff.jpg',
-                                      imageBuilder: (context, imageProvider) =>
-                                          Container(
-                                            decoration: BoxDecoration(
-                                              image: DecorationImage(
-                                                image: imageProvider,
-                                                fit: BoxFit.cover,
-                                                colorFilter: ColorFilter.mode(
-                                                  Colors.black.withOpacity(.15),
-                                                  BlendMode.color,
+                                child: Hero(
+                                  tag: widget.tienda.uid,
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(100),
+                                    child: CachedNetworkImage(
+                                        fit: BoxFit.cover,
+                                        imageUrl: widget.tienda.imagenPerfil,
+                                        imageBuilder: (context,
+                                                imageProvider) =>
+                                            Container(
+                                              decoration: BoxDecoration(
+                                                image: DecorationImage(
+                                                  image: imageProvider,
+                                                  fit: BoxFit.cover,
+                                                  colorFilter: ColorFilter.mode(
+                                                    Colors.black
+                                                        .withOpacity(.15),
+                                                    BlendMode.color,
+                                                  ),
                                                 ),
                                               ),
                                             ),
-                                          ),
-                                      placeholder: (context, url) => Container(
-                                          padding: const EdgeInsets.all(25),
-                                          child:
-                                              const CircularProgressIndicator(
-                                            strokeWidth: 1,
-                                            color: Colors.black,
-                                          )),
-                                      errorWidget: (context, url, error) {
-                                        return const Icon(Icons.error);
-                                      }),
+                                        placeholder: (context, url) => Container(
+                                            padding: const EdgeInsets.all(25),
+                                            child: const CircularProgressIndicator(
+                                              strokeWidth: 1,
+                                              color: Colors.black,
+                                            )),
+                                        errorWidget: (context, url, error) {
+                                          return const Icon(Icons.error);
+                                        }),
+                                  ),
                                 ),
                               ),
                               Positioned(
@@ -220,13 +223,10 @@ class _StoreIndividualState extends State<StoreIndividual> {
                               child: ClipRRect(
                                 child: SizedBox(
                                   width: double.infinity,
-                                  child: Hero(
-                                    tag: widget.tienda.uid,
-                                    child: const Image(
-                                      image: CachedNetworkImageProvider(
-                                          'https://images.otstatic.com/prod1/32412251/3/huge.jpg'),
-                                      fit: BoxFit.cover,
-                                    ),
+                                  child: Image(
+                                    image: CachedNetworkImageProvider(
+                                        widget.tienda.fotografias),
+                                    fit: BoxFit.cover,
                                   ),
                                 ),
                               ),
@@ -320,49 +320,59 @@ class _StoreIndividualState extends State<StoreIndividual> {
                                         color: Colors.white, fontSize: 12),
                                   ),
                                   const SizedBox(height: 5),
-                                  Row(
-                                    children: [
-                                      const Icon(
-                                        Icons.place_outlined,
-                                        color: Colors.white,
-                                        size: 15,
-                                      ),
-                                      const SizedBox(width: 3),
-                                      Text(
-                                        '${(calculateDistance(lat1: widget.tienda.coordenadas.latitud, lon1: widget.tienda.coordenadas.longitud, lat2: direccionesService.direcciones[authService.usuario.cesta.direccion.titulo != '' ? direccionesService.direcciones.indexWhere((element) => authService.usuario.cesta.direccion.titulo == element.titulo) : obtenerFavorito(direccionesService.direcciones) != -1 ? obtenerFavorito(direccionesService.direcciones) : 0].coordenadas.lat, lon2: direccionesService.direcciones[authService.usuario.cesta.direccion.titulo != '' ? direccionesService.direcciones.indexWhere((element) => authService.usuario.cesta.direccion.titulo == element.titulo) : obtenerFavorito(direccionesService.direcciones) != -1 ? obtenerFavorito(direccionesService.direcciones) : 0].coordenadas.lng).toStringAsFixed(2))} km Centro, Lagos de Moreno ',
-                                        style: GoogleFonts.quicksand(
-                                            color: Colors.white, fontSize: 13),
-                                      )
-                                    ],
-                                  )
+                                  direccionesService.direcciones.isNotEmpty
+                                      ? Row(
+                                          children: [
+                                            const Icon(
+                                              Icons.place_outlined,
+                                              color: Colors.white,
+                                              size: 15,
+                                            ),
+                                            const SizedBox(width: 3),
+                                            SizedBox(
+                                              width: width - 185,
+                                              child: Text(
+                                                '${(calculateDistance(lat1: widget.tienda.coordenadas.latitud, lon1: widget.tienda.coordenadas.longitud, lat2: direccionesService.direcciones[authService.usuario.cesta.direccion.titulo != '' ? direccionesService.direcciones.indexWhere((element) => authService.usuario.cesta.direccion.titulo == element.titulo) : obtenerFavorito(direccionesService.direcciones) != -1 ? obtenerFavorito(direccionesService.direcciones) : 0].coordenadas.lat, lon2: direccionesService.direcciones[authService.usuario.cesta.direccion.titulo != '' ? direccionesService.direcciones.indexWhere((element) => authService.usuario.cesta.direccion.titulo == element.titulo) : obtenerFavorito(direccionesService.direcciones) != -1 ? obtenerFavorito(direccionesService.direcciones) : 0].coordenadas.lng).toStringAsFixed(2))} km ${widget.tienda.direccion}',
+                                                overflow: TextOverflow.ellipsis,
+                                                style: GoogleFonts.quicksand(
+                                                    color: Colors.white,
+                                                    fontSize: 13),
+                                              ),
+                                            )
+                                          ],
+                                        )
+                                      : Container()
                                 ],
                               ),
                             ],
                           )),
                       Positioned(
-                          right: 15,
+                          left: 150,
                           bottom: 120,
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                'Horario :',
-                                style: GoogleFonts.quicksand(
-                                  color: Colors.white,
-                                  fontSize: 12,
-                                ),
-                              ),
                               Row(
                                 children: [
-                                  const Icon(
-                                    Icons.restore,
-                                    color: Colors.white,
-                                    size: 15,
-                                  ),
-                                  const SizedBox(width: 5),
                                   Text(
-                                    '10:00 PM',
+                                    DateFormat('h:mm a', 'es-MX')
+                                        .format(widget.tienda.horario.apertura)
+                                        .toString(),
+                                    style: GoogleFonts.quicksand(
+                                      color: Colors.white,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                  Text('    |   ',
+                                      style: GoogleFonts.quicksand(
+                                        color: Colors.white,
+                                        fontSize: 14,
+                                      )),
+                                  Text(
+                                    DateFormat('h:mm a', 'es-MX')
+                                        .format(widget.tienda.horario.cierre)
+                                        .toString(),
                                     style: GoogleFonts.quicksand(
                                       color: Colors.white,
                                       fontSize: 14,
@@ -384,11 +394,13 @@ class _StoreIndividualState extends State<StoreIndividual> {
                         -1
                     ? FutureBuilder(
                         future: tiendaService.obtenerProductos(
-                            nombre: widget.tienda.nombre),
+                            nombre: widget.tienda.nombre,
+                            id: widget.tienda.productos),
                         builder: (BuildContext context,
                             AsyncSnapshot<List<ListaProductosCategoria>>
                                 snapshot) {
                           return LinearProgressIndicator(
+                            minHeight: 1,
                             color: Colors.white.withOpacity(1),
                             backgroundColor:
                                 const Color.fromRGBO(62, 204, 191, 1),
