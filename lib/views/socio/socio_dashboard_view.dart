@@ -23,6 +23,7 @@ class _SocioDashBoardViewState extends State<SocioDashBoardView>
     with AutomaticKeepAliveClientMixin {
   @override
   Widget build(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
     final _controller = WeSlideController();
     final tiendasService = Provider.of<TiendasService>(context);
     final authServiceService = Provider.of<AuthService>(context);
@@ -32,17 +33,6 @@ class _SocioDashBoardViewState extends State<SocioDashBoardView>
       body: FutureBuilder(
         future: tiendasService.getTienda(tienda: tiendaUrl),
         builder: (BuildContext context, AsyncSnapshot<Tienda?> snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Column(
-              children: const [
-                LinearProgressIndicator(
-                  minHeight: 1,
-                  backgroundColor: Color.fromRGBO(234, 248, 248, 0),
-                  color: Color.fromRGBO(62, 204, 191, 1),
-                ),
-              ],
-            );
-          }
           var tienda = snapshot.data;
 
           return AnimatedSwitcher(
@@ -53,13 +43,18 @@ class _SocioDashBoardViewState extends State<SocioDashBoardView>
                       hideAppBar: true,
                       hideFooter: false,
                       backgroundColor: Colors.white,
-                      panelBorderRadiusBegin: 20.0,
-                      panelBorderRadiusEnd: 20.0,
+                      panelBorderRadiusBegin: 35.0,
+                      panelBorderRadiusEnd: 35.0,
                       panelMinSize: 0,
-                      panelMaxSize: 200,
+                      panelMaxSize: 180,
                       parallaxOffset: 0.3,
+                      blur: true,
+                      isDismissible: true,
+                      blurSigma: 5,
+                      blurColor: Colors.black,
                       appBarHeight: 80.0,
                       footerHeight: 60.0,
+                      panelWidth: width,
                       controller: _controller,
                       appBar: AppBar(
                         toolbarHeight: 150,
@@ -113,128 +108,151 @@ class _SocioDashBoardViewState extends State<SocioDashBoardView>
                         backgroundColor: Colors.white,
                         elevation: 0,
                       ),
-                      body: SingleChildScrollView(
-                        physics: const BouncingScrollPhysics(),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              padding:
-                                  const EdgeInsets.only(bottom: 90, top: 30),
+                      body: snapshot.connectionState == ConnectionState.waiting
+                          ? Column(
+                              children: const [
+                                LinearProgressIndicator(
+                                  minHeight: 1,
+                                  backgroundColor:
+                                      Color.fromRGBO(234, 248, 248, 0),
+                                  color: Color.fromRGBO(62, 204, 191, 1),
+                                ),
+                              ],
+                            )
+                          : SingleChildScrollView(
+                              physics: const BouncingScrollPhysics(),
                               child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Stack(
-                                    children: [
-                                      Container(
-                                        padding: const EdgeInsets.all(10),
-                                        decoration: const BoxDecoration(
-                                            color: Colors.white,
-                                            shape: BoxShape.circle),
-                                        child: Hero(
-                                          tag: tienda.uid,
-                                          child: SizedBox(
-                                            width: 170,
-                                            height: 170,
-                                            child: ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(100),
-                                              child: CachedNetworkImage(
-                                                  fit: BoxFit.cover,
-                                                  imageUrl: tienda.imagenPerfil,
-                                                  imageBuilder: (context,
-                                                          imageProvider) =>
-                                                      Container(
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          image:
-                                                              DecorationImage(
-                                                            image:
-                                                                imageProvider,
-                                                            fit: BoxFit.cover,
-                                                            colorFilter:
-                                                                ColorFilter
-                                                                    .mode(
-                                                              Colors.black
-                                                                  .withOpacity(
-                                                                      .15),
-                                                              BlendMode.color,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                  placeholder: (context, url) =>
-                                                      Container(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(100),
-                                                          child:
-                                                              const CircularProgressIndicator(
-                                                            strokeWidth: 1,
-                                                            color: Colors.black,
-                                                          )),
-                                                  errorWidget:
-                                                      (context, url, error) {
-                                                    return const Icon(
-                                                        Icons.error);
-                                                  }),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(
-                                    height: 93,
-                                    child: ListView.separated(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 25, vertical: 10),
-                                      scrollDirection: Axis.horizontal,
-                                      itemBuilder:
-                                          (BuildContext context, int index) =>
-                                              const MiembroEquipo(),
-                                      itemCount: 1,
-                                      separatorBuilder:
-                                          (BuildContext context, int index) =>
-                                              const SizedBox(
-                                        width: 5,
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 10),
                                   Container(
-                                    height: 170,
-                                    width: double.infinity,
-                                    margin: const EdgeInsets.symmetric(
-                                        horizontal: 25),
+                                    padding: const EdgeInsets.only(
+                                        bottom: 90, top: 30),
                                     child: Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.center,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
                                       children: [
-                                        Text(
-                                          'Sin pedidos por ahora :(',
-                                          style: GoogleFonts.quicksand(
-                                            color: Colors.black.withOpacity(.4),
-                                            fontSize: 20,
+                                        Stack(
+                                          children: [
+                                            Container(
+                                              padding: const EdgeInsets.all(10),
+                                              decoration: const BoxDecoration(
+                                                  color: Colors.white,
+                                                  shape: BoxShape.circle),
+                                              child: Hero(
+                                                tag: tienda.uid,
+                                                child: SizedBox(
+                                                  width: 170,
+                                                  height: 170,
+                                                  child: ClipRRect(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            100),
+                                                    child: CachedNetworkImage(
+                                                        fit: BoxFit.cover,
+                                                        imageUrl:
+                                                            tienda.imagenPerfil,
+                                                        imageBuilder: (context,
+                                                                imageProvider) =>
+                                                            Container(
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                image:
+                                                                    DecorationImage(
+                                                                  image:
+                                                                      imageProvider,
+                                                                  fit: BoxFit
+                                                                      .cover,
+                                                                  colorFilter:
+                                                                      ColorFilter
+                                                                          .mode(
+                                                                    Colors.black
+                                                                        .withOpacity(
+                                                                            .15),
+                                                                    BlendMode
+                                                                        .color,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                        placeholder: (context,
+                                                                url) =>
+                                                            Container(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                            .all(
+                                                                        100),
+                                                                child:
+                                                                    const CircularProgressIndicator(
+                                                                  strokeWidth:
+                                                                      1,
+                                                                  color: Colors
+                                                                      .black,
+                                                                )),
+                                                        errorWidget: (context,
+                                                            url, error) {
+                                                          return const Icon(
+                                                              Icons.error);
+                                                        }),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        SizedBox(
+                                          height: 93,
+                                          child: ListView.separated(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 25, vertical: 10),
+                                            scrollDirection: Axis.horizontal,
+                                            itemBuilder: (BuildContext context,
+                                                    int index) =>
+                                                const MiembroEquipo(),
+                                            itemCount: 1,
+                                            separatorBuilder:
+                                                (BuildContext context,
+                                                        int index) =>
+                                                    const SizedBox(
+                                              width: 5,
+                                            ),
                                           ),
                                         ),
+                                        const SizedBox(height: 10),
+                                        Container(
+                                          height: 170,
+                                          width: double.infinity,
+                                          margin: const EdgeInsets.symmetric(
+                                              horizontal: 25),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Text(
+                                                'Sin pedidos por ahora :(',
+                                                style: GoogleFonts.quicksand(
+                                                  color: Colors.black
+                                                      .withOpacity(.4),
+                                                  fontSize: 20,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        )
                                       ],
                                     ),
-                                  )
+                                  ),
                                 ],
                               ),
                             ),
-                          ],
-                        ),
-                      ),
                       panel: Container(
-                        height: 150,
+                        padding: EdgeInsets.only(top: 25),
+                        color: Colors.white,
+                        height: 140,
                         child: ListView.separated(
                           padding: const EdgeInsets.symmetric(horizontal: 25),
                           scrollDirection: Axis.horizontal,
-                          shrinkWrap: true,
                           itemCount: authServiceService.usuario.negocios.length,
                           itemBuilder: (_, int index) {
                             var tiendaPrev =

@@ -236,13 +236,14 @@ class _EditarTiendaViewState extends State<EditarTiendaView> {
                               ItemConfiguracion(
                                 color: const Color.fromRGBO(159, 227, 254, 1),
                                 titulo: 'Productos',
-                                subTitulo: widget
-                                    .tienda.listaProductos.length
+                                subTitulo: widget.tienda.listaProductos.length
                                     .toString(),
                                 funcion: () => Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) =>  EditarMenuView(tienda: widget.tienda,)),
+                                      builder: (context) => EditarMenuView(
+                                            tienda: widget.tienda,
+                                          )),
                                 ),
                                 icono: Icons.shopping_bag_outlined,
                               ),
@@ -367,12 +368,15 @@ class _EditarTiendaViewState extends State<EditarTiendaView> {
                                 icono: Icons.cake_outlined,
                               ),
                               const SizedBox(height: 15),
-                              ItemConfiguracion(
-                                color: const Color.fromRGBO(252, 208, 159, 1),
-                                titulo: 'Pagos',
-                                subTitulo: '646013168600137175',
-                                funcion: () => null,
-                                icono: Icons.account_balance_outlined,
+                              SizedBox(
+                                height: 105,
+                                child: ItemConfiguracion(
+                                  color: const Color.fromRGBO(252, 208, 159, 1),
+                                  titulo: 'Pagos',
+                                  subTitulo: '646013168600137175',
+                                  funcion: () => null,
+                                  icono: Icons.account_balance_outlined,
+                                ),
                               ),
                             ],
                           ),
@@ -380,13 +384,31 @@ class _EditarTiendaViewState extends State<EditarTiendaView> {
                       ],
                     ),
                     const SizedBox(height: 15),
-                    ItemConfiguracion(
-                      color: const Color.fromRGBO(253, 236, 171, 1),
-                      titulo: 'Disponibilidad',
-                      subTitulo: 'Disponible',
-                      funcion: () => null,
-                      icono: Icons.delivery_dining_outlined,
-                    ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: ItemConfiguracion(
+                            color: const Color.fromRGBO(253, 236, 171, 1),
+                            titulo: 'Disponibilidad',
+                            subTitulo: 'Disponible',
+                            funcion: () => null,
+                            icono: Icons.delivery_dining_outlined,
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 20,
+                        ),
+                        Expanded(
+                          child: ItemConfiguracion(
+                            color: const Color.fromRGBO(253, 236, 171, 1),
+                            titulo: 'Punto Venta',
+                            subTitulo: 'Configurado',
+                            funcion: () => openDialog(),
+                            icono: Icons.storefront_outlined,
+                          ),
+                        ),
+                      ],
+                    )
                   ],
                 ),
               ),
@@ -407,6 +429,32 @@ class _EditarTiendaViewState extends State<EditarTiendaView> {
       ),
     );
   }
+
+  Future openDialog() => showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+            title: Text('Your name', style: GoogleFonts.quicksand()),
+            content: TextField(
+              decoration: InputDecoration(
+                  hintText: 'Enter your name',
+                  hintStyle: GoogleFonts.quicksand()),
+            ),
+            actions: [
+              TextButton(
+                  onPressed: () {},
+                  child: Text(
+                    'Cancelar',
+                    style: GoogleFonts.quicksand(
+                        color: Colors.grey.withOpacity(.5)),
+                  )),
+              TextButton(
+                  onPressed: () {},
+                  child: Text(
+                    'Confirmar',
+                    style: GoogleFonts.quicksand(),
+                  ))
+            ],
+          ));
 }
 
 class ItemConfiguracion extends StatelessWidget {
