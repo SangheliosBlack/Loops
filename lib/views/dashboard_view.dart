@@ -21,8 +21,29 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
-class DashboardView extends StatelessWidget {
+class DashboardView extends StatefulWidget {
   const DashboardView({Key? key}) : super(key: key);
+
+  @override
+  State<DashboardView> createState() => _DashboardViewState();
+}
+
+class _DashboardViewState extends State<DashboardView> {
+  @override
+  void initState() {
+    super.initState();
+    final socketService = Provider.of<SocketService>(context, listen: false);
+    final pantallasService =
+        Provider.of<LlenarPantallasService>(context, listen: false);
+
+    socketService.socket.on('estado-negocio', (payload) {
+      if (payload['estado']) {
+        pantallasService.abrirNegocio(token: payload['token']);
+      } else {
+        pantallasService.cerrarNegocio(token: payload['token']);
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -353,24 +374,36 @@ class _DashBoardMainViewState extends State<DashBoardMainView>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return SingleChildScrollView(
-      physics: const BouncingScrollPhysics(),
-      child: AnimatedSize(
-        duration: const Duration(seconds: 1),
-        child: widget.llenarPantallasService.tiendas.isNotEmpty &&
-                widget.llenarPantallasService.categorias.isNotEmpty &&
-                widget.llenarPantallasService.productos.isNotEmpty
-            ? Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                BaraBusqueda(width: widget.width),
-                const ListadoCategorias(),
-                ListadoEstablecimientos(
-                    height: widget.height, width: widget.width),
-                const ListaProductos(),
-              ])
-            : const LinearProgressIndicator(
-                minHeight: 1,
-                backgroundColor: Color.fromRGBO(41, 200, 182, 1),
-                color: Colors.white),
+    return RefreshIndicator(
+      displacement: 100,
+      strokeWidth: 3,
+      onRefresh: () async {
+        widget.llenarPantallasService.recargarTodo();
+        widget.llenarPantallasService.pantallaPrincipalCategorias();
+        widget.llenarPantallasService.pantallaPrincipalProductos();
+        widget.llenarPantallasService.pantallaPrincipalTiendas();
+      },
+      child: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        child: AnimatedSize(
+          alignment: Alignment.topCenter,
+          duration: const Duration(milliseconds: 500),
+          child: widget.llenarPantallasService.tiendas.isNotEmpty &&
+                  widget.llenarPantallasService.categorias.isNotEmpty &&
+                  widget.llenarPantallasService.productos.isNotEmpty
+              ? Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  BaraBusqueda(width: widget.width),
+                  const ListadoCategorias(),
+                  const SizedBox(height: 10),
+                  ListadoEstablecimientos(
+                      height: widget.height, width: widget.width),
+                  const ListaProductos(),
+                ])
+              : const LinearProgressIndicator(
+                  minHeight: 1,
+                  backgroundColor: Color.fromRGBO(41, 200, 182, 1),
+                  color: Colors.white),
+        ),
       ),
     );
   }

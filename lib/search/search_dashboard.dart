@@ -6,6 +6,8 @@ import 'package:delivery/models/direccion.dart';
 import 'package:delivery/service/direcciones.service.dart';
 import 'package:delivery/service/traffic_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
@@ -187,6 +189,27 @@ class SearchBusqueda extends SearchDelegate<BusquedaResult> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          Row(
+                            children: [
+                              Container(
+                                  margin: const EdgeInsets.only(right: 5),
+                                  width: 5,
+                                  height: 5,
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(100),
+                                      color: tienda.online
+                                          ? Colors.green
+                                          : Colors.red)),
+                              Text(
+                                tienda.online ? 'Abierto' : 'Cerrado',
+                                style: GoogleFonts.quicksand(
+                                    fontSize: 11,
+                                    color: tienda.online
+                                        ? Colors.green
+                                        : Colors.red),
+                              )
+                            ],
+                          ),
                           Text(
                             'Restaurante',
                             style: GoogleFonts.quicksand(
@@ -197,16 +220,6 @@ class SearchBusqueda extends SearchDelegate<BusquedaResult> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Text(
-                                '4,9',
-                                style: GoogleFonts.playfairDisplay(
-                                    height: 1,
-                                    fontWeight: FontWeight.w600,
-                                    color:
-                                        const Color.fromRGBO(62, 204, 191, 1),
-                                    fontSize: 25),
-                              ),
-                              const SizedBox(width: 5),
                               Expanded(
                                 child: Text(
                                   tienda.nombre,
@@ -220,12 +233,29 @@ class SearchBusqueda extends SearchDelegate<BusquedaResult> {
                               ),
                             ],
                           ),
+                          const SizedBox(height: 2),
+                          RatingBar.builder(
+                            initialRating: 5,
+                            minRating: 1,
+                            direction: Axis.horizontal,
+                            allowHalfRating: true,
+                            itemCount: 5,
+                            itemPadding:
+                                const EdgeInsets.symmetric(horizontal: 4.0),
+                            itemBuilder: (context, _) => const FaIcon(
+                              FontAwesomeIcons.solidStar,
+                              color: Color.fromRGBO(41, 199, 184, 1),
+                            ),
+                            itemSize: 11,
+                            unratedColor: Colors.grey.withOpacity(.4),
+                            onRatingUpdate: (rating) {},
+                          ),
                           const SizedBox(height: 8),
                           Row(
                             children: [
                               const Icon(
                                 Icons.place_outlined,
-                                color: Colors.red,
+                                color: Colors.black,
                                 size: 15,
                               ),
                               const SizedBox(width: 3),

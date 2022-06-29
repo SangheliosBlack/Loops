@@ -1,11 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:delivery/global/styles.dart';
 import 'package:delivery/models/productos.dart';
+import 'package:delivery/service/llenar_pantallas.dart';
 import 'package:delivery/views/extras/ver_producto.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 class ProductoGeneral extends StatelessWidget {
   final Producto producto;
@@ -14,16 +16,18 @@ class ProductoGeneral extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final pantallasService = Provider.of<LlenarPantallasService>(context);
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
       onTap: () {
         Navigator.push(
-          context,
-          MaterialPageRoute(
+            context,
+            MaterialPageRoute(
               builder: (context) => VerProductoView(
-                    producto: producto,
-                  )),
-        );
+                  producto: producto,
+                  tienda: pantallasService.tiendas.firstWhere(
+                      (element) => element.nombre == producto.tienda)),
+            ));
       },
       child: Stack(
         children: [
@@ -33,44 +37,53 @@ class ProductoGeneral extends StatelessWidget {
               children: [
                 Container(
                   decoration: Styles.containerCustom(8),
-                  width: 85,
-                  height: 85,
+                  width: 95,
+                  height: 95,
                   child: Hero(
                     tag: producto.id,
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(15),
-                      child: CachedNetworkImage(
-                          key: UniqueKey(),
-                          fit: BoxFit.cover,
-                          imageUrl:
-                              'https://www.pequeocio.com/wp-content/uploads/2010/11/hamburguesas-caseras-800x717.jpg',
-                          imageBuilder: (context, imageProvider) => Container(
-                                decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                    image: imageProvider,
-                                    fit: BoxFit.cover,
-                                    colorFilter: ColorFilter.mode(
-                                      Colors.black.withOpacity(.15),
-                                      BlendMode.color,
+                      child: producto.imagen.isNotEmpty
+                          ? CachedNetworkImage(
+                              key: UniqueKey(),
+                              fit: BoxFit.cover,
+                              imageUrl:
+                                  'https://www.pequeocio.com/wp-content/uploads/2010/11/hamburguesas-caseras-800x717.jpg',
+                              imageBuilder: (context, imageProvider) =>
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      image: DecorationImage(
+                                        image: imageProvider,
+                                        fit: BoxFit.cover,
+                                        colorFilter: ColorFilter.mode(
+                                          Colors.black.withOpacity(.15),
+                                          BlendMode.color,
+                                        ),
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ),
-                          placeholder: (context, url) => Container(
-                              padding: const EdgeInsets.all(30),
-                              child: const CircularProgressIndicator(
-                                strokeWidth: 1,
-                                color: Colors.black,
-                              )),
-                          errorWidget: (context, url, error) {
-                            return const Icon(Icons.error);
-                          }),
+                              placeholder: (context, url) => Container(
+                                  padding: const EdgeInsets.all(30),
+                                  child: const CircularProgressIndicator(
+                                    strokeWidth: 1,
+                                    color: Colors.black,
+                                  )),
+                              errorWidget: (context, url, error) {
+                                return const Icon(Icons.error);
+                              })
+                          : Container(
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(15),
+                                  border: Border.all(
+                                      width: 1,
+                                      color: Colors.grey.withOpacity(.1))),
+                              child: const Icon(Icons.image)),
                     ),
                   ),
                 ),
                 Expanded(
                   child: Container(
-                    height: 90,
+                    height: 95,
                     margin: const EdgeInsets.only(left: 10),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -86,7 +99,31 @@ class ProductoGeneral extends StatelessWidget {
                           ],
                         ),
                         Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            producto.hot > 0
+                                ? RatingBar.builder(
+                                    initialRating:
+                                        double.parse(producto.hot.toString()),
+                                    minRating: 1,
+                                    direction: Axis.horizontal,
+                                    allowHalfRating: true,
+                                    itemCount: 5,
+                                    itemPadding: const EdgeInsets.symmetric(
+                                        horizontal: 4.0),
+                                    itemBuilder: (context, _) => const FaIcon(
+                                      FontAwesomeIcons.fireFlameCurved,
+                                      color: Colors.red,
+                                    ),
+                                    itemSize: 11,
+                                    unratedColor: Colors.grey.withOpacity(.4),
+                                    onRatingUpdate: (rating) {},
+                                  )
+                                : Container(),
+                            const SizedBox(
+                              height: 3,
+                            ),
                             Row(
                               children: [
                                 Icon(
@@ -158,25 +195,43 @@ class ProductoGeneral extends StatelessWidget {
           Positioned(
             right: 0,
             bottom: 5,
-            child: Row(
+            child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Text(
-                  '\$',
-                  style: GoogleFonts.playfairDisplay(
-                      fontSize: 18,
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(width: 3),
-                Text(
-                  producto.precio.toStringAsFixed(2),
-                  style: GoogleFonts.quicksand(
-                    fontSize: 25,
-                    color: const Color.fromRGBO(47, 47, 47, .9),
-                  ),
-                ),
+                producto.opciones.isNotEmpty
+                    ? Container(
+                        margin: const EdgeInsets.only(bottom: 5),
+                        child: Text(
+                          'Desde',
+                          style: GoogleFonts.quicksand(
+                            fontSize: 12,
+                            color: Colors.grey.withOpacity(.7),
+                          ),
+                        ),
+                      )
+                    : Container(),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '\$',
+                      style: GoogleFonts.playfairDisplay(
+                          fontSize: 18,
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(width: 3),
+                    Text(
+                      producto.precio.toStringAsFixed(2),
+                      style: GoogleFonts.quicksand(
+                        fontSize: 25,
+                        color: const Color.fromRGBO(47, 47, 47, .9),
+                      ),
+                    ),
+                  ],
+                )
               ],
             ),
           )

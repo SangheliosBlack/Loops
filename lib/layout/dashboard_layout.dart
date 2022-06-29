@@ -26,6 +26,7 @@ class _DashboardLayoutState extends State<DashboardLayout>
   @override
   void initState() {
     WidgetsBinding.instance?.addObserver(this);
+    
     super.initState();
   }
 

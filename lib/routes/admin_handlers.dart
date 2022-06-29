@@ -1,11 +1,14 @@
 import 'package:delivery/service/auth_service.dart';
 import 'package:delivery/service/permission_status.dart';
+import 'package:delivery/service/socket_service.dart';
 import 'package:delivery/views/admin/admin_dasboard.dart';
 import 'package:delivery/views/allow_gps_permission.dart';
 import 'package:delivery/views/autentificar_celular.dart';
 import 'package:delivery/views/confirmar_codigo.dart';
 import 'package:delivery/views/dashboard_view.dart';
+import 'package:delivery/views/extras/loading_view.dart';
 import 'package:delivery/views/gps_disable_view.dart';
+import 'package:delivery/views/punto_venta/punto_venta_main.dart';
 import 'package:delivery/views/register_view.dart';
 import 'package:fluro/fluro.dart';
 import 'package:flutter/foundation.dart';
@@ -15,6 +18,16 @@ class AdminHandlers {
   static Handler login = Handler(handlerFunc: (context, params) {
     final authService = Provider.of<AuthService>(context!);
     final permissionService = Provider.of<PermissionStatusProvider>(context);
+    final socketService = Provider.of<SocketService>(context);
+
+    if(authService.puntoVentaStatus == PuntoVenta.isAvailable ){
+      if(socketService.serverStatus == ServerStatus.Online){
+        return const PuntoVentaMainView();
+      }else{
+        return const LoadingView();
+      }
+    }
+
     if (authService.authStatus == AuthStatus.notAuthenticated) {
       return const AutentificarCelular();
     } else {

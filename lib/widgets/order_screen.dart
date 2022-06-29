@@ -8,6 +8,7 @@ import 'package:delivery/models/search_results.dart';
 import 'package:delivery/search/search_destination.dart';
 import 'package:delivery/service/auth_service.dart';
 import 'package:delivery/service/direcciones.service.dart';
+import 'package:delivery/service/llenar_pantallas.dart';
 import 'package:delivery/service/navigator_service.dart';
 import 'package:delivery/service/permission_status.dart';
 import 'package:delivery/service/stripe_service.dart';
@@ -192,12 +193,17 @@ class OrderItems extends StatelessWidget {
 
   Widget item(BuildContext context, Producto producto, int index) {
     final authService = Provider.of<AuthService>(context);
+    final pantallasService = Provider.of<LlenarPantallasService>(context);
     return GestureDetector(
       onTap: () {
         Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => VerProductoView(producto: producto)),
+              builder: (context) => VerProductoView(
+                    producto: producto,
+                    tienda: pantallasService.tiendas.firstWhere(
+                        (element) => element.nombre == producto.tienda),
+                  )),
         );
       },
       child: Container(
@@ -1387,16 +1393,17 @@ class _PaymentSummaryState extends State<PaymentSummary> {
             children: [
               Expanded(
                 child: GestureDetector(
-                  onTap: authService.usuario.cesta.productos.isEmpty ||
-                          direccionesService.direcciones.isEmpty
-                      ? null
-                      : () async {
-                          calculandoAlerta(context);
-                          /*NotificationApi.showNotification(
+                  onTap:
+                      authService.usuario.cesta.productos.isEmpty ||
+                              direccionesService.direcciones.isEmpty
+                          ? null
+                          : () async {
+                              calculandoAlerta(context);
+                              /*NotificationApi.showNotification(
                               title: 'Titulos',
                               body: 'Body',
                               payload: 'sarah.abs');*/
-                          /*socketService.emit('mensaje-personal', {
+                              /*socketService.emit('mensaje-personal', {
                             'direccion': direccionesService.direcciones[
                                 authService.usuario.cesta.direccion.titulo != ''
                                     ? direccionesService.direcciones.indexWhere(
@@ -1420,63 +1427,67 @@ class _PaymentSummaryState extends State<PaymentSummary> {
                             'efectivo': authService.usuario.cesta.efectivo,
                             'prodcutos': authService.usuario.cesta.productos
                           });*/
-                          final busqueda = tarjetasService.listaTarjetas
-                              .indexWhere((element) =>
-                                  element.id ==
-                                  customerService.tarjetaPredeterminada);
-                          final busqueda2 = tarjetasService.listaTarjetas
-                              .indexWhere((element) =>
-                                  element.id ==
-                                  authService.usuario.cesta.tarjeta);
-                          final venta = await authService.crearPedido(
-                              direccion: direccionesService.direcciones[
-                                  authService.usuario.cesta.direccion.titulo !=
+                              final busqueda = tarjetasService.listaTarjetas
+                                  .indexWhere((element) =>
+                                      element.id ==
+                                      customerService.tarjetaPredeterminada);
+                              final busqueda2 = tarjetasService.listaTarjetas
+                                  .indexWhere((element) =>
+                                      element.id ==
+                                      authService.usuario.cesta.tarjeta);
+                              final venta = await authService.crearPedido(
+                                  direccion: direccionesService.direcciones[authService
+                                              .usuario.cesta.direccion.titulo !=
                                           ''
                                       ? direccionesService.direcciones
                                           .indexWhere((element) =>
                                               authService.usuario.cesta
                                                   .direccion.titulo ==
                                               element.titulo)
-                                      : obtenerFavorito(direccionesService
-                                                  .direcciones) !=
+                                      : obtenerFavorito(direccionesService.direcciones) !=
                                               -1
                                           ? obtenerFavorito(
                                               direccionesService.direcciones)
                                           : 0],
-                              tarjeta: busqueda2 != -1
-                                  ? tarjetasService.listaTarjetas[busqueda2].id
-                                  : tarjetasService.listaTarjetas.isNotEmpty ? tarjetasService
-                                      .listaTarjetas[busqueda != -1 ? busqueda : 0]
-                                      .id : '',
-                              customer: customerService.customer);
+                                  tarjeta: busqueda2 != -1
+                                      ? tarjetasService
+                                          .listaTarjetas[busqueda2].id
+                                      : tarjetasService.listaTarjetas.isNotEmpty
+                                          ? tarjetasService
+                                              .listaTarjetas[
+                                                  busqueda != -1 ? busqueda : 0]
+                                              .id
+                                          : '',
+                                  customer: customerService.customer);
 
-                          if (venta != null) {
-                            pedidosService.agregarCompra(venta: venta);
-                            scrollListView2(controller: widget.controller);
-                            Navigator.pop(context);
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => DoneView(
-                                        venta: venta,
-                                      )),
-                            );
-                          } else {
-                            final snackBar = SnackBar(
-                              duration: const Duration(seconds: 2),
-                              backgroundColor: const Color.fromRGBO(0, 0, 0, 1),
-                              content: Text(
-                                'Error desconocido',
-                                style: GoogleFonts.quicksand(
-                                  color: Colors.white,
-                                ),
-                              ),
-                            );
+                              if (venta != null) {
+                                pedidosService.agregarCompra(venta: venta);
+                                scrollListView2(controller: widget.controller);
+                                Navigator.pop(context);
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => DoneView(
+                                            venta: venta,
+                                          )),
+                                );
+                              } else {
+                                final snackBar = SnackBar(
+                                  duration: const Duration(seconds: 2),
+                                  backgroundColor:
+                                      const Color.fromRGBO(0, 0, 0, 1),
+                                  content: Text(
+                                    'Error desconocido',
+                                    style: GoogleFonts.quicksand(
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                );
 
-                            ScaffoldMessenger.of(context)
-                                .showSnackBar(snackBar);
-                          }
-                        },
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(snackBar);
+                              }
+                            },
                   child: AnimatedOpacity(
                     duration: const Duration(milliseconds: 400),
                     opacity: authService.usuario.cesta.productos.isEmpty ||

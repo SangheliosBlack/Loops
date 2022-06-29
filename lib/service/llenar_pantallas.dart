@@ -41,8 +41,20 @@ class LlenarPantallasService with ChangeNotifier {
     notifyListeners();
   }
 
+  abrirNegocio({required String token}) {
+    var index = tiendas.indexWhere((element) => element.puntoVenta == token);
+    tiendas[index].online = true;
+    notifyListeners();
+  }
+
+  cerrarNegocio({required String token}) {
+    var index = tiendas.indexWhere((element) => element.puntoVenta == token);
+    tiendas[index].online = false;
+    notifyListeners();
+  }
+
   pantallaPrincipalCategorias() async {
-    await Future.delayed(const Duration(seconds: 3));
+    await Future.delayed(const Duration(milliseconds: 500));
     try {
       final resp = await http.get(
           Uri.parse(
@@ -63,7 +75,7 @@ class LlenarPantallasService with ChangeNotifier {
   }
 
   pantallaPrincipalProductos() async {
-    await Future.delayed(const Duration(seconds: 3));
+    await Future.delayed(const Duration(milliseconds: 500));
     try {
       final resp = await http.get(
           Uri.parse(
@@ -84,7 +96,7 @@ class LlenarPantallasService with ChangeNotifier {
   }
 
   pantallaPrincipalTiendas() async {
-    await Future.delayed(const Duration(seconds: 3));
+    await Future.delayed(const Duration(milliseconds: 500));
     try {
       final resp = await http.get(
           Uri.parse(
@@ -102,5 +114,11 @@ class LlenarPantallasService with ChangeNotifier {
     } catch (e) {
       return [];
     }
+  }
+
+  recargarTodo() {
+    tiendas = [];
+    categorias = [];
+    productos = [];
   }
 }

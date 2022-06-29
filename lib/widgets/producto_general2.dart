@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:delivery/global/styles.dart';
 import 'package:delivery/models/productos.dart';
+import 'package:delivery/models/tienda.dart';
 import 'package:delivery/views/extras/ver_producto.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -8,9 +9,10 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class ProductoGeneral2 extends StatelessWidget {
+  final Tienda tienda;
   final Producto producto;
 
-  const ProductoGeneral2({Key? key, required this.producto}) : super(key: key);
+  const ProductoGeneral2({Key? key, required this.producto, required this.tienda}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +23,7 @@ class ProductoGeneral2 extends StatelessWidget {
           MaterialPageRoute(
               builder: (context) => VerProductoView(
                     producto: producto,
-                    soloTienda: true,
+                    soloTienda: true, tienda: tienda,
                   )),
         );
       },
@@ -39,19 +41,26 @@ class ProductoGeneral2 extends StatelessWidget {
                   child: Hero(
                     tag: producto.nombre,
                     child: ClipRRect(
-                      borderRadius: BorderRadius.circular(15),
-                      child: const Image(
-                        image: CachedNetworkImageProvider(
-                            'https://www.pequeocio.com/wp-content/uploads/2010/11/hamburguesas-caseras-800x717.jpg'),
-                        fit: BoxFit.cover,
-                      ),
-                    ),
+                        borderRadius: BorderRadius.circular(15),
+                        child: producto.imagen.isNotEmpty
+                            ? Image(
+                                image:
+                                    CachedNetworkImageProvider(producto.imagen),
+                                fit: BoxFit.cover,
+                              )
+                            : Container(
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(15),
+                                    border: Border.all(
+                                        width: 1,
+                                        color: Colors.grey.withOpacity(.1))),
+                                child: const Icon(Icons.image))),
                   ),
                 ),
                 Expanded(
                   child: Container(
                     height: 95,
-                    margin: const EdgeInsets.only(left: 15),
+                    margin: const EdgeInsets.only(left: 10),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -60,10 +69,40 @@ class ProductoGeneral2 extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(producto.nombre,
-                                style: GoogleFonts.quicksand(
-                                    color: Colors.black.withOpacity(.8),
-                                    fontSize: 20)),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Text(producto.nombre,
+                                      style: GoogleFonts.quicksand(
+                                          color: Colors.black.withOpacity(.8),
+                                          fontSize: 20)),
+                                ),
+                                const SizedBox(
+                                  width: 3,
+                                ),
+                                producto.hot > 0
+                                    ? RatingBar.builder(
+                                        initialRating: double.parse(
+                                            producto.hot.toString()),
+                                        minRating: 1,
+                                        direction: Axis.horizontal,
+                                        allowHalfRating: true,
+                                        itemCount: 5,
+                                        itemPadding: const EdgeInsets.symmetric(
+                                            horizontal: 4.0),
+                                        itemBuilder: (context, _) =>
+                                            const FaIcon(
+                                          FontAwesomeIcons.fireFlameCurved,
+                                          color: Colors.red,
+                                        ),
+                                        itemSize: 11,
+                                        unratedColor:
+                                            Colors.grey.withOpacity(.4),
+                                        onRatingUpdate: (rating) {},
+                                      )
+                                    : Container()
+                              ],
+                            ),
                             const SizedBox(
                               height: 3,
                             ),
@@ -78,7 +117,7 @@ class ProductoGeneral2 extends StatelessWidget {
                         Row(
                           children: [
                             RatingBar.builder(
-                              initialRating: 4.5,
+                              initialRating: 5,
                               minRating: 1,
                               direction: Axis.horizontal,
                               allowHalfRating: true,
@@ -93,10 +132,10 @@ class ProductoGeneral2 extends StatelessWidget {
                               unratedColor: Colors.grey.withOpacity(.4),
                               onRatingUpdate: (rating) {},
                             ),
-                            const SizedBox(width: 5),
-                            Text('(49)',
-                                style: GoogleFonts.quicksand(
-                                    color: Colors.grey, fontSize: 11)),
+                            // const SizedBox(width: 5),
+                            // Text('(49)',
+                            //     style: GoogleFonts.quicksand(
+                            //         color: Colors.grey, fontSize: 11)),
                           ],
                         )
                       ],
@@ -109,21 +148,39 @@ class ProductoGeneral2 extends StatelessWidget {
           Positioned(
             right: 0,
             bottom: 0,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Text(
-                  '\$',
-                  style: GoogleFonts.playfairDisplay(
-                      fontSize: 15, color: Colors.black),
-                ),
-                const SizedBox(
-                  width: 4,
-                ),
-                Text(
-                  producto.precio.toStringAsFixed(2),
-                  style:
-                      GoogleFonts.quicksand(fontSize: 20, color: Colors.black),
+                producto.opciones.isNotEmpty
+                    ? Container(
+                        margin: const EdgeInsets.only(bottom: 5),
+                        child: Text(
+                          'Desde',
+                          style: GoogleFonts.quicksand(
+                            fontSize: 12,
+                            color: Colors.grey.withOpacity(.7),
+                          ),
+                        ),
+                      )
+                    : Container(),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '\$',
+                      style: GoogleFonts.playfairDisplay(
+                          fontSize: 15, color: Colors.black),
+                    ),
+                    const SizedBox(
+                      width: 4,
+                    ),
+                    Text(
+                      producto.precio.toStringAsFixed(2),
+                      style: GoogleFonts.quicksand(
+                          fontSize: 20, color: Colors.black),
+                    ),
+                  ],
                 ),
               ],
             ),

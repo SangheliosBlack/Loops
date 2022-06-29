@@ -274,7 +274,7 @@ class _ConfirmarCodigoState extends State<ConfirmarCodigo> with CodeAutoFill {
           send = false;
         });
         if (!logIn) {
-          Navigator.push(
+          Navigator.pushReplacement(
             context,
             MaterialPageRoute(
                 builder: (context) =>

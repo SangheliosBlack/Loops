@@ -20,7 +20,9 @@ class Producto {
       required this.tienda,
       required this.cantidad,
       required this.sku,
+      required this.hot,
       required this.extra,
+      required this.imagen,
       required this.opciones});
 
   String id;
@@ -29,10 +31,12 @@ class Producto {
   String descripcion;
   int descuentoP;
   int descuentoC;
+  int hot;
   bool disponible;
   String tienda;
   List<Opcion> opciones;
   num cantidad;
+  String imagen;
   num extra;
   String sku;
 
@@ -45,11 +49,13 @@ class Producto {
         descuentoP: json["descuentoP"],
         descuentoC: json["descuentoC"],
         disponible: json["disponible"],
+        hot: json["hot"] ?? 0,
         tienda: json['tienda'],
         sku: json['sku'] ?? '',
         extra: json['extra'] ?? 0,
         opciones:
             List<Opcion>.from(json["opciones"].map((x) => Opcion.fromJson(x))),
+        imagen: '',
       );
 
   Map<String, dynamic> toJson() => {
@@ -59,11 +65,13 @@ class Producto {
         "descripcion": descripcion,
         "descuentoP": descuentoP,
         "descuentoC": descuentoC,
+        "hot": hot,
         "disponible": disponible,
         "tienda": tienda,
         "cantidad": cantidad,
         "extra": extra,
         "sku": sku,
+        "imagen ": imagen,
         "opciones": List<dynamic>.from(opciones.map((x) => x.toJson()))
       };
 }
@@ -105,11 +113,13 @@ class Listado extends Equatable {
   Listado(
       {required this.precio,
       required this.tipo,
+      required this.hot,
       required this.activo,
       required this.auto,
       required this.fijo});
 
   int precio;
+  int hot;
   String tipo;
   bool activo;
   bool auto;
@@ -120,7 +130,8 @@ class Listado extends Equatable {
       precio: json["precio"],
       tipo: json["tipo"] ?? false,
       activo: json['activo'] ?? false,
-      fijo: json['fijo'] ?? false);
+      fijo: json['fijo'] ?? false,
+      hot: json['hot'] ?? 0);
 
   Map<String, dynamic> toJson() => {
         "precio": precio,

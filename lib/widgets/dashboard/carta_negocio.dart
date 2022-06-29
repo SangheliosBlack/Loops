@@ -22,127 +22,147 @@ class CartaNegocio extends StatelessWidget {
   Widget build(BuildContext context) {
     final authService = Provider.of<AuthService>(context);
     final direccionesService = Provider.of<DireccionesService>(context);
-    return AnimatedOpacity(
-      duration: const Duration(seconds: 1),
-      opacity: tienda.online ? 1 : .2,
-      child: GestureDetector(
-        onTap: tienda.online
-            ? () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => StoreIndividual(
-                            tienda: tienda,
-                          )),
-                );
-              }
-            : null,
-        child: SizedBox(
-          width: 240,
-          child: Column(
-            children: [
-              Hero(
-                tag: tienda.uid,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(15),
-                  child: SizedBox(
-                      width: double.infinity,
-                      height: 240,
-                      child: CachedNetworkImage(
-                          fit: BoxFit.cover,
-                          imageUrl: tienda.imagenPerfil,
-                          imageBuilder: (context, imageProvider) => Container(
-                                decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                    image: imageProvider,
-                                    fit: BoxFit.cover,
-                                    colorFilter: ColorFilter.mode(
-                                      Colors.black.withOpacity(.15),
-                                      BlendMode.color,
-                                    ),
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => StoreIndividual(
+                    tienda: tienda,
+                  )),
+        );
+      },
+      child: SizedBox(
+        width: 240,
+        child: Column(
+          children: [
+            Hero(
+              tag: tienda.uid,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(15),
+                child: SizedBox(
+                    width: double.infinity,
+                    height: 240,
+                    child: CachedNetworkImage(
+                        fit: BoxFit.cover,
+                        imageUrl: tienda.imagenPerfil,
+                        imageBuilder: (context, imageProvider) => Container(
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image: imageProvider,
+                                  fit: BoxFit.cover,
+                                  colorFilter: ColorFilter.mode(
+                                    Colors.black.withOpacity(.15),
+                                    BlendMode.color,
                                   ),
                                 ),
                               ),
-                          placeholder: (context, url) => Container(
-                              padding: const EdgeInsets.all(100),
-                              child: const CircularProgressIndicator(
-                                strokeWidth: 1,
-                                color: Colors.black,
-                              )),
-                          errorWidget: (context, url, error) {
-                            return const Icon(Icons.error);
-                          })),
-                ),
+                            ),
+                        placeholder: (context, url) => Container(
+                            padding: const EdgeInsets.all(100),
+                            child: const CircularProgressIndicator(
+                              strokeWidth: 1,
+                              color: Colors.black,
+                            )),
+                        errorWidget: (context, url, error) {
+                          return const Icon(Icons.error);
+                        })),
               ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    margin: const EdgeInsets.only(left: 4, top: 8),
-                    child: Text(
-                      tienda.nombre,
-                      style: GoogleFonts.quicksand(
-                          color: Colors.black.withOpacity(.8), fontSize: 16),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  Row(
+            ),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  margin: const EdgeInsets.only(left: 4, top: 8),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      RatingBar.builder(
-                        initialRating: 5,
-                        minRating: 1,
-                        direction: Axis.horizontal,
-                        allowHalfRating: true,
-                        itemCount: 5,
-                        itemPadding:
-                            const EdgeInsets.symmetric(horizontal: 4.0),
-                        itemBuilder: (context, _) => FaIcon(
-                          FontAwesomeIcons.solidStar,
-                          color: Colors.black.withOpacity(.8),
-                        ),
-                        itemSize: 13,
-                        unratedColor: Colors.grey.withOpacity(.2),
-                        onRatingUpdate: (rating) {},
+                      Row(
+                        children: [
+                          Container(
+                              margin: const EdgeInsets.only(right: 5),
+                              width: 5,
+                              height: 5,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(100),
+                                  color: tienda.online
+                                      ? Colors.green
+                                      : Colors.red)),
+                          Text(
+                            tienda.online ? 'Abierto' : 'Cerrado',
+                            style: GoogleFonts.quicksand(
+                                fontSize: 11,
+                                color:
+                                    tienda.online ? Colors.green : Colors.red),
+                          )
+                        ],
                       ),
-                      const SizedBox(width: 5),
-                      // Text('(49)',
-                      //     style: GoogleFonts.quicksand(
-                      //         color: Colors.grey, fontSize: 11)),
+                      Text(
+                        tienda.nombre,
+                        style: GoogleFonts.quicksand(
+                            color: Colors.black.withOpacity(.8), fontSize: 16),
+                      ),
                     ],
                   ),
-                  const SizedBox(
-                    height: 6,
-                  ),
-                  direccionesService.direcciones.isNotEmpty
-                      ? Container(
-                          margin: const EdgeInsets.only(left: 2),
-                          child: Row(
-                            children: [
-                              const Icon(
-                                Icons.place_outlined,
-                                color: Colors.black,
-                                size: 18,
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+                Row(
+                  children: [
+                    RatingBar.builder(
+                      initialRating: 5,
+                      ignoreGestures: true,
+                      minRating: 1,
+                      direction: Axis.horizontal,
+                      allowHalfRating: true,
+                      itemCount: 5,
+                      itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
+                      itemBuilder: (context, _) => FaIcon(
+                        FontAwesomeIcons.solidStar,
+                        color: Colors.black.withOpacity(.8),
+                      ),
+                      itemSize: 13,
+                      unratedColor: Colors.grey.withOpacity(.2),
+                      onRatingUpdate: (rating) {},
+                    ),
+                    const SizedBox(width: 5),
+                    // Text('(49)',
+                    //     style: GoogleFonts.quicksand(
+                    //         color: Colors.grey, fontSize: 11)),
+                  ],
+                ),
+                const SizedBox(
+                  height: 6,
+                ),
+                direccionesService.direcciones.isNotEmpty
+                    ? Container(
+                        margin: const EdgeInsets.only(left: 2),
+                        child: Row(
+                          children: [
+                            const Icon(
+                              Icons.place_outlined,
+                              color: Colors.black,
+                              size: 18,
+                            ),
+                            const SizedBox(width: 3),
+                            Expanded(
+                              child: Text(
+                                '${(calculateDistance(lat1: tienda.coordenadas.latitud, lon1: tienda.coordenadas.longitud, lat2: direccionesService.direcciones[authService.usuario.cesta.direccion.titulo != '' ? direccionesService.direcciones.indexWhere((element) => authService.usuario.cesta.direccion.titulo == element.titulo) : obtenerFavorito(direccionesService.direcciones) != -1 ? obtenerFavorito(direccionesService.direcciones) : 0].coordenadas.lat, lon2: direccionesService.direcciones[authService.usuario.cesta.direccion.titulo != '' ? direccionesService.direcciones.indexWhere((element) => authService.usuario.cesta.direccion.titulo == element.titulo) : obtenerFavorito(direccionesService.direcciones) != -1 ? obtenerFavorito(direccionesService.direcciones) : 0].coordenadas.lng).toStringAsFixed(2))} km ${tienda.direccion}',
+                                overflow: TextOverflow.ellipsis,
+                                style: GoogleFonts.quicksand(
+                                    color: Colors.black, fontSize: 13),
                               ),
-                              const SizedBox(width: 3),
-                              Expanded(
-                                child: Text(
-                                  '${(calculateDistance(lat1: tienda.coordenadas.latitud, lon1: tienda.coordenadas.longitud, lat2: direccionesService.direcciones[authService.usuario.cesta.direccion.titulo != '' ? direccionesService.direcciones.indexWhere((element) => authService.usuario.cesta.direccion.titulo == element.titulo) : obtenerFavorito(direccionesService.direcciones) != -1 ? obtenerFavorito(direccionesService.direcciones) : 0].coordenadas.lat, lon2: direccionesService.direcciones[authService.usuario.cesta.direccion.titulo != '' ? direccionesService.direcciones.indexWhere((element) => authService.usuario.cesta.direccion.titulo == element.titulo) : obtenerFavorito(direccionesService.direcciones) != -1 ? obtenerFavorito(direccionesService.direcciones) : 0].coordenadas.lng).toStringAsFixed(2))} km ${tienda.direccion}',
-                                  overflow: TextOverflow.ellipsis,
-                                  style: GoogleFonts.quicksand(
-                                      color: Colors.black, fontSize: 13),
-                                ),
-                              )
-                            ],
-                          ),
-                        )
-                      : Container()
-                ],
-              )
-            ],
-          ),
+                            )
+                          ],
+                        ),
+                      )
+                    : Container()
+              ],
+            )
+          ],
         ),
       ),
     );

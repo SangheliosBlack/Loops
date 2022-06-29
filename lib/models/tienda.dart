@@ -25,6 +25,7 @@ class Tienda {
       required this.horario,
       required this.coordenadas,
       required this.online,
+      required this.puntoVenta,
       required this.imagenPerfil,
       required this.listaProductos});
 
@@ -42,6 +43,7 @@ class Tienda {
   String uid;
   String direccion;
   Horario horario;
+  String puntoVenta;
   bool online;
   Coordenadas coordenadas;
   List<Producto> listaProductos;
@@ -66,7 +68,7 @@ class Tienda {
             json["listaProductos"].map((x) => Producto.fromJson(x))),
         imagenPerfil: json['imagen_perfil'],
         direccion: json['direccion'],
-        online: json['online'],
+        online: json['online'], puntoVenta: json['punto_venta']??'',
       );
 
   Map<String, dynamic> toJson() => {
@@ -84,6 +86,7 @@ class Tienda {
         "uid": uid,
         "online": online,
         "horario": horario.toJson(),
+        "puntoVenta": puntoVenta,
         "coordenadas": coordenadas.toJson(),
         "listaProductos":
             List<Producto>.from(listaProductos.map((x) => x.toJson())),

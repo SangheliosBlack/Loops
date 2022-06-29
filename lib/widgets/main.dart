@@ -60,7 +60,8 @@ class BaraBusqueda extends StatelessWidget {
 class ListadoEstablecimientos extends StatelessWidget {
   final double height;
   final double width;
-  const ListadoEstablecimientos(
+  const 
+  ListadoEstablecimientos(
       {Key? key, required this.height, required this.width})
       : super(key: key);
 
@@ -140,7 +141,7 @@ class ListadoEstablecimientos extends StatelessWidget {
       decoration: const BoxDecoration(
           borderRadius: BorderRadius.only(
               topRight: Radius.circular(30), topLeft: Radius.circular(30))),
-      height: 332,
+      height: 344,
       width: width,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

@@ -3,6 +3,7 @@ import 'package:delivery/global/enviroment.dart';
 import 'package:delivery/layout/auth_layout.dart';
 import 'package:delivery/layout/dashboard_layout.dart';
 import 'package:delivery/layout/permission_layout.dart';
+import 'package:delivery/layout/socio_layout.dart';
 import 'package:delivery/layout/splash_layout.dart';
 import 'package:delivery/providers/login_form_provider.dart';
 import 'package:delivery/providers/push_notifications_provider.dart';
@@ -29,7 +30,10 @@ late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Firebase.initializeApp(options: kIsWeb ? DefaultFirebaseOptions.web : DefaultFirebaseOptions.currentPlatform);
+  await Firebase.initializeApp(
+      options: kIsWeb
+          ? DefaultFirebaseOptions.web
+          : DefaultFirebaseOptions.currentPlatform);
   if (!kIsWeb) {
     channel = const AndroidNotificationChannel(
       'general_id', // id
@@ -132,6 +136,7 @@ class _MyAppState extends State<MyApp> {
       onGenerateRoute: Flurorouter.router.generator,
       builder: (_, child) {
         final authProvider = Provider.of<AuthService>(context);
+        final socketProvider = Provider.of<SocketService>(context);
         final permissionProvider =
             Provider.of<PermissionStatusProvider>(context);
 
@@ -142,8 +147,17 @@ class _MyAppState extends State<MyApp> {
                   ? const SplashLayout()
                   : authProvider.authStatus == AuthStatus.authenticated
                       ? permissionProvider.isGranted &&
-                              permissionProvider.isEnabled || kIsWeb
-                          ? DashboardLayout(child: child!)
+                                  permissionProvider.isEnabled ||
+                              kIsWeb
+                          ? authProvider.puntoVentaStatus ==
+                                  PuntoVenta.isAvailable
+                              ? SocioLayout(
+                                  child: child!,
+                                )
+                              : socketProvider.serverStatus ==
+                                      ServerStatus.Online
+                                  ? DashboardLayout(child: child!)
+                                  : const SplashLayout()
                           : PermissionLaoyut(child: child!)
                       : AuthLayout(child: child!);
             })

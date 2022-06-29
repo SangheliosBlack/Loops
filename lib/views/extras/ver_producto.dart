@@ -2,15 +2,23 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:delivery/helpers/calculando_alerta.dart';
 import 'package:delivery/models/lista_opciones.dart';
 import 'package:delivery/models/productos.dart';
+import 'package:delivery/models/tienda.dart';
 import 'package:delivery/service/auth_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class VerProductoView extends StatefulWidget {
+  final Tienda tienda;
   final bool soloTienda;
   const VerProductoView(
-      {Key? key, required this.producto, this.soloTienda = false})
+      {Key? key,
+      required this.producto,
+      this.soloTienda = false,
+      required this.tienda})
       : super(key: key);
 
   final Producto producto;
@@ -42,59 +50,6 @@ class _VerProductoViewState extends State<VerProductoView> {
           backgroundColor: Colors.white,
           appBar: AppBar(
               centerTitle: true,
-              /*actions: [
-                Center(
-                  child: GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const NotificacionesView()),
-                      );
-                    },
-                    child: Stack(
-                      children: [
-                        Container(
-                          margin: const EdgeInsets.only(right: 15),
-                          width: 45,
-                          height: 45,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(1000),
-                            child: const Icon(
-                              Icons.shopping_bag_outlined,
-                              color: Colors.black,
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                            right: 5,
-                            top: 0,
-                            child: AnimatedOpacity(
-                              duration: const Duration(milliseconds: 200),
-                              opacity: authService.totalPiezas() == 0 ? 0 : 1,
-                              child: Container(
-                                width: 23,
-                                height: 23,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(100),
-                                  color: const Color.fromRGBO(62, 204, 191, 1),
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    authService.totalPiezas().toString(),
-                                    style: GoogleFonts.quicksand(
-                                      fontSize: 12,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ))
-                      ],
-                    ),
-                  ),
-                )
-              ]*/
               leadingWidth: 350,
               leading: GestureDetector(
                   behavior: HitTestBehavior.translucent,
@@ -122,92 +77,130 @@ class _VerProductoViewState extends State<VerProductoView> {
               backgroundColor: Colors.white,
               elevation: 0),
           body: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                width: width,
-                margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 0),
-                child: Hero(
-                    tag: widget.soloTienda
-                        ? widget.producto.nombre
-                        : widget.producto.id,
-                    child: Center(
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(25),
-                        child: const Image(
-                          image: CachedNetworkImageProvider(
-                              'https://www.pequeocio.com/wp-content/uploads/2010/11/hamburguesas-caseras-800x717.jpg'),
-                          fit: BoxFit.cover,
+              Expanded(
+                child: SingleChildScrollView(
+                  physics: const BouncingScrollPhysics(),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        width: width,
+                        margin: const EdgeInsets.symmetric(
+                            horizontal: 15, vertical: 0),
+                        child: Hero(
+                          tag: widget.soloTienda
+                              ? widget.producto.nombre
+                              : widget.producto.id,
+                          child: Center(
+                            child: ClipRRect(
+                                borderRadius: BorderRadius.circular(25),
+                                child: widget.producto.imagen.isNotEmpty
+                                    ? const Image(
+                                        image: CachedNetworkImageProvider(
+                                            'https://www.pequeocio.com/wp-content/uploads/2010/11/hamburguesas-caseras-800x717.jpg'),
+                                        fit: BoxFit.cover,
+                                      )
+                                    : Container(
+                                        height: 280,
+                                        width: double.infinity,
+                                        decoration: BoxDecoration(
+                                            border: Border.all(
+                                                width: 1,
+                                                color: Colors.grey
+                                                    .withOpacity(.1)),
+                                            borderRadius:
+                                                BorderRadius.circular(25)),
+                                        child: const Icon(Icons.image),
+                                      )),
+                          ),
                         ),
                       ),
-                    ),
-                  ),
-              ),
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 0, horizontal: 25),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 10),
-                    Text(widget.producto.tienda,
-                        style: GoogleFonts.quicksand(
-                            fontSize: 14, color: Colors.black.withOpacity(.8))),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Text(
-                          '4.9',
-                          style: GoogleFonts.playfairDisplay(
-                              color: const Color.fromRGBO(62, 204, 191, 1),
-                              height: .8,
-                              fontSize: 30),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 0, horizontal: 25),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(height: 10),
+                            Text(widget.producto.tienda,
+                                style: GoogleFonts.quicksand(
+                                    fontSize: 14,
+                                    color: Colors.black.withOpacity(.8))),
+                            Container(
+                              margin: const EdgeInsets.symmetric(vertical: 5),
+                              child: RatingBar.builder(
+                                initialRating: 5,
+                                minRating: 1,
+                                direction: Axis.horizontal,
+                                allowHalfRating: true,
+                                itemCount: 5,
+                                itemPadding:
+                                    const EdgeInsets.symmetric(horizontal: 4.0),
+                                itemBuilder: (context, _) => const FaIcon(
+                                  FontAwesomeIcons.solidStar,
+                                  color: Color.fromRGBO(62, 204, 191, 1),
+                                ),
+                                itemSize: 12,
+                                unratedColor: Colors.grey.withOpacity(.4),
+                                onRatingUpdate: (rating) {},
+                              ),
+                            ),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  child: Text(widget.producto.nombre,
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 2,
+                                      style: GoogleFonts.quicksand(
+                                          fontSize: 25,
+                                          color: const Color.fromRGBO(
+                                              83, 84, 85, 1))),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 7),
+                            Text(
+                              widget.producto.descripcion,
+                              textAlign: TextAlign.start,
+                              style: GoogleFonts.quicksand(
+                                  color: Colors.grey, fontSize: 14),
+                            ),
+                          ],
                         ),
-                        const SizedBox(
-                          width: 8,
-                        ),
-                        Text(widget.producto.nombre,
-                            style: GoogleFonts.quicksand(
-                                fontSize: 25,
-                                color: const Color.fromRGBO(83, 84, 85, 1))),
-                      ],
-                    ),
-                    const SizedBox(height: 7),
-                    Text(
-                      'Lorem Ipsum es simplemente el texto de relleno de las imprentas y archivos de texto. Lorem Ipsum ha sido el texto de relleno estándar de las industrias desde el año 1500,',
-                      textAlign: TextAlign.start,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.quicksand(
-                          color: Colors.grey, fontSize: 13),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(
-                height: 15,
-              ),
-              widget.producto.opciones.isEmpty
-                  ? Container()
-                  : ListView.separated(
-                      physics: const NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      itemBuilder: (BuildContext context, int index) {
-                        final Opcion opcion = widget.producto.opciones[index];
-                        return ListadoOpcinesWidget(
-                          index: index,
-                          opcion: opcion,
-                        );
-                      },
-                      itemCount: widget.producto.opciones.length,
-                      separatorBuilder: (BuildContext context, int index) =>
-                          const SizedBox(
+                      ),
+                      const SizedBox(
                         height: 15,
                       ),
-                    ),
-              Expanded(
+                      widget.producto.opciones.isEmpty
+                          ? Container()
+                          : ListView.separated(
+                              physics: const NeverScrollableScrollPhysics(),
+                              shrinkWrap: true,
+                              itemBuilder: (BuildContext context, int index) {
+                                final Opcion opcion =
+                                    widget.producto.opciones[index];
+                                return ListadoOpcinesWidget(
+                                  index: index,
+                                  opcion: opcion,
+                                );
+                              },
+                              itemCount: widget.producto.opciones.length,
+                              separatorBuilder:
+                                  (BuildContext context, int index) =>
+                                      const SizedBox(
+                                height: 15,
+                              ),
+                            ),
+                    ],
+                  ),
+                ),
+              ),
+              Container(
+                margin: const EdgeInsets.symmetric(vertical: 35),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -389,40 +382,55 @@ class _VerProductoViewState extends State<VerProductoView> {
                       child: Builder(builder: (context) {
                         return GestureDetector(
                           behavior: HitTestBehavior.translucent,
-                          onTap: authService.listadoTemp.fold<num>(
-                                      0,
-                                      (previousValue, element) =>
-                                          element.listado.length +
-                                          previousValue) >=
-                                  widget.producto.opciones.fold<num>(
-                                      0,
-                                      (previousValue, element) =>
-                                          element.minimo + previousValue)
+                          onTap: widget.tienda.online == false
                               ? () async {
-                                  calculandoAlerta(context);
-                                  await authService.agregarProductoCesta(
-                                      producto: widget.producto,
-                                      cantidad: cantidad,
-                                      listado: opcionesFinales(
-                                          opciones: authService.listadoTemp));
-                                  Navigator.pop(context);
-                                  Navigator.pop(context);
                                   final snackBar = SnackBar(
-                                    duration: const Duration(seconds: 2),
-                                    backgroundColor:
-                                        const Color.fromRGBO(0, 0, 0, 1),
+                                    duration: const Duration(seconds: 3),
+                                    backgroundColor: Colors.red,
                                     content: Text(
-                                      '${widget.producto.nombre} agregado',
-                                      style: GoogleFonts.quicksand(
-                                        color: Colors.white,
-                                      ),
+                                      '${widget.tienda.nombre} se encuentra fuera de servicio vuelve en su horario de atencion entre ${DateFormat('h:mm a', 'es-MX').format(widget.tienda.horario.apertura).toString()} y ${DateFormat('h:mm a', 'es-MX').format(widget.tienda.horario.cierre).toString()}',
+                                      style: GoogleFonts.quicksand(),
                                     ),
                                   );
 
                                   ScaffoldMessenger.of(context)
                                       .showSnackBar(snackBar);
                                 }
-                              : null,
+                              : authService.listadoTemp.fold<num>(
+                                          0,
+                                          (previousValue, element) =>
+                                              element.listado.length +
+                                              previousValue) >=
+                                      widget.producto.opciones.fold<num>(
+                                          0,
+                                          (previousValue, element) =>
+                                              element.minimo + previousValue)
+                                  ? () async {
+                                      calculandoAlerta(context);
+                                      await authService.agregarProductoCesta(
+                                          producto: widget.producto,
+                                          cantidad: cantidad,
+                                          listado: opcionesFinales(
+                                              opciones:
+                                                  authService.listadoTemp));
+                                      Navigator.pop(context);
+                                      Navigator.pop(context);
+                                      final snackBar = SnackBar(
+                                        duration: const Duration(seconds: 2),
+                                        backgroundColor:
+                                            const Color.fromRGBO(0, 0, 0, 1),
+                                        content: Text(
+                                          '${widget.producto.nombre} agregado',
+                                          style: GoogleFonts.quicksand(
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      );
+
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(snackBar);
+                                    }
+                                  : null,
                           child: AnimatedContainer(
                               duration: const Duration(milliseconds: 200),
                               margin: const EdgeInsets.only(left: 20),
@@ -690,6 +698,36 @@ class _OpcionWidgetState extends State<OpcionWidget> {
                                   ? Colors.white
                                   : Colors.grey
                               : Colors.grey)))),
+          Positioned(
+            bottom: 0,
+            left: 5,
+            child: AnimatedOpacity(
+              duration: const Duration(milliseconds: 200),
+              opacity: widget.opcionIndex.hot > 0 ? 1 : 0,
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 0),
+                decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0),
+                    borderRadius: BorderRadius.circular(100)),
+                child: RatingBar.builder(
+                  initialRating:
+                      double.parse(widget.opcionIndex.hot.toString()),
+                  minRating: double.parse(widget.opcionIndex.hot.toString()),
+                  direction: Axis.horizontal,
+                  allowHalfRating: true,
+                  itemCount: widget.opcionIndex.hot,
+                  itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
+                  itemBuilder: (context, _) => const FaIcon(
+                    FontAwesomeIcons.fireFlameCurved,
+                    color: Colors.orange,
+                  ),
+                  itemSize: 15,
+                  unratedColor: Colors.grey.withOpacity(.4),
+                  onRatingUpdate: (rating) {},
+                ),
+              ),
+            ),
+          ),
           Positioned(
             bottom: 0,
             right: 0,

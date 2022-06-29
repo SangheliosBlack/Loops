@@ -22,7 +22,7 @@ class TiendasService with ChangeNotifier {
   }
 
   Future<List<Tienda>> verTodoTienda() async {
-    await Future.delayed(const Duration(seconds: 1));
+    await Future.delayed(const Duration(milliseconds: 300));
     try {
       final resp = await http
           .get(Uri.parse('${Statics.apiUrl}/tiendas/verTodoTiendas'), headers: {
@@ -176,7 +176,7 @@ class TiendasService with ChangeNotifier {
   }
 
   Future<Tienda?> getTienda({required String tienda}) async {
-    final data = {"tienda": tienda};
+    final data = {"tienda": tienda, "token": await AuthService.getPuntoVenta()};
 
     await Future.delayed(const Duration(seconds: 1));
     try {
@@ -189,8 +189,6 @@ class TiendasService with ChangeNotifier {
           });
       final tienda = tiendaFromJson(resp.body);
 
-      print(tienda.nombre);
-
       return tienda;
     } catch (e) {
       return null;
@@ -200,6 +198,10 @@ class TiendasService with ChangeNotifier {
   int tiendaCache({required String nombre}) {
     productosCategoria.indexWhere((element) => element.nombre == nombre);
     return productosCategoria.indexWhere((element) => element.nombre == nombre);
+  }
+
+  eliminarTiendaCache({required String nombre}) {
+    productosCategoria.removeWhere((element) => element.nombre == nombre);
   }
 
   Future<List<ListaProductosCategoria>> obtenerProductos(

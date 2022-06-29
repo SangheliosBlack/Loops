@@ -23,7 +23,9 @@ class _SplashLayoutState extends State<SplashLayout> {
         child: FutureBuilder(
           future: checkLoginState(context),
           builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-            return const CircularProgressIndicator();
+            return const CircularProgressIndicator(
+              strokeWidth: 1,
+            );
           },
         ),
       ),
@@ -34,10 +36,13 @@ class _SplashLayoutState extends State<SplashLayout> {
     final authService = Provider.of<AuthService>(context, listen: false);
     final socketService = Provider.of<SocketService>(context, listen: false);
 
-    final isAutenticado = await authService.isLoggedIn();
+    
+
+    final isAutenticado =
+        await authService.isLoggedIn();
 
     if (isAutenticado) {
-      socketService.connect();
+       socketService.connect();
     }
   }
 }

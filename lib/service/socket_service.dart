@@ -1,5 +1,6 @@
 // ignore_for_file: library_prefixes
 
+import 'package:delivery/providers/push_notifications_provider.dart';
 import 'package:delivery/service/auth_service.dart';
 import 'package:flutter/material.dart';
 
@@ -21,15 +22,19 @@ class SocketService with ChangeNotifier {
 
   void connect() async {
 
+    final pushProvider = PushNotificationProvider();
+
+    final tokenFB = await pushProvider.firebaseMessaging.getToken();
+
     final token = await AuthService.getToken();
 
-    _socket = IO.io('http://192.168.100.12:3000', {
+    _socket = IO.io('https://server-delivery-production.herokuapp.com', {
       'transports': ['websocket'],
       'autoConnect': true,
       'forceNew': true,
-      'auth':{'x-token':token},
-      'extraHeaders': {'x-token': token}
+      'extraHeaders': {'x-token': token,'token':tokenFB}
     });
+    
     _socket.onConnect((_) {
       _serverStatus = ServerStatus.Online;
       notifyListeners();

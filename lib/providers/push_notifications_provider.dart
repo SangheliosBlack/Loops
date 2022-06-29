@@ -3,29 +3,26 @@ import 'dart:io';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 
-class PushNotificationProvider {
+class PushNotificationProvider  {
+  
+
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
 
   final _mensajesStreamController = StreamController<String>.broadcast();
   Stream<String> get mensajes => _mensajesStreamController.stream;
 
+  FirebaseMessaging get firebaseMessaging => _firebaseMessaging;
+
   initNotifications() async {
 
-
     NotificationSettings settings = await _firebaseMessaging.requestPermission(
-      announcement: true,
-      carPlay: true,
-      criticalAlert: true,alert: true,
-      sound: true
-    );
-
-
+        announcement: true,
+        carPlay: true,
+        criticalAlert: true,
+        alert: true,
+        sound: true);
 
     settings;
-
-    _firebaseMessaging.getToken().then((token) {
-      print(token);
-    });
 
     FirebaseMessaging.onMessage.listen((event) {
       String argumento = 'no-data';
@@ -46,9 +43,5 @@ class PushNotificationProvider {
 
       _mensajesStreamController.sink.add(argumento);
     });
-  }
-
-  dispose() {
-    _mensajesStreamController.close();
   }
 }

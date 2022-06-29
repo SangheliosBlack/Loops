@@ -11,6 +11,7 @@ import 'package:delivery/models/lista_opciones.dart';
 import 'package:delivery/models/productos.dart';
 import 'package:delivery/models/usuario.dart';
 import 'package:delivery/models/venta_response.dart';
+import 'package:delivery/providers/push_notifications_provider.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:delivery/models/auth.dart';
@@ -25,6 +26,8 @@ enum AuthStatus { checking, authenticated, notAuthenticated }
 
 enum ButtonStatus { autenticando, disponible, pressed }
 
+enum PuntoVenta { isAvailable, notAvailable }
+
 class AuthService with ChangeNotifier {
   ButtonStatus _buttonStatus = ButtonStatus.disponible;
   ButtonStatus get buttonStatus => _buttonStatus;
@@ -34,6 +37,7 @@ class AuthService with ChangeNotifier {
   }
 
   AuthStatus authStatus = AuthStatus.checking;
+  PuntoVenta puntoVentaStatus = PuntoVenta.notAvailable;
 
   late Usuario usuario;
 
@@ -92,12 +96,15 @@ class AuthService with ChangeNotifier {
 
   Future register(String nombre, String email, String password, String numero,
       String passwordCheck, String dialCode) async {
+    final pushProvider = PushNotificationProvider();
+    final tokenFirebase = await pushProvider.firebaseMessaging.getToken();
     buttonStatus = ButtonStatus.autenticando;
     await Future.delayed(const Duration(milliseconds: 500));
     List<Errore> lista = [];
     final data = {
       'nombre': nombre,
       'correo': email,
+      'tokenFB': tokenFirebase,
       'contrasena': password,
       'confirmar_contrasena': passwordCheck,
       'numero_celular': numero,
@@ -113,7 +120,7 @@ class AuthService with ChangeNotifier {
       if (resp.statusCode == 200) {
         final loginResponse = loginResponseFromJson(resp.body);
         usuario = loginResponse.usuario;
-        await _guardarToken(loginResponse.token);
+        await _guardarToken(loginResponse.token, false, '');
         return lista;
       } else {
         final resErrores = errorResponseFromJson(resp.body);
@@ -139,7 +146,7 @@ class AuthService with ChangeNotifier {
       if (resp.statusCode == 200) {
         final loginResponse = loginResponseFromJson(resp.body);
         usuario = loginResponse.usuario;
-        await _guardarToken(loginResponse.token);
+        await _guardarToken(loginResponse.token, false, '');
         return lista;
       } else {
         final resErrores = errorResponseFromJson(resp.body);
@@ -152,7 +159,12 @@ class AuthService with ChangeNotifier {
   }
 
   Future<bool> logInCelular({required String numero}) async {
-    final data = {'numero': numero.replaceAll(' ', '')};
+    final pushProvider = PushNotificationProvider();
+    final tokenFirebase = await pushProvider.firebaseMessaging.getToken();
+    final data = {
+      'numero': numero.replaceAll(' ', ''),
+      'tokenFB': tokenFirebase
+    };
     try {
       final resp = await http.post(
           Uri.parse('${Statics.apiUrl}/autentificacion/iniciarUsuarioTelefono'),
@@ -163,7 +175,7 @@ class AuthService with ChangeNotifier {
       if (resp.statusCode == 200) {
         final loginResponse = loginResponseFromJson(resp.body);
         usuario = loginResponse.usuario;
-        await _guardarToken(loginResponse.token);
+        await _guardarToken(loginResponse.token, false, '');
         await Future.delayed(const Duration(milliseconds: 750));
         return true;
       } else {
@@ -175,19 +187,24 @@ class AuthService with ChangeNotifier {
   }
 
   Future<bool> isLoggedIn() async {
+    final pushProvider = PushNotificationProvider();
+    final tokenFirebase = await pushProvider.firebaseMessaging.getToken();
     try {
       final token = LocalStorage.prefs.getString('token');
       final resp = await http.get(
           Uri.parse('${Statics.apiUrl}/autentificacion/renovarCodigo'),
           headers: {
             'Content-Type': 'application/json',
-            'x-token': token ?? ''
+            'x-token': token ?? '',
+            'x-token-firebase': tokenFirebase ?? ''
           });
       if (resp.statusCode == 200) {
         final loginResponse = loginResponseFromJson(resp.body);
+
         usuario = loginResponse.usuario;
 
-        await _guardarToken(loginResponse.token);
+        await _guardarToken(
+            loginResponse.token, loginResponse.checkToken, tokenFirebase!);
         await Future.delayed(const Duration(milliseconds: 750));
         return true;
       } else {
@@ -195,16 +212,19 @@ class AuthService with ChangeNotifier {
         return false;
       }
     } catch (e) {
-      print(e);
       return false;
     }
   }
 
-  Future _guardarToken(String token) async {
+  Future _guardarToken(String token, bool isSocio, String token2) async {
     authStatus = AuthStatus.authenticated;
     buttonStatus = ButtonStatus.disponible;
+    if (isSocio) {
+      puntoVentaStatus = PuntoVenta.isAvailable;
+      LocalStorage.prefs.setString('punto_venta', token2);
+    }
     notifyListeners();
-    return LocalStorage.prefs.setString('token', token);
+    LocalStorage.prefs.setString('token', token);
   }
 
   /*Future cambiarDireccionFavorita(String id) async {
@@ -219,6 +239,11 @@ class AuthService with ChangeNotifier {
 
   static Future<String> getToken() async {
     final token = LocalStorage.prefs.getString('token');
+    return token!;
+  }
+
+  static Future<String> getPuntoVenta() async {
+    final token = LocalStorage.prefs.getString('punto_venta');
     return token!;
   }
 
@@ -251,7 +276,8 @@ class AuthService with ChangeNotifier {
                   tipo: e.tipo,
                   activo: listado.contains(e.tipo) ? true : false,
                   auto: e.auto,
-                  fijo: e.fijo);
+                  fijo: e.fijo,
+                  hot: e.hot);
             }).toList(),
             maximo: e.maximo,
             minimo: e.minimo))
@@ -308,7 +334,9 @@ class AuthService with ChangeNotifier {
           cantidad: cantidad,
           extra: calcularOpcionesExtra(opciones: opciones),
           opciones: opciones,
-          sku: producto.id + listado.toString());
+          sku: producto.id + listado.toString(),
+          imagen: producto.imagen,
+          hot: producto.hot);
 
       newProducto.cantidad = cantidad;
       usuario.cesta.productos.insert(0, newProducto);

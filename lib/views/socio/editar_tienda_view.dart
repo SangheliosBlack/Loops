@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:delivery/global/enviroment.dart';
 import 'package:delivery/models/tienda.dart';
+import 'package:delivery/providers/push_notifications_provider.dart';
 import 'package:delivery/views/socio/editar_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -50,6 +51,7 @@ class _EditarTiendaViewState extends State<EditarTiendaView> {
         target: LatLng(widget.tienda.coordenadas.latitud,
             widget.tienda.coordenadas.longitud));
     double width = MediaQuery.of(context).size.width;
+    final pushProvider = PushNotificationProvider();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -71,7 +73,7 @@ class _EditarTiendaViewState extends State<EditarTiendaView> {
                     width: width,
                     margin: const EdgeInsets.only(bottom: 50),
                     child: Hero(
-                      tag: widget.tienda.uid,
+                      tag: '${widget.tienda.imagenPerfil}+socio',
                       child: ClipRRect(
                         borderRadius: const BorderRadius.only(
                             bottomLeft: Radius.circular(30),
@@ -144,57 +146,12 @@ class _EditarTiendaViewState extends State<EditarTiendaView> {
                                   ),
                                 ),
                               ),
-                              Positioned(
-                                bottom: 10,
-                                right: 10,
-                                child: Container(
-                                    padding: const EdgeInsets.all(9),
-                                    decoration: BoxDecoration(
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.grey.withOpacity(0.1),
-                                            spreadRadius: 2,
-                                            blurRadius: 1,
-                                            offset: const Offset(0, 0),
-                                          ),
-                                        ],
-                                        shape: BoxShape.circle,
-                                        color: Colors.white),
-                                    child: Icon(
-                                      Icons.photo_camera_outlined,
-                                      size: 17,
-                                      color: Theme.of(context).primaryColor,
-                                    )),
-                              )
                             ],
                           ),
                         ],
                       ),
                     ),
                   ),
-                  Container(
-                    margin: const EdgeInsets.only(top: 15, right: 15),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Container(
-                            padding: const EdgeInsets.all(9),
-                            decoration: BoxDecoration(boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(0.1),
-                                spreadRadius: 10,
-                                blurRadius: 5,
-                                offset: const Offset(0, 0),
-                              ),
-                            ], shape: BoxShape.circle, color: Colors.white),
-                            child: Icon(
-                              Icons.photo_camera_outlined,
-                              size: 17,
-                              color: Theme.of(context).primaryColor,
-                            )),
-                      ],
-                    ),
-                  )
                 ],
               ),
               Container(
@@ -399,12 +356,28 @@ class _EditarTiendaViewState extends State<EditarTiendaView> {
                           width: 20,
                         ),
                         Expanded(
-                          child: ItemConfiguracion(
-                            color: const Color.fromRGBO(253, 236, 171, 1),
-                            titulo: 'Punto Venta',
-                            subTitulo: 'Configurado',
-                            funcion: () => openDialog(),
-                            icono: Icons.storefront_outlined,
+                          child: FutureBuilder(
+                            future: pushProvider.firebaseMessaging.getToken(),
+                            builder: (BuildContext context,
+                                AsyncSnapshot<String?> snapshot) {
+                              if (snapshot.hasData) {
+                                return ItemConfiguracion(
+                                  isRed: widget.tienda.puntoVenta.isEmpty
+                                      ? true
+                                      : false,
+                                  color: const Color.fromRGBO(253, 236, 171, 1),
+                                  titulo: 'Punto Venta',
+                                  subTitulo: widget.tienda.puntoVenta.isEmpty
+                                      ? 'No configurado'
+                                      : 'Configurado',
+                                  funcion: () =>
+                                      openDialog(string: snapshot.data!),
+                                  icono: Icons.storefront_outlined,
+                                );
+                              } else {
+                                return const CircularProgressIndicator();
+                              }
+                            },
                           ),
                         ),
                       ],
@@ -430,27 +403,38 @@ class _EditarTiendaViewState extends State<EditarTiendaView> {
     );
   }
 
-  Future openDialog() => showDialog(
+  Future openDialog({required String string}) => showDialog(
       context: context,
       builder: (context) => AlertDialog(
-            title: Text('Your name', style: GoogleFonts.quicksand()),
-            content: TextField(
-              decoration: InputDecoration(
-                  hintText: 'Enter your name',
-                  hintStyle: GoogleFonts.quicksand()),
-            ),
+            elevation: 0,
+            title: Text(string, style: GoogleFonts.quicksand()),
             actions: [
               TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Clipboard.setData(ClipboardData(text: string));
+                    Navigator.pop(context);
+                    final snackBar = SnackBar(
+                      duration: const Duration(seconds: 2),
+                      backgroundColor: Colors.black,
+                      content: Text(
+                        'Copiado en portapapeles',
+                        style: GoogleFonts.quicksand(color: Colors.white),
+                      ),
+                    );
+
+                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                  },
                   child: Text(
-                    'Cancelar',
+                    'Copiar',
                     style: GoogleFonts.quicksand(
-                        color: Colors.grey.withOpacity(.5)),
+                        color: Colors.grey.withOpacity(1)),
                   )),
               TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
                   child: Text(
-                    'Confirmar',
+                    'Ok',
                     style: GoogleFonts.quicksand(),
                   ))
             ],
@@ -463,15 +447,17 @@ class ItemConfiguracion extends StatelessWidget {
   final String titulo;
   final String subTitulo;
   final Function funcion;
+  final bool isRed;
 
-  const ItemConfiguracion({
-    Key? key,
-    required this.color,
-    required this.titulo,
-    required this.subTitulo,
-    required this.funcion,
-    required this.icono,
-  }) : super(key: key);
+  const ItemConfiguracion(
+      {Key? key,
+      required this.color,
+      required this.titulo,
+      required this.subTitulo,
+      required this.funcion,
+      required this.icono,
+      this.isRed = false})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -503,8 +489,10 @@ class ItemConfiguracion extends StatelessWidget {
                   margin: const EdgeInsets.only(right: 5),
                   width: 5,
                   height: 5,
-                  decoration: const BoxDecoration(
-                      color: Color.fromRGBO(62, 204, 191, 1),
+                  decoration: BoxDecoration(
+                      color: isRed
+                          ? Colors.red
+                          : const Color.fromRGBO(62, 204, 191, 1),
                       shape: BoxShape.circle),
                 ),
                 Text(
