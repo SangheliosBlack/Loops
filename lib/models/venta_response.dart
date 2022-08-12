@@ -780,7 +780,6 @@ class PedidoProducto {
   int tiempoEspera;
 
   factory PedidoProducto.fromJson(Map<String, dynamic> json) {
-    print(json);
     return PedidoProducto(
       idVenta: json['id_venta'],
       codigoRepartidor: json['codigo_repartidor'],

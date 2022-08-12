@@ -25,7 +25,6 @@ class PushNotificationProvider {
     settings;
 
     FirebaseMessaging.onMessage.listen((event) {
-      print('mensaje 1');
       final mensaje = FirebaseSocket(
           evento: event.data['evento'],
           pedido: PedidoProducto.fromJson(json.decode(event.data['pedido'])));
@@ -34,7 +33,6 @@ class PushNotificationProvider {
     });
 
     FirebaseMessaging.onMessageOpenedApp.listen((event) {
-      print('mensaje');
       final mensaje = FirebaseSocket(
           evento: event.data['evento'],
           pedido: PedidoProducto.fromJson(json.decode(event.data['pedido'])));

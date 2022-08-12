@@ -74,8 +74,6 @@ class LlenarPantallasService with ChangeNotifier {
 
       return pantallaResponse;
     } catch (e) {
-      print('categorias');
-      print(e);
       return [];
     }
   }
@@ -99,8 +97,6 @@ class LlenarPantallasService with ChangeNotifier {
 
       return pantallaResponse;
     } catch (e) {
-      print('productos');
-      print(e);
       return [];
     }
   }
@@ -122,8 +118,6 @@ class LlenarPantallasService with ChangeNotifier {
 
       return pantallaResponse;
     } catch (e) {
-      print('tiendas');
-      print(e);
       return [];
     }
   }

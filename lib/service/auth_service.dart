@@ -645,7 +645,6 @@ class AuthService with ChangeNotifier {
         return null;
       }
     } catch (e) {
-      print(e);
       return null;
     }
   }

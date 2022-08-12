@@ -71,7 +71,6 @@ class SocioService with ChangeNotifier {
   bool ventasCargadas = false;
 
   obtenerPedidos({required String filter}) async {
-    print('entre');
     ventasCargadas = false;
     ventaCache.venta = [];
 
@@ -168,7 +167,6 @@ class SocioService with ChangeNotifier {
         return false;
       }
     } catch (e) {
-      print(e);
       return false;
     }
   }

@@ -12,7 +12,6 @@ import 'package:delivery/service/direcciones.service.dart';
 import 'package:delivery/service/llenar_pantallas.dart';
 import 'package:delivery/service/navigator_service.dart';
 import 'package:delivery/service/permission_status.dart';
-import 'package:delivery/service/socket_service.dart';
 import 'package:delivery/service/stripe_service.dart';
 import 'package:delivery/service/tarjetas.service.dart';
 import 'package:delivery/service/ventas_service.dart';
@@ -688,7 +687,6 @@ class _PaymentSummaryState extends State<PaymentSummary> {
     final pantallaService = Provider.of<LlenarPantallasService>(context);
     final direccionesService = Provider.of<DireccionesService>(context);
     final authService = Provider.of<AuthService>(context, listen: true);
-    final socketService = Provider.of<SocketService>(context, listen: true);
     final pedidosService = Provider.of<PedidosService>(context, listen: true);
 
     final busqueda = tarjetasService.listaTarjetas.indexWhere(

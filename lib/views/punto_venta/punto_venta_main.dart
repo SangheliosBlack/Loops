@@ -974,9 +974,6 @@ class PedidoVentaWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String formattedDate = DateFormat.yMEd('es-MX').format(pedido.createdAt);
-    DateTime formattedDate2 = pedido.createdAt.add(const Duration(minutes: 20));
-
-    String formattedDatex = DateFormat.jm('es-MX').format(formattedDate2);
 
     return GestureDetector(
       onTap: () {
