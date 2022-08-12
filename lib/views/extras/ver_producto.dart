@@ -126,8 +126,23 @@ class _VerProductoViewState extends State<VerProductoView> {
                             const SizedBox(height: 10),
                             Text(widget.producto.tienda,
                                 style: GoogleFonts.quicksand(
-                                    fontSize: 14,
-                                    color: Colors.black.withOpacity(.8))),
+                                    fontSize: 14, color: Colors.blue)),
+                            const SizedBox(height: 5),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  child: Text(widget.producto.nombre,
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 2,
+                                      style: GoogleFonts.quicksand(
+                                          fontSize: 25,
+                                          color: const Color.fromRGBO(
+                                              83, 84, 85, 1))),
+                                ),
+                              ],
+                            ),
                             Container(
                               margin: const EdgeInsets.symmetric(vertical: 5),
                               child: RatingBar.builder(
@@ -146,21 +161,6 @@ class _VerProductoViewState extends State<VerProductoView> {
                                 unratedColor: Colors.grey.withOpacity(.4),
                                 onRatingUpdate: (rating) {},
                               ),
-                            ),
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Expanded(
-                                  child: Text(widget.producto.nombre,
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 2,
-                                      style: GoogleFonts.quicksand(
-                                          fontSize: 25,
-                                          color: const Color.fromRGBO(
-                                              83, 84, 85, 1))),
-                                ),
-                              ],
                             ),
                             const SizedBox(height: 7),
                             Text(
@@ -420,7 +420,7 @@ class _VerProductoViewState extends State<VerProductoView> {
                                         backgroundColor:
                                             const Color.fromRGBO(0, 0, 0, 1),
                                         content: Text(
-                                          '${widget.producto.nombre} agregado',
+                                          '${widget.producto.nombre} x $cantidad agregado',
                                           style: GoogleFonts.quicksand(
                                             color: Colors.white,
                                           ),

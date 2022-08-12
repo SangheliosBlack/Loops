@@ -206,8 +206,6 @@ class TiendasService with ChangeNotifier {
 
   Future<List<ListaProductosCategoria>> obtenerProductos(
       {required String nombre, required String id}) async {
-    await Future.delayed(const Duration(seconds: 2));
-
     final data = {"id": id};
 
     try {

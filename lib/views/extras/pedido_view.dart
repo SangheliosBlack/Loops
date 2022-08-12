@@ -294,8 +294,8 @@ class PedidoView extends StatelessWidget {
   }
 
   String _checkEstadoPedido({required List<PedidoProducto> ventas}) {
-    var estado =
-        EstadoPedido(preparado: 0, enviado: 0, entregado: 0, pagado: 0);
+    var estado = EstadoPedido(
+        preparado: 0, enviado: 0, entregado: 0, pagado: 0, confirmado: 0);
 
     for (var element in ventas) {
       if (element.preparado) {
@@ -308,6 +308,9 @@ class PedidoView extends StatelessWidget {
         estado.entregado++;
       }
       if (element.pagado) {
+        estado.pagado++;
+      }
+      if (element.confirmado) {
         estado.pagado++;
       }
     }
@@ -333,6 +336,13 @@ class PedidoView extends StatelessWidget {
         return 'Preparado !';
       }
     }
+    if (estado.confirmado > 0) {
+      if (estado.confirmado >= ventas.length) {
+        return 'Confirmado';
+      } else {
+        return 'Confirmado !';
+      }
+    }
     if (estado.pagado > 0) {
       return 'Pagado';
     } else {
@@ -350,16 +360,36 @@ class EstadoWidget extends StatelessWidget {
     return Column(
       children: [
         Container(
-            margin: const EdgeInsets.only(top: 5, bottom: 10),
-            child: Row(
+            margin: const EdgeInsets.only(top: 5, bottom: 20),
+            child: Column(
               children: [
-                const Expanded(child: Divider()),
-                Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 15),
-                    child: Text(pedido.tienda,
-                        style: GoogleFonts.quicksand(
-                            fontSize: 18, color: Colors.black))),
-                const Expanded(child: Divider()),
+                Row(
+                  children: [
+                    const Expanded(child: Divider()),
+                    Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 15),
+                        child: Text(pedido.tienda,
+                            style: GoogleFonts.quicksand(
+                                fontSize: 18, color: Colors.black))),
+                    const Expanded(child: Divider()),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      pedido.confirmado
+                          ? '${pedido.tienda} reviso tu pedido!.'
+                          : '${pedido.tienda} aun no revisa tu pedido.',
+                      style: GoogleFonts.quicksand(
+                          fontSize: 13,
+                          color:
+                              pedido.confirmado ? Colors.blue : Colors.black),
+                    ),
+                  ],
+                ),
               ],
             )),
         Container(
@@ -370,13 +400,15 @@ class EstadoWidget extends StatelessWidget {
                 children: [
                   Container(
                     padding: const EdgeInsets.all(5),
-                    decoration: const BoxDecoration(
-                        color: Color.fromRGBO(41, 199, 184, 1),
+                    decoration: BoxDecoration(
+                        color: pedido.preparado
+                            ? const Color.fromRGBO(41, 199, 184, 1)
+                            : Colors.grey.withOpacity(.2),
                         shape: BoxShape.circle),
-                    child: const Icon(
+                    child: Icon(
                       Icons.attach_money,
                       size: 18,
-                      color: Colors.white,
+                      color: pedido.preparado ? Colors.white : Colors.grey,
                     ),
                   ),
                   const SizedBox(
@@ -385,7 +417,11 @@ class EstadoWidget extends StatelessWidget {
                   Text(
                     'Pagado',
                     style: GoogleFonts.quicksand(
-                        fontSize: 13, color: Colors.black.withOpacity(.8)),
+                      fontSize: 13,
+                      color: pedido.confirmado
+                          ? Colors.black.withOpacity(.8)
+                          : Colors.grey,
+                    ),
                   )
                 ],
               ),
@@ -398,8 +434,9 @@ class EstadoWidget extends StatelessWidget {
                             flex: 2,
                             child: Container(
                               height: 2,
-                              decoration: const BoxDecoration(
-                                  color: Color.fromRGBO(41, 199, 184, 1)),
+                              decoration: BoxDecoration(
+                                  color: Color.fromRGBO(
+                                      41, 199, 184, pedido.confirmado ? 1 : 0)),
                             ),
                           ),
                           Expanded(
@@ -408,7 +445,7 @@ class EstadoWidget extends StatelessWidget {
                               height: 2,
                               decoration: BoxDecoration(
                                   color: Color.fromRGBO(
-                                      41, 199, 184, pedido.preparado ? 1 : .1)),
+                                      41, 199, 184, pedido.preparado ? 1 : 0)),
                             ),
                           ),
                         ],
@@ -644,6 +681,9 @@ class EstadoWidget extends StatelessWidget {
             .reduce((value, element) => value + element),
         pagado: venta.pedidos
             .map((e) => e.pagado ? 1 : 0)
+            .reduce((value, element) => value + element),
+        confirmado: venta.pedidos
+            .map((e) => e.confirmado ? 1 : 0)
             .reduce((value, element) => value + element));
   }
 }
@@ -665,26 +705,32 @@ class ItemPedidoWidget extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              '- ${producto.nombre}',
-              style: GoogleFonts.quicksand(color: Colors.black, fontSize: 15),
+            Expanded(
+              child: Text(
+                '- ${producto.nombre}',
+                overflow: TextOverflow.visible,
+                style: GoogleFonts.quicksand(color: Colors.black, fontSize: 15),
+              ),
             ),
-            Row(
-              children: [
-                Text(
-                  '\$ ${producto.precio.toStringAsFixed(2)}',
-                  style:
-                      GoogleFonts.quicksand(color: Colors.black, fontSize: 15),
-                ),
-                const SizedBox(
-                  width: 65,
-                ),
-                Text(
-                  producto.cantidad.toString(),
-                  style:
-                      GoogleFonts.quicksand(color: Colors.black, fontSize: 15),
-                ),
-              ],
+            SizedBox(
+              width: 85,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Text(
+                      '\$ ${producto.precio.toStringAsFixed(2)}',
+                      style: GoogleFonts.quicksand(
+                          color: Colors.black, fontSize: 15),
+                    ),
+                  ),
+                  Text(
+                    producto.cantidad.toString(),
+                    style: GoogleFonts.quicksand(
+                        color: Colors.black, fontSize: 15),
+                  ),
+                ],
+              ),
             )
           ],
         ),
@@ -695,11 +741,12 @@ class ItemPedidoWidget extends StatelessWidget {
           physics: const NeverScrollableScrollPhysics(),
           scrollDirection: Axis.vertical,
           shrinkWrap: true,
+          padding: const EdgeInsets.all(0),
           itemBuilder: (BuildContext context, int index) {
             return Row(
               children: [
                 Text(
-                  '   ${elecciones(producto: producto)[index].titulo}',
+                  elecciones(producto: producto)[index].titulo,
                   style: GoogleFonts.quicksand(
                       color: Colors.black.withOpacity(.5), fontSize: 15),
                 ),

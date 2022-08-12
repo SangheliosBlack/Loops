@@ -1,10 +1,10 @@
-// To parse this JSON data, do
-//
-//     final venta = ventaFromJson(jsonString);
-
 import 'dart:convert';
 
+import 'package:delivery/models/cesta.dart';
+import 'package:delivery/models/direccion.dart';
 import 'package:delivery/models/productos.dart';
+import 'package:delivery/models/usuario.dart';
+import 'package:delivery/models/usuario_venta.dart';
 
 List<Venta> ventaResponseFromJson(String str) =>
     List<Venta>.from(json.decode(str).map((x) => Venta.fromJson(x)));
@@ -27,6 +27,7 @@ class Venta {
     required this.createdAt,
     required this.updatedAt,
     required this.v,
+    required this.direccion,
     required this.usuario,
   });
 
@@ -37,23 +38,28 @@ class Venta {
   num envio;
   num servicio;
   num envioPromo;
-  MetodoPago ?metodoPago;
+  MetodoPago? metodoPago;
   DateTime createdAt;
   DateTime updatedAt;
+  Direccion direccion;
   int v;
   String usuario;
 
   factory Venta.fromJson(Map<String, dynamic> json) => Venta(
-        pedidos: List<PedidoProducto>.from(
-            json["pedidos"].map((x) => PedidoProducto.fromJson(x))),
+        pedidos: List<PedidoProducto>.from(json["pedidos"].map((x) {
+          return PedidoProducto.fromJson(x);
+        })),
         id: json["_id"],
         total: json["total"],
         efectivo: json["efectivo"],
         envio: json["envio"],
-        metodoPago:json['metodoPago'] != null ? MetodoPago.fromJson(json["metodoPago"]) : null,
+        metodoPago: json['metodoPago'] != null
+            ? MetodoPago.fromJson(json["metodoPago"])
+            : null,
         createdAt: DateTime.parse(json["createdAt"]),
         updatedAt: DateTime.parse(json["updatedAt"]),
         v: json["__v"],
+        direccion: Direccion.fromJson(json["direccion"]),
         usuario: json["usuario"],
         envioPromo: json["envioPromo"],
         servicio: json["servicio"],
@@ -65,6 +71,7 @@ class Venta {
         "total": total,
         "efectivo": efectivo,
         "gananciaEnvio": envio,
+        "direccion": direccion.toJson(),
         "metodoPago": metodoPago?.toJson(),
         "createdAt": createdAt.toIso8601String(),
         "updatedAt": updatedAt.toIso8601String(),
@@ -717,47 +724,126 @@ class PaymentMethodOptionsCard {
       };
 }
 
+List<PedidoProducto> pedidoProductoFromJson(String str) =>
+    List<PedidoProducto>.from(
+        json.decode(str).map((x) => PedidoProducto.fromJson(x)));
+
 class PedidoProducto {
-  PedidoProducto({
-    required this.productos,
-    required this.id,
-    required this.total,
-    required this.tienda,
-    required this.repartidor,
-    required this.imagen,
-    required this.ubicacion,
-    required this.pagado,
-    required this.preparado,
-    required this.enviado,
-    required this.entregado,
-  });
+  PedidoProducto(
+      {required this.productos,
+      required this.id,
+      required this.total,
+      required this.tienda,
+      required this.repartidor,
+      required this.imagen,
+      required this.ubicacion,
+      required this.pagado,
+      required this.preparado,
+      required this.confirmado,
+      required this.enviado,
+      required this.direccion,
+      required this.entregado,
+      required this.efectivo,
+      required this.usuario,
+      required this.createdAt,
+      required this.updatedAt,
+      required this.entregadoRepartidor,
+      required this.confirmacionTiempo,
+      required this.codigoRepartidor,
+      required this.entregadoRepartidorTiempo,
+      required this.idVenta,
+      required this.tiempoEspera});
 
   List<Producto> productos;
   String id;
   int total;
   String tienda;
-  String repartidor;
+  Usuario repartidor;
   String imagen;
   Ubicacion ubicacion;
   bool pagado;
+  bool confirmado;
+  bool efectivo;
   bool preparado;
+  String direccion;
   bool enviado;
   bool entregado;
+  UsuarioVenta usuario;
+  DateTime createdAt;
+  bool entregadoRepartidor;
+  DateTime confirmacionTiempo;
+  DateTime entregadoRepartidorTiempo;
+  String codigoRepartidor;
+  String idVenta;
 
-  factory PedidoProducto.fromJson(Map<String, dynamic> json) => PedidoProducto(
-        productos: List<Producto>.from(
-            json["productos"].map((x) => Producto.fromJson(x))),
-        id: json["_id"],
-        total: json["total"],
-        tienda: json["tienda"],
-        repartidor: json["repartidor"],
-        imagen: json["imagen"],
-        ubicacion: Ubicacion.fromJson(json["ubicacion"]),
-        pagado: json["pagado"],
-        preparado: json["preparado"],
-        enviado: json["enviado"],
-        entregado: json["entregado"],
-      );
+  DateTime updatedAt;
+  int tiempoEspera;
+
+  factory PedidoProducto.fromJson(Map<String, dynamic> json) {
+    print(json);
+    return PedidoProducto(
+      idVenta: json['id_venta'],
+      codigoRepartidor: json['codigo_repartidor'],
+      productos: List<Producto>.from(
+          json["productos"].map((x) => Producto.fromJson(x))),
+      id: json["_id"],
+      total: json["total"],
+      tienda: json["tienda"],
+      confirmacionTiempo: json['confirmacion_tiempo'] != null
+          ? DateTime.parse(json["confirmacion_tiempo"])
+          : DateTime(0000, 00, 00, 00, 00),
+      entregadoRepartidorTiempo: json['entrega_repartidor_tiempo'] != null
+          ? DateTime.parse(json["entrega_repartidor_tiempo"])
+          : DateTime(0000, 00, 00, 00, 00),
+      repartidor: json['repartidor'] != null
+          ? Usuario.fromJson(json["repartidor"])
+          : Usuario(
+              codigo: '',
+              online: false,
+              direcciones: [],
+              correo: '',
+              nombreUsuario: '',
+              nombre: '',
+              socio: false,
+              createdAt: DateTime(2017, 9, 7, 17, 30),
+              updatedAt: DateTime(2017, 9, 7, 17, 30),
+              uid: '',
+              negocios: [],
+              numeroCelular: '',
+              customerID: '',
+              nombreCodigo: '',
+              idCodigo: '',
+              dialCode: '',
+              repartidor: false,
+              ultimaTarea: DateTime(2017, 9, 7, 17, 30),
+              transito: false,
+              cesta: Cesta(
+                  productos: [],
+                  total: 0,
+                  tarjeta: '',
+                  direccion: Direccion(
+                      id: '',
+                      coordenadas: Coordenadas(lat: 6454564, lng: 65465),
+                      predeterminado: false,
+                      titulo: ''),
+                  efectivo: false,
+                  codigo: '')),
+      imagen: json["imagen"],
+      ubicacion: Ubicacion.fromJson(json["ubicacion"]),
+      pagado: json["pagado"],
+      preparado: json["preparado"],
+      enviado: json["enviado"],
+      entregado: json["entregado"],
+      confirmado: json["confirmado"],
+      direccion: json['direccion'],
+      efectivo: json['efectivo'],
+      usuario: UsuarioVenta.fromJson(json['usuario']),
+      createdAt: DateTime.parse(json["createdAt"]),
+      updatedAt: DateTime.parse(json["updatedAt"]),
+      tiempoEspera: json['tiempo_espera'],
+      entregadoRepartidor: json['entregado_repartidor'],
+    );
+  }
 
   Map<String, dynamic> toJson() => {
         "productos": List<dynamic>.from(productos.map((x) => x.toJson())),
@@ -768,6 +854,8 @@ class PedidoProducto {
         "imagen": imagen,
         "ubicacion": ubicacion.toJson(),
         "pagado": pagado,
+        "confirmado": confirmado,
+        "direccion": direccion,
         "preparado": preparado,
         "enviado": enviado,
         "entregado": entregado,
@@ -775,11 +863,7 @@ class PedidoProducto {
 }
 
 class Ubicacion {
-  Ubicacion({
-    required this.latitud,
-    required this.longitud,
-    required this.id,
-  });
+  Ubicacion({required this.latitud, required this.longitud, required this.id});
 
   double latitud;
   double longitud;

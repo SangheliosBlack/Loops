@@ -30,10 +30,14 @@ class PedidosService with ChangeNotifier {
         listaOrdenesLocal = lista;
         notifyListeners();
       }
-
       return lista;
     } catch (e) {
       return [];
     }
+  }
+
+  recargarPedidos() {
+    listaOrdenesLocal = [];
+    notifyListeners();
   }
 }

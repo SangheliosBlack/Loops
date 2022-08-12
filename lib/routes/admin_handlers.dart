@@ -6,6 +6,7 @@ import 'package:delivery/views/allow_gps_permission.dart';
 import 'package:delivery/views/autentificar_celular.dart';
 import 'package:delivery/views/confirmar_codigo.dart';
 import 'package:delivery/views/dashboard_view.dart';
+import 'package:delivery/views/delivery/dashboard.dart';
 import 'package:delivery/views/extras/loading_view.dart';
 import 'package:delivery/views/gps_disable_view.dart';
 import 'package:delivery/views/punto_venta/punto_venta_main.dart';
@@ -20,10 +21,10 @@ class AdminHandlers {
     final permissionService = Provider.of<PermissionStatusProvider>(context);
     final socketService = Provider.of<SocketService>(context);
 
-    if(authService.puntoVentaStatus == PuntoVenta.isAvailable ){
-      if(socketService.serverStatus == ServerStatus.Online){
+    if (authService.puntoVentaStatus == PuntoVenta.isAvailable) {
+      if (socketService.serverStatus == ServerStatus.Online) {
         return const PuntoVentaMainView();
-      }else{
+      } else {
         return const LoadingView();
       }
     }
@@ -40,7 +41,11 @@ class AdminHandlers {
       }
       if (permissionService.isGranted) {
         if (permissionService.isEnabled) {
-          return const DashboardView();
+          if (authService.usuario.repartidor) {
+            return const DashBoardViewRepartidor();
+          } else {
+            return const DashboardView();
+          }
         } else {
           return const GpsDisableView();
         }

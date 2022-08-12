@@ -5,12 +5,14 @@ import 'package:delivery/helpers/mostrar_carga.dart';
 import 'package:delivery/models/direccion.dart';
 import 'package:delivery/models/productos.dart';
 import 'package:delivery/models/search_results.dart';
+import 'package:delivery/models/tienda.dart';
 import 'package:delivery/search/search_destination.dart';
 import 'package:delivery/service/auth_service.dart';
 import 'package:delivery/service/direcciones.service.dart';
 import 'package:delivery/service/llenar_pantallas.dart';
 import 'package:delivery/service/navigator_service.dart';
 import 'package:delivery/service/permission_status.dart';
+import 'package:delivery/service/socket_service.dart';
 import 'package:delivery/service/stripe_service.dart';
 import 'package:delivery/service/tarjetas.service.dart';
 import 'package:delivery/service/ventas_service.dart';
@@ -176,6 +178,7 @@ class OrderItems extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final authService = Provider.of<AuthService>(context);
+    final pantallaService = Provider.of<LlenarPantallasService>(context);
     return AnimatedSize(
       curve: Curves.fastOutSlowIn,
       duration: const Duration(seconds: 1),
@@ -183,17 +186,25 @@ class OrderItems extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 0),
           physics: const NeverScrollableScrollPhysics(),
           shrinkWrap: true,
-          itemBuilder: (BuildContext context, int index) =>
-              item(context, authService.usuario.cesta.productos[index], index),
-          separatorBuilder: (BuildContext context, int index) =>
-              const SizedBox(height: 0),
+          itemBuilder: (BuildContext context, int index) => item(
+              context,
+              authService.usuario.cesta.productos[index],
+              index,
+              pantallaService.tiendas.firstWhere((element) =>
+                  element.nombre ==
+                  authService.usuario.cesta.productos[index].tienda)),
+          separatorBuilder: (BuildContext context, int index) {
+            return const SizedBox(height: 0);
+          },
           itemCount: authService.usuario.cesta.productos.length),
     );
   }
 
-  Widget item(BuildContext context, Producto producto, int index) {
+  Widget item(
+      BuildContext context, Producto producto, int index, Tienda tienda) {
     final authService = Provider.of<AuthService>(context);
     final pantallasService = Provider.of<LlenarPantallasService>(context);
+
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -206,226 +217,202 @@ class OrderItems extends StatelessWidget {
                   )),
         );
       },
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 5),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-              height: 95,
-              width: 95,
-              child: Hero(
-                tag: producto.id,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(15),
-                  child: CachedNetworkImage(
-                      key: UniqueKey(),
-                      fit: BoxFit.cover,
-                      imageUrl:
-                          'https://www.pequeocio.com/wp-content/uploads/2010/11/hamburguesas-caseras-800x717.jpg',
-                      imageBuilder: (context, imageProvider) => Container(
-                            decoration: BoxDecoration(
-                              image: DecorationImage(
-                                image: imageProvider,
-                                fit: BoxFit.cover,
-                                colorFilter: ColorFilter.mode(
-                                  Colors.black.withOpacity(.15),
-                                  BlendMode.color,
+      child: Column(
+        children: [
+          AnimatedSize(
+            duration: const Duration(milliseconds: 800),
+            child: tienda.online != false
+                ? Container()
+                : Column(
+                    children: [
+                      Container(
+                        height: 15,
+                      ),
+                      Text(
+                        '${tienda.nombre} se encuentra fuera de servicio, para continuar debes eliminar ente producto de tu cesta.',
+                        style: GoogleFonts.quicksand(color: Colors.red),
+                      ),
+                      Container(
+                        height: 15,
+                      )
+                    ],
+                  ),
+          ),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 5),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(
+                  height: 95,
+                  width: 95,
+                  child: Hero(
+                    tag: producto.id,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(15),
+                      child: CachedNetworkImage(
+                          key: UniqueKey(),
+                          fit: BoxFit.cover,
+                          imageUrl:
+                              'https://www.pequeocio.com/wp-content/uploads/2010/11/hamburguesas-caseras-800x717.jpg',
+                          imageBuilder: (context, imageProvider) => Container(
+                                decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                    image: imageProvider,
+                                    fit: BoxFit.cover,
+                                    colorFilter: ColorFilter.mode(
+                                      Colors.black.withOpacity(.15),
+                                      BlendMode.color,
+                                    ),
+                                  ),
                                 ),
                               ),
-                            ),
-                          ),
-                      placeholder: (context, url) => Container(
-                          padding: const EdgeInsets.all(30),
-                          child: const CircularProgressIndicator(
-                            strokeWidth: 1,
-                            color: Colors.black,
-                          )),
-                      errorWidget: (context, url, error) {
-                        return const Icon(Icons.error);
-                      }),
+                          placeholder: (context, url) => Container(
+                              padding: const EdgeInsets.all(30),
+                              child: const CircularProgressIndicator(
+                                strokeWidth: 1,
+                                color: Colors.black,
+                              )),
+                          errorWidget: (context, url, error) {
+                            return const Icon(Icons.error);
+                          }),
+                    ),
+                  ),
                 ),
-              ),
-            ),
-            Expanded(
-              child: Container(
-                height: 95,
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Column(
+                Expanded(
+                  child: Container(
+                    height: 95,
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          producto.tienda,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.quicksand(
-                            color: Colors.blue,
-                            fontSize: 11,
-                          ),
-                        ),
-                        Text(
-                          producto.nombre,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.quicksand(
-                            color: Colors.black.withOpacity(.8),
-                            fontSize: 17,
-                          ),
-                        ),
-                      ],
-                    ),
-                    Text(
-                      elecciones(producto: producto),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.quicksand(
-                          color: Colors.grey, fontSize: 12),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Container(
-                              margin: const EdgeInsets.only(bottom: 5),
-                              child: Text('\$',
-                                  style: GoogleFonts.playfairDisplay(
-                                      fontSize: 16,
-                                      color: Colors.black.withOpacity(.8))),
-                            ),
-                            const SizedBox(width: 2),
                             Text(
-                                ((producto.precio + producto.extra) *
-                                        producto.cantidad)
-                                    .toStringAsFixed(2),
-                                style: GoogleFonts.quicksand(
-                                    fontSize: 24,
-                                    color: Colors.black.withOpacity(.8))),
+                              producto.tienda,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: GoogleFonts.quicksand(
+                                color: Colors.blue,
+                                fontSize: 11,
+                              ),
+                            ),
+                            Text(
+                              producto.nombre,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: GoogleFonts.quicksand(
+                                color: Colors.black.withOpacity(.8),
+                                fontSize: 17,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Text(
+                          elecciones(producto: producto),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.quicksand(
+                              color: Colors.grey, fontSize: 12),
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              children: [
+                                Container(
+                                  margin: const EdgeInsets.only(bottom: 5),
+                                  child: Text('\$',
+                                      style: GoogleFonts.playfairDisplay(
+                                          fontSize: 16,
+                                          color: Colors.black.withOpacity(.8))),
+                                ),
+                                const SizedBox(width: 2),
+                                Text(
+                                    ((producto.precio + producto.extra) *
+                                            producto.cantidad)
+                                        .toStringAsFixed(2),
+                                    style: GoogleFonts.quicksand(
+                                        fontSize: 24,
+                                        color: Colors.black.withOpacity(.8))),
+                              ],
+                            ),
                           ],
                         ),
                       ],
                     ),
-                  ],
-                ),
-              ),
-            ),
-            Column(
-              children: [
-                GestureDetector(
-                  onTap: () async {
-                    mostrarCarga(context);
-                    await authService.eliminarProductoCesta(pos: index);
-                    Navigator.pop(context);
-                    final snackBar = SnackBar(
-                      duration: const Duration(seconds: 2),
-                      backgroundColor: const Color.fromRGBO(0, 0, 0, 1),
-                      content: Text(
-                        '${producto.nombre} eliminado',
-                        style: GoogleFonts.quicksand(
-                          color: Colors.white,
-                        ),
-                      ),
-                    );
-
-                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                  },
-                  child: Container(
-                    margin: const EdgeInsets.only(bottom: 13),
-                    padding:
-                        const EdgeInsets.symmetric(vertical: 7, horizontal: 27),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                            width: 1, color: Colors.grey.withOpacity(.1))),
-                    child: Text(
-                      'Eliminar',
-                      style: GoogleFonts.quicksand(
-                          color: Colors.black.withOpacity(.8)),
-                    ),
                   ),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
+                Column(
                   children: [
                     GestureDetector(
-                      behavior: HitTestBehavior.translucent,
                       onTap: () async {
-                        if (producto.cantidad == 1) {
-                          mostrarCarga(context);
-                          await authService.eliminarProductoCesta(pos: index);
-                          Navigator.pop(context);
-                          final snackBar = SnackBar(
-                            duration: const Duration(seconds: 2),
-                            backgroundColor: const Color.fromRGBO(0, 0, 0, 1),
-                            content: Text(
-                              '${producto.nombre} eliminado',
-                              style: GoogleFonts.quicksand(
-                                color: Colors.white,
-                              ),
+                        mostrarCarga(context);
+                        await authService.eliminarProductoCesta(pos: index);
+                        Navigator.pop(context);
+                        final snackBar = SnackBar(
+                          duration: const Duration(seconds: 2),
+                          backgroundColor: const Color.fromRGBO(0, 0, 0, 1),
+                          content: Text(
+                            '${producto.nombre} eliminado',
+                            style: GoogleFonts.quicksand(
+                              color: Colors.white,
                             ),
-                          );
+                          ),
+                        );
 
-                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                        } else {
-                          mostrarCarga(context);
-                          await authService.actulizarCantidad(
-                              cantidad: (producto.cantidad - 1).toInt(),
-                              index: index);
-                          Navigator.pop(context);
-                        }
+                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
                       },
                       child: Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: producto.cantidad == 1
-                                  ? Colors.red.withOpacity(.05)
-                                  : const Color(0xffF3F5F6).withOpacity(.5)),
-                          child: Icon(
-                            producto.cantidad == 1
-                                ? Icons.delete
-                                : Icons.remove,
-                            size: 16,
-                            color: producto.cantidad != 1
-                                ? Colors.grey.withOpacity(.7)
-                                : Colors.red.withOpacity(.5),
-                          )),
+                        margin: const EdgeInsets.only(bottom: 13),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 7, horizontal: 27),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(
+                                width: 1,
+                                color: pantallasService.tiendas
+                                        .firstWhere((element) =>
+                                            element.nombre == producto.tienda)
+                                        .online
+                                    ? Colors.grey.withOpacity(.1)
+                                    : Colors.red)),
+                        child: Text(
+                          'Eliminar',
+                          style: GoogleFonts.quicksand(
+                              color: pantallasService.tiendas
+                                      .firstWhere((element) =>
+                                          element.nombre == producto.tienda)
+                                      .online
+                                  ? Colors.black.withOpacity(.8)
+                                  : Colors.red),
+                        ),
+                      ),
                     ),
-                    Container(
-                        width: 37,
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                        child: Center(
-                          child: Text(
-                            producto.cantidad.toString(),
-                            style: GoogleFonts.quicksand(fontSize: 20),
-                          ),
-                        )),
-                    GestureDetector(
-                      behavior: HitTestBehavior.translucent,
-                      onTap: producto.cantidad < 15
-                          ? () async {
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        GestureDetector(
+                          behavior: HitTestBehavior.translucent,
+                          onTap: () async {
+                            if (producto.cantidad == 1) {
                               mostrarCarga(context);
-                              await authService.actulizarCantidad(
-                                  cantidad: (producto.cantidad + 1).toInt(),
-                                  index: index);
+                              await authService.eliminarProductoCesta(
+                                  pos: index);
                               Navigator.pop(context);
-                            }
-                          : () {
                               final snackBar = SnackBar(
                                 duration: const Duration(seconds: 2),
                                 backgroundColor:
                                     const Color.fromRGBO(0, 0, 0, 1),
                                 content: Text(
-                                  'Cantidad maxima alcanzada',
+                                  '${producto.nombre} eliminado',
                                   style: GoogleFonts.quicksand(
                                     color: Colors.white,
                                   ),
@@ -434,24 +421,86 @@ class OrderItems extends StatelessWidget {
 
                               ScaffoldMessenger.of(context)
                                   .showSnackBar(snackBar);
-                            },
-                      child: Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: const BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Color.fromRGBO(234, 248, 248, 1)),
-                          child: const Icon(
-                            Icons.add,
-                            size: 16,
-                            color: Color.fromRGBO(62, 204, 191, 1),
-                          )),
+                            } else {
+                              mostrarCarga(context);
+                              await authService.actulizarCantidad(
+                                  cantidad: (producto.cantidad - 1).toInt(),
+                                  index: index);
+                              Navigator.pop(context);
+                            }
+                          },
+                          child: Container(
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: producto.cantidad == 1
+                                      ? Colors.red.withOpacity(.05)
+                                      : const Color(0xffF3F5F6)
+                                          .withOpacity(.5)),
+                              child: Icon(
+                                producto.cantidad == 1
+                                    ? Icons.delete
+                                    : Icons.remove,
+                                size: 16,
+                                color: producto.cantidad != 1
+                                    ? Colors.grey.withOpacity(.7)
+                                    : Colors.red.withOpacity(.5),
+                              )),
+                        ),
+                        Container(
+                            width: 37,
+                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                            child: Center(
+                              child: Text(
+                                producto.cantidad.toString(),
+                                style: GoogleFonts.quicksand(fontSize: 20),
+                              ),
+                            )),
+                        GestureDetector(
+                          behavior: HitTestBehavior.translucent,
+                          onTap: producto.cantidad < 15
+                              ? () async {
+                                  mostrarCarga(context);
+                                  await authService.actulizarCantidad(
+                                      cantidad: (producto.cantidad + 1).toInt(),
+                                      index: index);
+                                  Navigator.pop(context);
+                                }
+                              : () {
+                                  final snackBar = SnackBar(
+                                    duration: const Duration(seconds: 2),
+                                    backgroundColor:
+                                        const Color.fromRGBO(0, 0, 0, 1),
+                                    content: Text(
+                                      'Cantidad maxima alcanzada',
+                                      style: GoogleFonts.quicksand(
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  );
+
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(snackBar);
+                                },
+                          child: Container(
+                              padding: const EdgeInsets.all(12),
+                              decoration: const BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Color.fromRGBO(234, 248, 248, 1)),
+                              child: const Icon(
+                                Icons.add,
+                                size: 16,
+                                color: Color.fromRGBO(62, 204, 191, 1),
+                              )),
+                        ),
+                      ],
                     ),
                   ],
-                ),
+                )
               ],
-            )
-          ],
-        ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -636,8 +685,10 @@ class _PaymentSummaryState extends State<PaymentSummary> {
   Widget build(BuildContext context) {
     final tarjetasService = Provider.of<TarjetasService>(context);
     final customerService = Provider.of<StripeService>(context);
+    final pantallaService = Provider.of<LlenarPantallasService>(context);
     final direccionesService = Provider.of<DireccionesService>(context);
     final authService = Provider.of<AuthService>(context, listen: true);
+    final socketService = Provider.of<SocketService>(context, listen: true);
     final pedidosService = Provider.of<PedidosService>(context, listen: true);
 
     final busqueda = tarjetasService.listaTarjetas.indexWhere(
@@ -1393,8 +1444,11 @@ class _PaymentSummaryState extends State<PaymentSummary> {
             children: [
               Expanded(
                 child: GestureDetector(
-                  onTap:
-                      authService.usuario.cesta.productos.isEmpty ||
+                  onTap: revisarTiendasAbiertas(
+                              authSerice: authService,
+                              pantallasService: pantallaService) ==
+                          false
+                      ? authService.usuario.cesta.productos.isEmpty ||
                               direccionesService.direcciones.isEmpty
                           ? null
                           : () async {
@@ -1462,6 +1516,8 @@ class _PaymentSummaryState extends State<PaymentSummary> {
 
                               if (venta != null) {
                                 pedidosService.agregarCompra(venta: venta);
+                                // socketService.socket
+                                //     .emit('enviar-pedido', venta);
                                 scrollListView2(controller: widget.controller);
                                 Navigator.pop(context);
                                 Navigator.push(
@@ -1487,13 +1543,19 @@ class _PaymentSummaryState extends State<PaymentSummary> {
                                 ScaffoldMessenger.of(context)
                                     .showSnackBar(snackBar);
                               }
-                            },
+                            }
+                      : null,
                   child: AnimatedOpacity(
                     duration: const Duration(milliseconds: 400),
-                    opacity: authService.usuario.cesta.productos.isEmpty ||
-                            direccionesService.direcciones.isEmpty
-                        ? .1
-                        : 1,
+                    opacity: revisarTiendasAbiertas(
+                                authSerice: authService,
+                                pantallasService: pantallaService) ==
+                            false
+                        ? authService.usuario.cesta.productos.isEmpty ||
+                                direccionesService.direcciones.isEmpty
+                            ? .1
+                            : 1
+                        : .1,
                     child: Container(
                         margin: const EdgeInsets.only(top: 20, bottom: 10),
                         padding: const EdgeInsets.all(20),
@@ -1515,6 +1577,23 @@ class _PaymentSummaryState extends State<PaymentSummary> {
         ],
       ),
     );
+  }
+
+  bool revisarTiendasAbiertas(
+      {required AuthService authSerice,
+      required LlenarPantallasService pantallasService}) {
+    bool isClosed = false;
+
+    for (var element2 in authSerice.usuario.cesta.productos) {
+      Tienda tienda = pantallasService.tiendas
+          .firstWhere((element) => element.nombre == element2.tienda);
+
+      if (tienda.online == false) {
+        isClosed = true;
+      }
+    }
+
+    return isClosed;
   }
 
   obtenerFavorito(List<Direccion> direcciones) {

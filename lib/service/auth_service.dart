@@ -266,7 +266,7 @@ class AuthService with ChangeNotifier {
       {required Producto producto,
       required num cantidad,
       required List<String> listado}) async {
-    await Future.delayed(const Duration(seconds: 1));
+    await Future.delayed(const Duration(milliseconds: 500));
     List<Opcion> opciones = producto.opciones
         .map((e) => Opcion(
             titulo: e.titulo,
@@ -645,6 +645,7 @@ class AuthService with ChangeNotifier {
         return null;
       }
     } catch (e) {
+      print(e);
       return null;
     }
   }

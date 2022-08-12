@@ -2,11 +2,11 @@ import 'package:delivery/firebase_options.dart';
 import 'package:delivery/global/enviroment.dart';
 import 'package:delivery/layout/auth_layout.dart';
 import 'package:delivery/layout/dashboard_layout.dart';
+import 'package:delivery/layout/delivery_layout.dart';
 import 'package:delivery/layout/permission_layout.dart';
 import 'package:delivery/layout/socio_layout.dart';
 import 'package:delivery/layout/splash_layout.dart';
 import 'package:delivery/providers/login_form_provider.dart';
-import 'package:delivery/providers/push_notifications_provider.dart';
 import 'package:delivery/providers/register_form_provider.dart';
 import 'package:delivery/routes/router.dart';
 import 'package:delivery/service/auth_service.dart';
@@ -34,13 +34,15 @@ void main() async {
       options: kIsWeb
           ? DefaultFirebaseOptions.web
           : DefaultFirebaseOptions.currentPlatform);
+
   if (!kIsWeb) {
     channel = const AndroidNotificationChannel(
-      'general_id', // id
-      'General', // title
-      'This channel is used for important notifications.', // description
-      importance: Importance.high,
-    );
+        'general_id', // id
+        'General', // title
+        'This channel is used for important notifications.', // description
+        importance: Importance.high,
+        playSound: true,
+        ledColor: Colors.blue);
 
     flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
@@ -99,13 +101,15 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
 
-    final pushProvider = PushNotificationProvider();
-    pushProvider.initNotifications();
+    // final pushProvider = PushNotificationProvider();
+    // final socioService = Provider.of<SocioService>(context, listen: false);
+    // pushProvider.initNotifications();
 
-    pushProvider.mensajes.listen((event) {
-      navigationService.navigatorKey.currentState!
-          .pushNamed('/extras/notificacionPedido', arguments: event);
-    });
+    // pushProvider.mensajes.listen((event) {
+    //   if (event.evento == '1') {
+    //     socioService.pedidosCodigo.add(event);
+    //   }
+    // });
   }
 
   @override
@@ -156,7 +160,13 @@ class _MyAppState extends State<MyApp> {
                                 )
                               : socketProvider.serverStatus ==
                                       ServerStatus.Online
-                                  ? DashboardLayout(child: child!)
+                                  ? authProvider.usuario.repartidor
+                                      ? DeliveryLayout(
+                                          child: child!,
+                                        )
+                                      : DashboardLayout(
+                                          child: child!,
+                                        )
                                   : const SplashLayout()
                           : PermissionLaoyut(child: child!)
                       : AuthLayout(child: child!);

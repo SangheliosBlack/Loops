@@ -1,0 +1,28 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "Flutter-Launch-All",
+        "dependsOn": [
+          "Flutter-Launch-iOS",
+          "Flutter-Launch-Android",
+          "Flutter-Launch-Web"
+        ]
+      },
+      {
+        "label": "Flutter-Launch-iOS",
+        "type": "shell",
+        "command": "flutter run -d 'iPhone 11' "
+      },
+      {
+        "label": "Flutter-Launch-Android",
+        "type": "shell",
+        "command": "flutter run -d 'SMA225M' "
+      },
+      {
+        "label": "Flutter-Launch-Web",
+        "type": "shell",
+        "command": "flutter run -d 'Chrome' "
+      }
+    ]
+  }

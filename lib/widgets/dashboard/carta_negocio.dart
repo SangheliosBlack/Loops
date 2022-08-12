@@ -145,17 +145,38 @@ class CartaNegocio extends StatelessWidget {
                             const Icon(
                               Icons.place_outlined,
                               color: Colors.black,
-                              size: 18,
+                              size: 14,
                             ),
                             const SizedBox(width: 3),
-                            Expanded(
+                            Text(
+                              '${(calculateDistance(lat1: tienda.coordenadas.latitud, lon1: tienda.coordenadas.longitud, lat2: direccionesService.direcciones[authService.usuario.cesta.direccion.titulo != '' ? direccionesService.direcciones.indexWhere((element) => authService.usuario.cesta.direccion.titulo == element.titulo) : obtenerFavorito(direccionesService.direcciones) != -1 ? obtenerFavorito(direccionesService.direcciones) : 0].coordenadas.lat, lon2: direccionesService.direcciones[authService.usuario.cesta.direccion.titulo != '' ? direccionesService.direcciones.indexWhere((element) => authService.usuario.cesta.direccion.titulo == element.titulo) : obtenerFavorito(direccionesService.direcciones) != -1 ? obtenerFavorito(direccionesService.direcciones) : 0].coordenadas.lng).toStringAsFixed(2))} km',
+                              overflow: TextOverflow.ellipsis,
+                              style: GoogleFonts.quicksand(
+                                  color: Colors.black, fontSize: 13),
+                            ),
+                            Container(
+                              margin:
+                                  const EdgeInsets.symmetric(horizontal: 10),
                               child: Text(
-                                '${(calculateDistance(lat1: tienda.coordenadas.latitud, lon1: tienda.coordenadas.longitud, lat2: direccionesService.direcciones[authService.usuario.cesta.direccion.titulo != '' ? direccionesService.direcciones.indexWhere((element) => authService.usuario.cesta.direccion.titulo == element.titulo) : obtenerFavorito(direccionesService.direcciones) != -1 ? obtenerFavorito(direccionesService.direcciones) : 0].coordenadas.lat, lon2: direccionesService.direcciones[authService.usuario.cesta.direccion.titulo != '' ? direccionesService.direcciones.indexWhere((element) => authService.usuario.cesta.direccion.titulo == element.titulo) : obtenerFavorito(direccionesService.direcciones) != -1 ? obtenerFavorito(direccionesService.direcciones) : 0].coordenadas.lng).toStringAsFixed(2))} km ${tienda.direccion}',
-                                overflow: TextOverflow.ellipsis,
-                                style: GoogleFonts.quicksand(
-                                    color: Colors.black, fontSize: 13),
+                                '|',
+                                style: GoogleFonts.quicksand(),
                               ),
-                            )
+                            ),
+                            Row(
+                              children: [
+                                const SizedBox(width: 1),
+                                Icon(
+                                  Icons.schedule,
+                                  color: Colors.black.withOpacity(.8),
+                                  size: 13,
+                                ),
+                                const SizedBox(width: 5),
+                                Text(tienda.tiempoEspera,
+                                    style: GoogleFonts.quicksand(
+                                        fontSize: 14,
+                                        color: Colors.black.withOpacity(.8))),
+                              ],
+                            ),
                           ],
                         ),
                       )

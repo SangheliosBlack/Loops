@@ -42,15 +42,19 @@ class LlenarPantallasService with ChangeNotifier {
   }
 
   abrirNegocio({required String token}) {
-    var index = tiendas.indexWhere((element) => element.puntoVenta == token);
-    tiendas[index].online = true;
-    notifyListeners();
+    if (tiendas.isNotEmpty) {
+      var index = tiendas.indexWhere((element) => element.puntoVenta == token);
+      tiendas[index].online = true;
+      notifyListeners();
+    }
   }
 
   cerrarNegocio({required String token}) {
-    var index = tiendas.indexWhere((element) => element.puntoVenta == token);
-    tiendas[index].online = false;
-    notifyListeners();
+    if (tiendas.isNotEmpty) {
+      var index = tiendas.indexWhere((element) => element.puntoVenta == token);
+      tiendas[index].online = false;
+      notifyListeners();
+    }
   }
 
   pantallaPrincipalCategorias() async {
@@ -70,6 +74,8 @@ class LlenarPantallasService with ChangeNotifier {
 
       return pantallaResponse;
     } catch (e) {
+      print('categorias');
+      print(e);
       return [];
     }
   }
@@ -89,8 +95,12 @@ class LlenarPantallasService with ChangeNotifier {
 
       productos = pantallaResponse.separados;
 
+      productos.shuffle();
+
       return pantallaResponse;
     } catch (e) {
+      print('productos');
+      print(e);
       return [];
     }
   }
@@ -112,6 +122,8 @@ class LlenarPantallasService with ChangeNotifier {
 
       return pantallaResponse;
     } catch (e) {
+      print('tiendas');
+      print(e);
       return [];
     }
   }

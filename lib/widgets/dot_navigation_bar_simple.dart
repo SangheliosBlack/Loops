@@ -1,7 +1,6 @@
 import 'package:delivery/service/auth_service.dart';
 import 'package:delivery/service/hide_show_menu.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 class MenuInferior extends StatelessWidget {
@@ -27,7 +26,9 @@ class MenuInferior extends StatelessWidget {
         fixedColor: const Color.fromRGBO(41, 199, 184, 1),
         selectedIconTheme:
             const IconThemeData(color: Color.fromRGBO(41, 199, 184, 1)),
-        items: authService.usuario.socio ? listaSocio() : listaUsuario(context),
+        items: authService.usuario.socio
+            ? listaSocio(context)
+            : listaUsuario(context),
       ),
     );
   }
@@ -56,24 +57,19 @@ class MenuInferior extends StatelessWidget {
                 Icons.shopping_bag,
                 size: 30,
               ),
-              AnimatedOpacity(
-                opacity: authService.totalPiezas() > 0 ? 1 : 0,
-                duration: const Duration(milliseconds: 200),
-                child: Column(
-                  children: [
-                    const SizedBox(
-                      height: 8,
-                    ),
-                    Center(
-                      child: Text(
-                        authService.totalPiezas().toString(),
-                        style: GoogleFonts.quicksand(
-                            color: Colors.white,
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  ],
+              Positioned(
+                top: 0,
+                right: 0,
+                child: AnimatedOpacity(
+                  opacity: authService.totalPiezas() > 0 ? 1 : 0,
+                  duration: const Duration(milliseconds: 200),
+                  child: Container(
+                    width: 6,
+                    height: 6,
+                    decoration: const BoxDecoration(
+                        color: Color.fromRGBO(41, 199, 184, 1),
+                        shape: BoxShape.circle),
+                  ),
                 ),
               )
             ],
@@ -87,24 +83,19 @@ class MenuInferior extends StatelessWidget {
                 Icons.shopping_bag_outlined,
                 size: 30,
               ),
-              AnimatedOpacity(
-                opacity: authService.totalPiezas() > 0 ? 1 : 0,
-                duration: const Duration(milliseconds: 200),
-                child: Column(
-                  children: [
-                    const SizedBox(
-                      height: 8,
-                    ),
-                    Center(
-                      child: Text(
-                        authService.totalPiezas().toString(),
-                        style: GoogleFonts.quicksand(
-                            color: Colors.black,
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  ],
+              Positioned(
+                top: 0,
+                right: 0,
+                child: AnimatedOpacity(
+                  opacity: authService.totalPiezas() > 0 ? 1 : 0,
+                  duration: const Duration(milliseconds: 200),
+                  child: Container(
+                    width: 6,
+                    height: 6,
+                    decoration: const BoxDecoration(
+                        color: Color.fromRGBO(41, 199, 184, 1),
+                        shape: BoxShape.circle),
+                  ),
                 ),
               )
             ],
@@ -120,65 +111,70 @@ class MenuInferior extends StatelessWidget {
     ];
   }
 
-  List<BottomNavigationBarItem> listaSocio() {
+  List<BottomNavigationBarItem> listaSocio(BuildContext context) {
+    final authService = Provider.of<AuthService>(context);
     return [
       const BottomNavigationBarItem(
-        activeIcon: Icon(Icons.home),
-        icon: Icon(Icons.home_outlined),
+        activeIcon: Icon(
+          Icons.home,
+          size: 30,
+        ),
+        icon: Icon(
+          Icons.home_outlined,
+          size: 30,
+        ),
         label: 'Calls',
       ),
       BottomNavigationBarItem(
         activeIcon: SizedBox(
-          height: 50,
-          width: 50,
           child: Stack(
             alignment: Alignment.center,
-            children: const [
-              Icon(Icons.delivery_dining),
-              /*Positioned(
-                top: -3,
-                left: 0,
-                child: Container(
-                  padding: const EdgeInsets.all(5),
-                  decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Color.fromRGBO(41, 200, 182, 1)),
-                  child: Text(
-                    '2',
-                    style: GoogleFonts.quicksand(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                        fontSize: 12),
+            children: [
+              const Icon(
+                Icons.shopping_bag,
+                size: 30,
+              ),
+              Positioned(
+                top: 0,
+                right: 0,
+                child: AnimatedOpacity(
+                  opacity: authService.totalPiezas() > 0 ? 1 : 0,
+                  duration: const Duration(milliseconds: 200),
+                  child: Container(
+                    width: 6,
+                    height: 6,
+                    decoration: const BoxDecoration(
+                        color: Color.fromRGBO(41, 199, 184, 1),
+                        shape: BoxShape.circle),
                   ),
                 ),
-              )*/
+              )
             ],
           ),
         ),
         icon: SizedBox(
-          height: 50,
-          width: 50,
           child: Stack(
             alignment: Alignment.center,
-            children: const [
-              Icon(Icons.delivery_dining_outlined),
-              /*Positioned(
-                top: -3,
-                left: 0,
-                child: Container(
-                  padding: const EdgeInsets.all(5),
-                  decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Color.fromRGBO(41, 200, 182, 1)),
-                  child: Text(
-                    '2',
-                    style: GoogleFonts.quicksand(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                        fontSize: 12),
+            children: [
+              const Icon(
+                Icons.shopping_bag_outlined,
+                size: 30,
+              ),
+              Positioned(
+                top: 0,
+                right: 0,
+                child: AnimatedOpacity(
+                  opacity: authService.totalPiezas() > 0 ? 1 : 0,
+                  duration: const Duration(milliseconds: 200),
+                  child: Container(
+                    width: 6,
+                    height: 6,
+                    decoration: const BoxDecoration(
+                        color: Color.fromRGBO(41, 199, 184, 1),
+                        shape: BoxShape.circle),
                   ),
                 ),
-              )*/
+              )
             ],
           ),
         ),
@@ -196,7 +192,10 @@ class MenuInferior extends StatelessWidget {
           child: Stack(
             alignment: Alignment.center,
             children: const [
-              Icon(Icons.store),
+              Icon(
+                Icons.store,
+                size: 30,
+              ),
               /*Positioned(
                 top: -3,
                 left: 0,
@@ -223,7 +222,11 @@ class MenuInferior extends StatelessWidget {
           child: Stack(
             alignment: Alignment.center,
             children: const [
-              Icon(Icons.store_outlined),
+              Icon(
+                Icons.store_outlined,
+                size: 30,
+              ),
+
               /*Positioned(
                 top: -3,
                 left: 0,

@@ -29,6 +29,7 @@ void calculandoAlerta(BuildContext context) {
                         width: 100,
                         height: 100,
                         child: const CircularProgressIndicator(
+                          
                           strokeWidth: 1,
                           color: Colors.black,
                         ),

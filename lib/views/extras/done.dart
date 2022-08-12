@@ -390,7 +390,7 @@ class DoneView extends StatelessWidget {
 
   String _checkEstadoPedido({required List<PedidoProducto> ventas}) {
     var estado =
-        EstadoPedido(preparado: 0, enviado: 0, entregado: 0, pagado: 0);
+        EstadoPedido(preparado: 0, enviado: 0, entregado: 0, pagado: 0, confirmado: 0);
 
     for (var element in ventas) {
       if (element.preparado) {
@@ -403,6 +403,9 @@ class DoneView extends StatelessWidget {
         estado.entregado++;
       }
       if (element.pagado) {
+        estado.pagado++;
+      }
+      if (element.confirmado) {
         estado.pagado++;
       }
     }
@@ -426,6 +429,13 @@ class DoneView extends StatelessWidget {
         return 'Preparado';
       } else {
         return 'Preparado !';
+      }
+    }
+    if (estado.confirmado > 0) {
+      if (estado.confirmado >= ventas.length) {
+        return 'Confirmado';
+      } else {
+        return 'Confirmado !';
       }
     }
     if (estado.pagado > 0) {

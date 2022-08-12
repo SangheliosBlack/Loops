@@ -2,6 +2,11 @@
     package="com.example.delivery">
 
      <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+     <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
+     <uses-permission android:name="android.permission.BLUETOOTH" />
+<uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+<uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+
 
   <!--Localizacion-->
   <uses-permission android:name="android.permission.INTERNET" />

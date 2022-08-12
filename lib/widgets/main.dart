@@ -60,8 +60,7 @@ class BaraBusqueda extends StatelessWidget {
 class ListadoEstablecimientos extends StatelessWidget {
   final double height;
   final double width;
-  const 
-  ListadoEstablecimientos(
+  const ListadoEstablecimientos(
       {Key? key, required this.height, required this.width})
       : super(key: key);
 

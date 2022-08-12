@@ -1,20 +1,20 @@
 import 'dart:async';
-import 'dart:io';
+import 'dart:convert';
 
+import 'package:delivery/models/firebase_socket.dart';
+import 'package:delivery/models/venta_response.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
-class PushNotificationProvider  {
-  
-
+class PushNotificationProvider {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
 
-  final _mensajesStreamController = StreamController<String>.broadcast();
-  Stream<String> get mensajes => _mensajesStreamController.stream;
+  final _mensajesStreamController =
+      StreamController<FirebaseSocket>.broadcast();
+  Stream<FirebaseSocket> get mensajes => _mensajesStreamController.stream;
 
   FirebaseMessaging get firebaseMessaging => _firebaseMessaging;
 
   initNotifications() async {
-
     NotificationSettings settings = await _firebaseMessaging.requestPermission(
         announcement: true,
         carPlay: true,
@@ -25,23 +25,21 @@ class PushNotificationProvider  {
     settings;
 
     FirebaseMessaging.onMessage.listen((event) {
-      String argumento = 'no-data';
+      print('mensaje 1');
+      final mensaje = FirebaseSocket(
+          evento: event.data['evento'],
+          pedido: PedidoProducto.fromJson(json.decode(event.data['pedido'])));
 
-      if (Platform.isAndroid) {
-        argumento = event.data['comida'] ?? 'no-data';
-      }
-
-      _mensajesStreamController.sink.add(argumento);
+      _mensajesStreamController.sink.add(mensaje);
     });
 
     FirebaseMessaging.onMessageOpenedApp.listen((event) {
-      String argumento = 'no-data';
+      print('mensaje');
+      final mensaje = FirebaseSocket(
+          evento: event.data['evento'],
+          pedido: PedidoProducto.fromJson(json.decode(event.data['pedido'])));
 
-      if (Platform.isAndroid) {
-        argumento = event.data['comida'] ?? 'no-data';
-      }
-
-      _mensajesStreamController.sink.add(argumento);
+      _mensajesStreamController.sink.add(mensaje);
     });
   }
 }

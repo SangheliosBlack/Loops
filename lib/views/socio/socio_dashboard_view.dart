@@ -24,10 +24,10 @@ class _SocioDashBoardViewState extends State<SocioDashBoardView>
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     final _controller = WeSlideController();
-    final tiendasService = Provider.of<TiendasService>(context);  
+    final tiendasService = Provider.of<TiendasService>(context);
     final authServiceService = Provider.of<AuthService>(context);
     super.build(context);
-    
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: FutureBuilder(
@@ -186,7 +186,8 @@ class _SocioDashBoardViewState extends State<SocioDashBoardView>
                                                     color: Colors.white,
                                                     shape: BoxShape.circle),
                                                 child: Hero(
-                                                  tag: '${tienda.imagenPerfil}+socio',
+                                                  tag:
+                                                      '${tienda.imagenPerfil}+socio',
                                                   child: SizedBox(
                                                     width: 170,
                                                     height: 170,

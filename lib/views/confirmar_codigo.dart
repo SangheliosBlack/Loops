@@ -30,6 +30,7 @@ class _ConfirmarCodigoState extends State<ConfirmarCodigo> with CodeAutoFill {
   void codeUpdated() {
     final authService = Provider.of<AuthService>(context, listen: false);
     final socketService = Provider.of<SocketService>(context, listen: false);
+    if (!mounted) return;
     setState(() {
       otpCode = code!;
       controller.text = otpCode!;
@@ -46,6 +47,7 @@ class _ConfirmarCodigoState extends State<ConfirmarCodigo> with CodeAutoFill {
     super.initState();
     listenForCode();
     SmsAutoFill().getAppSignature.then((signature) {
+      if (!mounted) return;
       setState(() {
         appSignature = signature;
       });
@@ -174,6 +176,7 @@ class _ConfirmarCodigoState extends State<ConfirmarCodigo> with CodeAutoFill {
                   children: [
                     SlideCountdown(
                       onDone: () async {
+                        if (!mounted) return;
                         setState(() {
                           isDone = true;
                         });
@@ -261,6 +264,7 @@ class _ConfirmarCodigoState extends State<ConfirmarCodigo> with CodeAutoFill {
       required String numero,
       required AuthService authService,
       required SocketService socket}) async {
+        if (!mounted) return;
     setState(() {
       send = true;
     });
@@ -270,6 +274,7 @@ class _ConfirmarCodigoState extends State<ConfirmarCodigo> with CodeAutoFill {
           await TwilioService().confirmarSms(numero, codigo, widget.codigo);
       if (confirmado) {
         final logIn = await authService.logInCelular(numero: numero);
+        if (!mounted) return;
         setState(() {
           send = false;
         });
@@ -285,6 +290,7 @@ class _ConfirmarCodigoState extends State<ConfirmarCodigo> with CodeAutoFill {
           socket.connect();
         }
       } else {
+        if (!mounted) return;
         setState(() {
           send = false;
         });
@@ -300,6 +306,7 @@ class _ConfirmarCodigoState extends State<ConfirmarCodigo> with CodeAutoFill {
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
       }
     } else {
+      if (!mounted) return;
       setState(() {
         send = false;
       });

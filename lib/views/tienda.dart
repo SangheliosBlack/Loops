@@ -71,8 +71,7 @@ class _StoreIndividualState extends State<StoreIndividual> {
                             GestureDetector(
                               onTap: () async {
                                 Navigator.pop(context);
-                                await Future.delayed(
-                                    const Duration(milliseconds: 300));
+
                                 generalActions.controllerNavigate(1);
                               },
                               child: Container(
@@ -139,110 +138,101 @@ class _StoreIndividualState extends State<StoreIndividual> {
                         builder: (ctx, cons) => FlexibleSpaceBar(
                           titlePadding: const EdgeInsets.all(20),
                           centerTitle: true,
-                          title: FadeInLeft(
-                            delay: const Duration(milliseconds: 50),
-                            child: Row(
-                              children: [
-                                AnimatedContainer(
-                                  margin: EdgeInsets.only(
-                                      left:
-                                          cons.biggest.height <= 200 ? 40 : 0),
-                                  padding: const EdgeInsets.all(5),
-                                  decoration: const BoxDecoration(
-                                      color: Colors.white,
-                                      shape: BoxShape.circle),
-                                  duration: const Duration(milliseconds: 500),
-                                  child: Stack(
-                                    children: [
-                                      AnimatedContainer(
-                                        width: cons.biggest.height <= 190
-                                            ? 50
-                                            : 70,
-                                        height: cons.biggest.height <= 190
-                                            ? 50
-                                            : 70,
-                                        duration:
-                                            const Duration(milliseconds: 300),
-                                        child: Hero(
-                                          tag: widget.tienda.uid,
-                                          child: ClipRRect(
-                                            borderRadius:
-                                                BorderRadius.circular(100),
-                                            child: CachedNetworkImage(
-                                                fit: BoxFit.cover,
-                                                imageUrl:
-                                                    widget.tienda.imagenPerfil,
-                                                imageBuilder: (context,
-                                                        imageProvider) =>
-                                                    Container(
-                                                      decoration: BoxDecoration(
-                                                        image: DecorationImage(
-                                                          image: imageProvider,
-                                                          fit: BoxFit.cover,
-                                                          colorFilter:
-                                                              ColorFilter.mode(
-                                                            Colors.black
-                                                                .withOpacity(
-                                                                    .15),
-                                                            BlendMode.color,
-                                                          ),
+                          title: Row(
+                            children: [
+                              AnimatedContainer(
+                                margin: EdgeInsets.only(
+                                    left: cons.biggest.height <= 200 ? 40 : 0),
+                                padding: const EdgeInsets.all(5),
+                                decoration: const BoxDecoration(
+                                    color: Colors.white,
+                                    shape: BoxShape.circle),
+                                duration: const Duration(milliseconds: 500),
+                                child: Stack(
+                                  children: [
+                                    AnimatedContainer(
+                                      width:
+                                          cons.biggest.height <= 190 ? 50 : 70,
+                                      height:
+                                          cons.biggest.height <= 190 ? 50 : 70,
+                                      duration:
+                                          const Duration(milliseconds: 300),
+                                      child: Hero(
+                                        tag: widget.tienda.uid,
+                                        child: ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(100),
+                                          child: CachedNetworkImage(
+                                              fit: BoxFit.cover,
+                                              imageUrl:
+                                                  widget.tienda.imagenPerfil,
+                                              imageBuilder: (context,
+                                                      imageProvider) =>
+                                                  Container(
+                                                    decoration: BoxDecoration(
+                                                      image: DecorationImage(
+                                                        image: imageProvider,
+                                                        fit: BoxFit.cover,
+                                                        colorFilter:
+                                                            ColorFilter.mode(
+                                                          Colors.black
+                                                              .withOpacity(.15),
+                                                          BlendMode.color,
                                                         ),
                                                       ),
                                                     ),
-                                                placeholder: (context, url) =>
-                                                    Container(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .all(25),
-                                                        child:
-                                                            const CircularProgressIndicator(
-                                                          strokeWidth: 1,
-                                                          color: Colors.black,
-                                                        )),
-                                                errorWidget:
-                                                    (context, url, error) {
-                                                  return const Icon(
-                                                      Icons.error);
-                                                }),
-                                          ),
+                                                  ),
+                                              placeholder: (context, url) =>
+                                                  Container(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              25),
+                                                      child:
+                                                          const CircularProgressIndicator(
+                                                        strokeWidth: 1,
+                                                        color: Colors.black,
+                                                      )),
+                                              errorWidget:
+                                                  (context, url, error) {
+                                                return const Icon(Icons.error);
+                                              }),
                                         ),
                                       ),
-                                      Positioned(
-                                        bottom:
-                                            cons.biggest.height <= 190 ? 0 : 0,
-                                        right:
-                                            cons.biggest.height <= 190 ? 0 : 0,
-                                        child: Container(
-                                          padding: const EdgeInsets.all(3),
-                                          decoration: const BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              color: Color.fromRGBO(
-                                                  0, 224, 242, 1)),
-                                          child: const Icon(
-                                            Icons.check,
-                                            size: 10,
-                                            color: Colors.white,
-                                          ),
+                                    ),
+                                    Positioned(
+                                      bottom:
+                                          cons.biggest.height <= 190 ? 0 : 0,
+                                      right: cons.biggest.height <= 190 ? 0 : 0,
+                                      child: Container(
+                                        padding: const EdgeInsets.all(3),
+                                        decoration: const BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color:
+                                                Color.fromRGBO(0, 224, 242, 1)),
+                                        child: const Icon(
+                                          Icons.check,
+                                          size: 10,
+                                          color: Colors.white,
                                         ),
                                       ),
-                                    ],
-                                  ),
+                                    ),
+                                  ],
                                 ),
-                                const SizedBox(
-                                  width: 5,
+                              ),
+                              const SizedBox(
+                                width: 5,
+                              ),
+                              Expanded(
+                                child: Text(
+                                  widget.tienda.nombre,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: GoogleFonts.playfairDisplay(
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.white),
                                 ),
-                                Expanded(
-                                  child: Text(
-                                    widget.tienda.nombre,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: GoogleFonts.playfairDisplay(
-                                        fontSize: 17,
-                                        fontWeight: FontWeight.w600,
-                                        color: Colors.white),
-                                  ),
-                                )
-                              ],
-                            ),
+                              )
+                            ],
                           ),
                           collapseMode: CollapseMode.parallax,
                           background: Stack(
@@ -264,24 +254,20 @@ class _StoreIndividualState extends State<StoreIndividual> {
                                       ),
                                     ),
                                     Positioned.fill(
-                                      child: FadeInUp(
-                                        duration:
-                                            const Duration(milliseconds: 400),
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                              gradient: LinearGradient(
-                                            stops: const [
-                                              0.6,
-                                              0.99,
-                                            ],
-                                            begin: Alignment.topCenter,
-                                            end: Alignment.bottomCenter,
-                                            colors: [
-                                              Colors.black.withOpacity(0),
-                                              Colors.black.withOpacity(1)
-                                            ],
-                                          )),
-                                        ),
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                            gradient: LinearGradient(
+                                          stops: const [
+                                            0.6,
+                                            0.99,
+                                          ],
+                                          begin: Alignment.topCenter,
+                                          end: Alignment.bottomCenter,
+                                          colors: [
+                                            Colors.black.withOpacity(0),
+                                            Colors.black.withOpacity(1)
+                                          ],
+                                        )),
                                       ),
                                     ),
                                     Positioned.fill(
@@ -340,55 +326,77 @@ class _StoreIndividualState extends State<StoreIndividual> {
                                 ),
                               ),
                               Positioned(
-                                  bottom: 25,
-                                  left: 150,
-                                  child: Column(
-                                    children: [
-                                      Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            'Restaurante',
-                                            style: GoogleFonts.quicksand(
-                                                color: Colors.white,
-                                                fontSize: 12),
-                                          ),
-                                          const SizedBox(height: 5),
-                                          direccionesService
-                                                  .direcciones.isNotEmpty
-                                              ? Row(
-                                                  children: [
-                                                    const Icon(
-                                                      Icons.place_outlined,
-                                                      color: Colors.white,
-                                                      size: 15,
-                                                    ),
-                                                    const SizedBox(width: 3),
-                                                    SizedBox(
-                                                      width: width - 185,
-                                                      child: Text(
-                                                        '${(calculateDistance(lat1: widget.tienda.coordenadas.latitud, lon1: widget.tienda.coordenadas.longitud, lat2: direccionesService.direcciones[authService.usuario.cesta.direccion.titulo != '' ? direccionesService.direcciones.indexWhere((element) => authService.usuario.cesta.direccion.titulo == element.titulo) : obtenerFavorito(direccionesService.direcciones) != -1 ? obtenerFavorito(direccionesService.direcciones) : 0].coordenadas.lat, lon2: direccionesService.direcciones[authService.usuario.cesta.direccion.titulo != '' ? direccionesService.direcciones.indexWhere((element) => authService.usuario.cesta.direccion.titulo == element.titulo) : obtenerFavorito(direccionesService.direcciones) != -1 ? obtenerFavorito(direccionesService.direcciones) : 0].coordenadas.lng).toStringAsFixed(2))} km ${widget.tienda.direccion}',
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                        style: GoogleFonts
-                                                            .quicksand(
-                                                                color: Colors
-                                                                    .white,
-                                                                fontSize: 13),
-                                                      ),
-                                                    )
-                                                  ],
-                                                )
-                                              : Container()
-                                        ],
-                                      ),
-                                    ],
-                                  )),
+                                bottom: 47,
+                                left: 145,
+                                child: Text(
+                                  'Restaurante',
+                                  style: GoogleFonts.quicksand(
+                                      color: Colors.white, fontSize: 12),
+                                ),
+                              ),
                               Positioned(
-                                  left: 150,
+                                  bottom: 25,
+                                  left: 140,
+                                  child: direccionesService
+                                          .direcciones.isNotEmpty
+                                      ? SizedBox(
+                                          width: width - 185,
+                                          child: Row(
+                                            children: [
+                                              Row(
+                                                children: [
+                                                  const Icon(
+                                                    Icons.place_outlined,
+                                                    color: Colors.white,
+                                                    size: 15,
+                                                  ),
+                                                  const SizedBox(width: 3),
+                                                  Text(
+                                                    '${(calculateDistance(lat1: widget.tienda.coordenadas.latitud, lon1: widget.tienda.coordenadas.longitud, lat2: direccionesService.direcciones[authService.usuario.cesta.direccion.titulo != '' ? direccionesService.direcciones.indexWhere((element) => authService.usuario.cesta.direccion.titulo == element.titulo) : obtenerFavorito(direccionesService.direcciones) != -1 ? obtenerFavorito(direccionesService.direcciones) : 0].coordenadas.lat, lon2: direccionesService.direcciones[authService.usuario.cesta.direccion.titulo != '' ? direccionesService.direcciones.indexWhere((element) => authService.usuario.cesta.direccion.titulo == element.titulo) : obtenerFavorito(direccionesService.direcciones) != -1 ? obtenerFavorito(direccionesService.direcciones) : 0].coordenadas.lng).toStringAsFixed(2))} km',
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    style:
+                                                        GoogleFonts.quicksand(
+                                                            color: Colors.white,
+                                                            fontSize: 13),
+                                                  )
+                                                ],
+                                              ),
+                                              Container(
+                                                margin:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 10),
+                                                child: Text('|',
+                                                    style:
+                                                        GoogleFonts.quicksand(
+                                                            color:
+                                                                Colors.white)),
+                                              ),
+                                              Row(
+                                                children: [
+                                                  const SizedBox(width: 1),
+                                                  const Icon(
+                                                    Icons.schedule,
+                                                    color: Colors.white,
+                                                    size: 14,
+                                                  ),
+                                                  const SizedBox(width: 5),
+                                                  Text(
+                                                      widget
+                                                          .tienda.tiempoEspera,
+                                                      style:
+                                                          GoogleFonts.quicksand(
+                                                              fontSize: 13,
+                                                              color: Colors
+                                                                  .white)),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        )
+                                      : Container()),
+                              Positioned(
+                                  left: 140,
                                   bottom: 120,
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.start,
@@ -397,6 +405,31 @@ class _StoreIndividualState extends State<StoreIndividual> {
                                     children: [
                                       Row(
                                         children: [
+                                          Row(
+                                            children: [
+                                              Container(
+                                                  margin: const EdgeInsets.only(
+                                                      right: 5),
+                                                  width: 5,
+                                                  height: 5,
+                                                  decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              100),
+                                                      color: Colors.white)),
+                                              Text(
+                                                widget.tienda.online
+                                                    ? 'Abierto'
+                                                    : 'Cerrado',
+                                                style: GoogleFonts.quicksand(
+                                                    fontSize: 14,
+                                                    color: Colors.white),
+                                              )
+                                            ],
+                                          ),
+                                          const SizedBox(
+                                            width: 8,
+                                          ),
                                           Text(
                                             DateFormat('h:mm a', 'es-MX')
                                                 .format(widget
@@ -421,38 +454,6 @@ class _StoreIndividualState extends State<StoreIndividual> {
                                               color: Colors.white,
                                               fontSize: 14,
                                             ),
-                                          )
-                                        ],
-                                      ),
-                                    ],
-                                  )),
-                              Positioned(
-                                  left: 150,
-                                  bottom: 140,
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Container(
-                                              margin: const EdgeInsets.only(
-                                                  right: 5),
-                                              width: 5,
-                                              height: 5,
-                                              decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          100),
-                                                  color: Colors.white)),
-                                          Text(
-                                            widget.tienda.online
-                                                ? 'Abierto'
-                                                : 'Cerrado',
-                                            style: GoogleFonts.quicksand(
-                                                fontSize: 14,
-                                                color: Colors.white),
                                           )
                                         ],
                                       ),
@@ -484,13 +485,13 @@ class _StoreIndividualState extends State<StoreIndividual> {
                                 },
                               )
                             : FadeInUp(
-                                delay: const Duration(milliseconds: 700),
                                 child: Container(
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(40),
                                     color: Colors.white,
                                   ),
-                                  child: ListView.separated(
+                                  child: ListView.builder(
+                                    primary: false,
                                     physics:
                                         const NeverScrollableScrollPhysics(),
                                     padding: const EdgeInsets.only(
@@ -515,9 +516,6 @@ class _StoreIndividualState extends State<StoreIndividual> {
                                                 nombre: widget.tienda.nombre)]
                                         .productos
                                         .length,
-                                    separatorBuilder:
-                                        (BuildContext context, int index) =>
-                                            const SizedBox(height: 0),
                                   ),
                                 ),
                               )),
@@ -562,7 +560,7 @@ class ItemPorCategoria extends StatefulWidget {
 }
 
 class _ItemPorCategoriaState extends State<ItemPorCategoria> {
-  bool _expanded = true;
+  bool _expanded = false;
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
@@ -572,47 +570,51 @@ class _ItemPorCategoriaState extends State<ItemPorCategoria> {
           borderRadius: BorderRadius.circular(10),
           color: Colors.white,
         ),
-        child: ExpansionPanelList(
-          expandedHeaderPadding: const EdgeInsets.symmetric(vertical: 0),
-          elevation: 0,
-          children: [
-            ExpansionPanel(
-              headerBuilder: (context, isExpanded) {
-                return ListTile(
-                  title: Text(
-                    widget.categoria.titulo,
-                    style: GoogleFonts.quicksand(
-                        color: Colors.black.withOpacity(.5), fontSize: 22),
-                  ),
-                );
-              },
-              body: Column(
-                children: [
-                  ListView.separated(
-                    physics: const NeverScrollableScrollPhysics(),
-                    padding: const EdgeInsets.all(0),
-                    shrinkWrap: true,
-                    itemBuilder: (BuildContext context, int index) =>
-                        ProductoGeneral2(
-                      producto: widget.categoria.productos[index],
-                      tienda: widget.tienda,
+        child: AnimatedSize(
+          duration: const Duration(seconds: 1),
+          child: ExpansionPanelList(
+            expandedHeaderPadding: const EdgeInsets.symmetric(vertical: 0),
+            elevation: 0,
+            children: [
+              ExpansionPanel(
+                headerBuilder: (context, isExpanded) {
+                  return ListTile(
+                    title: Text(
+                      widget.categoria.titulo,
+                      style: GoogleFonts.quicksand(
+                          color: Colors.black.withOpacity(.5), fontSize: 22),
                     ),
-                    itemCount: widget.categoria.productos.length,
-                    separatorBuilder: (BuildContext context, int index) =>
-                        const SizedBox(height: 0),
-                  )
-                ],
+                  );
+                },
+                body: Column(
+                  children: [
+                    ListView.separated(
+                      primary: false,
+                      physics: const NeverScrollableScrollPhysics(),
+                      padding: const EdgeInsets.all(0),
+                      shrinkWrap: true,
+                      itemBuilder: (BuildContext context, int index) =>
+                          ProductoGeneral2(
+                        producto: widget.categoria.productos[index],
+                        tienda: widget.tienda,
+                      ),
+                      itemCount: widget.categoria.productos.length,
+                      separatorBuilder: (BuildContext context, int index) =>
+                          const SizedBox(height: 0),
+                    )
+                  ],
+                ),
+                isExpanded: _expanded,
+                canTapOnHeader: true,
               ),
-              isExpanded: _expanded,
-              canTapOnHeader: true,
-            ),
-          ],
-          animationDuration: const Duration(seconds: 1),
-          dividerColor: Colors.grey,
-          expansionCallback: (panelIndex, isExpanded) {
-            _expanded = !_expanded;
-            setState(() {});
-          },
+            ],
+            animationDuration: const Duration(seconds: 1),
+            dividerColor: Colors.grey,
+            expansionCallback: (panelIndex, isExpanded) {
+              _expanded = !_expanded;
+              setState(() {});
+            },
+          ),
         ),
       ),
     );

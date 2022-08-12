@@ -7,9 +7,14 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-class MisPedidosView extends StatelessWidget {
+class MisPedidosView extends StatefulWidget {
   const MisPedidosView({Key? key}) : super(key: key);
 
+  @override
+  State<MisPedidosView> createState() => _MisPedidosViewState();
+}
+
+class _MisPedidosViewState extends State<MisPedidosView> {
   @override
   Widget build(BuildContext context) {
     final pedidosService = Provider.of<PedidosService>(context);
@@ -52,16 +57,22 @@ class MisPedidosView extends StatelessWidget {
                             ));
                 },
               )
-            : ListView.separated(
-                padding: const EdgeInsets.only(bottom: 30),
-                physics: const BouncingScrollPhysics(),
-                shrinkWrap: true,
-                itemBuilder: (_, int index) => PedidoWidgetFold(
-                    venta: pedidosService.listaOrdenesLocal[index]),
-                separatorBuilder: (_, __) => Divider(
-                      color: Colors.grey.withOpacity(.2),
-                    ),
-                itemCount: pedidosService.listaOrdenesLocal.length),
+            : RefreshIndicator(
+                strokeWidth: 3,
+                onRefresh: () async {
+                  pedidosService.recargarPedidos();
+                },
+                child: ListView.separated(
+                    padding: const EdgeInsets.only(bottom: 30),
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    itemBuilder: (_, int index) => PedidoWidgetFold(
+                        venta: pedidosService.listaOrdenesLocal[index]),
+                    separatorBuilder: (_, __) => Divider(
+                          color: Colors.grey.withOpacity(.2),
+                        ),
+                    itemCount: pedidosService.listaOrdenesLocal.length),
+              ),
       ),
     );
   }
@@ -219,8 +230,8 @@ class PedidoWidgetFold extends StatelessWidget {
   }
 
   String _checkEstadoPedido({required List<PedidoProducto> ventas}) {
-    var estado =
-        EstadoPedido(preparado: 0, enviado: 0, entregado: 0, pagado: 0);
+    var estado = EstadoPedido(
+        preparado: 0, enviado: 0, entregado: 0, pagado: 0, confirmado: 0);
 
     for (var element in ventas) {
       if (element.preparado) {
@@ -233,6 +244,9 @@ class PedidoWidgetFold extends StatelessWidget {
         estado.entregado++;
       }
       if (element.pagado) {
+        estado.pagado++;
+      }
+      if (element.confirmado) {
         estado.pagado++;
       }
     }
@@ -256,6 +270,13 @@ class PedidoWidgetFold extends StatelessWidget {
         return 'Preparado';
       } else {
         return 'Preparado !';
+      }
+    }
+    if (estado.confirmado > 0) {
+      if (estado.confirmado >= ventas.length) {
+        return 'Confirmado';
+      } else {
+        return 'Confirmado !';
       }
     }
     if (estado.pagado > 0) {

@@ -153,7 +153,11 @@ class ProductoGeneral extends StatelessWidget {
                                   size: 13,
                                 ),
                                 const SizedBox(width: 5),
-                                Text('15 - 25 min',
+                                Text(
+                                    pantallasService.tiendas
+                                        .firstWhere((element) =>
+                                            element.nombre == producto.tienda)
+                                        .tiempoEspera,
                                     style: GoogleFonts.quicksand(
                                         fontSize: 14,
                                         color: Colors.black.withOpacity(.8))),

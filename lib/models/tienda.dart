@@ -24,9 +24,12 @@ class Tienda {
       required this.uid,
       required this.horario,
       required this.coordenadas,
+      required this.tiempoEspera,
       required this.online,
       required this.puntoVenta,
       required this.imagenPerfil,
+      required this.autoImpresion,
+      required this.mac,
       required this.listaProductos});
 
   String fotografias;
@@ -45,9 +48,12 @@ class Tienda {
   Horario horario;
   String puntoVenta;
   bool online;
+  String tiempoEspera;
   Coordenadas coordenadas;
   List<Producto> listaProductos;
   String imagenPerfil;
+  String mac;
+  bool autoImpresion;
 
   factory Tienda.fromJson(Map<String, dynamic> json) => Tienda(
         fotografias: json['fotografias'],
@@ -68,7 +74,11 @@ class Tienda {
             json["listaProductos"].map((x) => Producto.fromJson(x))),
         imagenPerfil: json['imagen_perfil'],
         direccion: json['direccion'],
-        online: json['online'], puntoVenta: json['punto_venta']??'',
+        online: json['online'],
+        puntoVenta: json['punto_venta'] ?? '',
+        tiempoEspera: json['tiempoEspera'] ?? '40 - 50 min',
+        autoImpresion: json['auto_impresion'],
+        mac: json['mac'] ?? '',
       );
 
   Map<String, dynamic> toJson() => {
@@ -84,6 +94,7 @@ class Tienda {
         "createdAt": createdAt.toIso8601String(),
         "updatedAt": updatedAt.toIso8601String(),
         "uid": uid,
+        "tiempoEspera": tiempoEspera,
         "online": online,
         "horario": horario.toJson(),
         "puntoVenta": puntoVenta,
