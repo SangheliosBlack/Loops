@@ -12,7 +12,9 @@ class ProductoGeneral2 extends StatelessWidget {
   final Tienda tienda;
   final Producto producto;
 
-  const ProductoGeneral2({Key? key, required this.producto, required this.tienda}) : super(key: key);
+  const ProductoGeneral2(
+      {Key? key, required this.producto, required this.tienda})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +25,8 @@ class ProductoGeneral2 extends StatelessWidget {
           MaterialPageRoute(
               builder: (context) => VerProductoView(
                     producto: producto,
-                    soloTienda: true, tienda: tienda,
+                    soloTienda: false,
+                    tienda: tienda,
                   )),
         );
       },
@@ -87,6 +90,7 @@ class ProductoGeneral2 extends StatelessWidget {
                                         minRating: 1,
                                         direction: Axis.horizontal,
                                         allowHalfRating: true,
+                                        ignoreGestures: true,
                                         itemCount: 5,
                                         itemPadding: const EdgeInsets.symmetric(
                                             horizontal: 4.0),

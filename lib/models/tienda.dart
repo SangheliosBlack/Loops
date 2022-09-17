@@ -48,7 +48,7 @@ class Tienda {
   Horario horario;
   String puntoVenta;
   bool online;
-  String tiempoEspera;
+  num tiempoEspera;
   Coordenadas coordenadas;
   List<Producto> listaProductos;
   String imagenPerfil;
@@ -76,7 +76,7 @@ class Tienda {
         direccion: json['direccion'],
         online: json['online'],
         puntoVenta: json['punto_venta'] ?? '',
-        tiempoEspera: json['tiempoEspera'] ?? '40 - 50 min',
+        tiempoEspera: json['tiempo_espera'] ,
         autoImpresion: json['auto_impresion'],
         mac: json['mac'] ?? '',
       );

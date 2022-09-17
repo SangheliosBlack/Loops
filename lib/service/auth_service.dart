@@ -1,7 +1,9 @@
 import 'dart:convert';
+import 'dart:ffi';
 import 'dart:io';
 
 import 'package:delivery/global/enviroment.dart';
+import 'package:delivery/helpers/haversine.dart';
 import 'package:delivery/models/cesta.dart';
 import 'package:delivery/models/codigo_response.dart';
 import 'package:delivery/models/customer.dart';
@@ -9,6 +11,7 @@ import 'package:delivery/models/direccion.dart';
 import 'package:delivery/models/image_response.dart';
 import 'package:delivery/models/lista_opciones.dart';
 import 'package:delivery/models/productos.dart';
+import 'package:delivery/models/tienda.dart';
 import 'package:delivery/models/usuario.dart';
 import 'package:delivery/models/venta_response.dart';
 import 'package:delivery/providers/push_notifications_provider.dart';
@@ -94,6 +97,33 @@ class AuthService with ChangeNotifier {
   }
   /*Imagen*/
 
+  Future<bool> transitoUsuario() async {
+    await Future.delayed(const Duration(seconds: 1));
+
+    final data = {'id': usuario.uid};
+
+    try {
+      final resp = await http.post(
+          Uri.parse('${Statics.apiUrl}/repartidor/transitoUsuario'),
+          body: jsonEncode(data),
+          headers: {
+            'Content-Type': 'application/json',
+            'x-token': await AuthService.getToken()
+          });
+      print(resp.body);
+      if (resp.statusCode == 200) {
+        usuario.transito = true;
+        notifyListeners();
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
   Future register(String nombre, String email, String password, String numero,
       String passwordCheck, String dialCode) async {
     final pushProvider = PushNotificationProvider();
@@ -101,13 +131,14 @@ class AuthService with ChangeNotifier {
     buttonStatus = ButtonStatus.autenticando;
     await Future.delayed(const Duration(milliseconds: 500));
     List<Errore> lista = [];
+    final String superNumero = numero.replaceAll(RegExp(r' '), '');
     final data = {
       'nombre': nombre,
       'correo': email,
       'tokenFB': tokenFirebase,
       'contrasena': password,
       'confirmar_contrasena': passwordCheck,
-      'numero_celular': numero,
+      'numero_celular': superNumero,
       'dialCode': dialCode,
     };
 
@@ -265,7 +296,8 @@ class AuthService with ChangeNotifier {
   Future<bool> agregarProductoCesta(
       {required Producto producto,
       required num cantidad,
-      required List<String> listado}) async {
+      required List<String> listado,
+      required num envio}) async {
     await Future.delayed(const Duration(milliseconds: 500));
     List<Opcion> opciones = producto.opciones
         .map((e) => Opcion(
@@ -462,8 +494,6 @@ class AuthService with ChangeNotifier {
   }
 
   Future<bool> eliminarProductoCesta({required int pos}) async {
-    await Future.delayed(const Duration(seconds: 1));
-
     final data = {"id": usuario.cesta.productos[pos].id};
 
     try {
@@ -602,24 +632,23 @@ class AuthService with ChangeNotifier {
   }
 
   Future<Venta?> crearPedido(
-      {required Direccion direccion,
+      {required num envio,
+      required Direccion direccion,
       String tarjeta = '',
       required Customer customer}) async {
     Cesta cestaEnvio = Cesta(
         productos: usuario.cesta.productos,
-        total: (calcularTiendas() > 1 ? 4 * calcularTiendas() : 0) +
-            -(usuario.cesta.codigo != '' ? 18 * calcularTiendas() : 0) +
+        total: -(usuario.cesta.codigo != '' ? envio : 0) +
             calcularTotal() +
-            (11 * calcularTiendas()) +
-            (18 * calcularTiendas()),
+            (10.2 * calcularTiendas()) +
+            envio,
         tarjeta: tarjeta,
         direccion: direccion,
         efectivo: usuario.cesta.efectivo,
         codigo: usuario.cesta.codigo);
     final data = {
-      'servicio': (11 * calcularTiendas()) +
-          (calcularTiendas() > 1 ? 4 * calcularTiendas() : 0),
-      'envio': 18 * calcularTiendas(),
+      'servicio': (10.2 * calcularTiendas()),
+      'envio': envio,
       'usuario': usuario.uid,
       'customer': customer.id,
       'cesta': cestaToJson(cestaEnvio)
@@ -658,6 +687,54 @@ class AuthService with ChangeNotifier {
       }
     }
     return listado.length;
+  }
+
+  obtenerFavorito(List<Direccion> direcciones) {
+    final busqueda =
+        direcciones.indexWhere((element) => element.predeterminado);
+    return busqueda;
+  }
+
+  num calcularEnvioAvanzado(
+      {required List<Tienda> tiendas,
+      required,
+      required List<Direccion> direcciones}) {
+    List<Tienda> listado = [];
+    List<String> listado2 = [];
+    List<num> distancias = [];
+
+    for (var element1 in usuario.cesta.productos) {
+      if (!listado2.contains(element1.tienda)) {
+        listado.add(
+            tiendas.firstWhere((element) => element.nombre == element1.tienda));
+      }
+    }
+
+    for (var element in listado) {
+      distancias.add(calculateDistance(
+          lat1: element.coordenadas.latitud,
+          lon1: element.coordenadas.longitud,
+          lat2: direcciones[usuario.cesta.direccion.titulo != ''
+                  ? direcciones.indexWhere((element) =>
+                      usuario.cesta.direccion.titulo == element.titulo)
+                  : obtenerFavorito(direcciones) != -1
+                      ? obtenerFavorito(direcciones)
+                      : 0]
+              .coordenadas
+              .lat,
+          lon2: direcciones[usuario.cesta.direccion.titulo != ''
+                  ? direcciones.indexWhere((element) =>
+                      usuario.cesta.direccion.titulo == element.titulo)
+                  : obtenerFavorito(direcciones) != -1
+                      ? obtenerFavorito(direcciones)
+                      : 0]
+              .coordenadas
+              .lng));
+    }
+    var reduceTotal =
+        distancias.map((e) => (e <= 3 ? 19.8 : ((e - 3) * 7.2) + 19.8));
+
+    return reduceTotal.reduce((value, element) => value + element);
   }
 
   List<String> calcularTiendasNombres() {

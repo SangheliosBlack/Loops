@@ -4,6 +4,7 @@ import 'package:delivery/service/llenar_pantallas.dart';
 import 'package:delivery/service/navigator_service.dart';
 import 'package:delivery/service/permission_status.dart';
 import 'package:delivery/service/puto_dial.dart';
+import 'package:delivery/service/socio_service.dart';
 import 'package:delivery/service/stripe_service.dart';
 import 'package:delivery/service/tarjetas.service.dart';
 import 'package:delivery/service/tiendas_service.dart';
@@ -62,6 +63,7 @@ class _DashboardLayoutState extends State<DashboardLayout>
         ChangeNotifierProvider(lazy: false, create: (_) => TiendasService()),
         ChangeNotifierProvider(lazy: false, create: (_) => GeneralActions()),
         ChangeNotifierProvider(lazy: false, create: (_) => PutoDial()),
+        ChangeNotifierProvider(lazy: false, create: (_) => SocioService()),
       ],
       child: widget.child,
     );

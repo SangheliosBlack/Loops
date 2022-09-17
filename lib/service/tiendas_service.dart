@@ -178,7 +178,6 @@ class TiendasService with ChangeNotifier {
   Future<Tienda?> getTienda({required String tienda}) async {
     final data = {"tienda": tienda, "token": await AuthService.getPuntoVenta()};
 
-    await Future.delayed(const Duration(seconds: 1));
     try {
       final resp = await http.post(
           Uri.parse('${Statics.apiUrl}/tiendas/obtenerTienda'),

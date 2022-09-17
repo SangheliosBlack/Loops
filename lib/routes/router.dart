@@ -93,9 +93,7 @@ class Flurorouter {
         transitionDuration: const Duration(milliseconds: 500),
         transitionType: TransitionType.native);
 
-    router.define(configuracionRoute,
-        handler: DashBoardHandlers.settings,
-        transitionType: TransitionType.none);
+    
 
     router.define(orderRoute,
         handler: DashBoardHandlers.order,

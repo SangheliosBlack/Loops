@@ -133,7 +133,7 @@ class _StoreIndividualState extends State<StoreIndividual> {
                       backgroundColor: Colors.black,
                       elevation: 0,
                       pinned: true,
-                      expandedHeight: 600,
+                      expandedHeight: 500,
                       flexibleSpace: LayoutBuilder(
                         builder: (ctx, cons) => FlexibleSpaceBar(
                           titlePadding: const EdgeInsets.all(20),
@@ -382,8 +382,9 @@ class _StoreIndividualState extends State<StoreIndividual> {
                                                   ),
                                                   const SizedBox(width: 5),
                                                   Text(
-                                                      widget
-                                                          .tienda.tiempoEspera,
+                                                      widget.tienda.tiempoEspera
+                                                              .toString() +
+                                                          ' min',
                                                       style:
                                                           GoogleFonts.quicksand(
                                                               fontSize: 13,
@@ -433,7 +434,8 @@ class _StoreIndividualState extends State<StoreIndividual> {
                                           Text(
                                             DateFormat('h:mm a', 'es-MX')
                                                 .format(widget
-                                                    .tienda.horario.apertura)
+                                                    .tienda.horario.apertura
+                                                    .toLocal())
                                                 .toString(),
                                             style: GoogleFonts.quicksand(
                                               color: Colors.white,
@@ -448,7 +450,8 @@ class _StoreIndividualState extends State<StoreIndividual> {
                                           Text(
                                             DateFormat('h:mm a', 'es-MX')
                                                 .format(widget
-                                                    .tienda.horario.cierre)
+                                                    .tienda.horario.cierre
+                                                    .toLocal())
                                                 .toString(),
                                             style: GoogleFonts.quicksand(
                                               color: Colors.white,
@@ -529,7 +532,7 @@ class _StoreIndividualState extends State<StoreIndividual> {
                     padding: const EdgeInsets.symmetric(
                         vertical: 25, horizontal: 25),
                     child: Text(
-                        '${widget.tienda.nombre} se encuentra fuera de servicio vuelve en su horario de atencion entre ${DateFormat('h:mm a', 'es-MX').format(widget.tienda.horario.apertura).toString()} y ${DateFormat('h:mm a', 'es-MX').format(widget.tienda.horario.cierre).toString()}',
+                        '${widget.tienda.nombre} se encuentra fuera de servicio vuelve en su horario de atencion entre ${DateFormat('h:mm a', 'es-MX').format(widget.tienda.horario.apertura.toLocal()).toString()} y ${DateFormat('h:mm a', 'es-MX').format(widget.tienda.horario.cierre.toLocal()).toString()}',
                         textAlign: TextAlign.center,
                         style: GoogleFonts.quicksand(color: Colors.white)),
                   )

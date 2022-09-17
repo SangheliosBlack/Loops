@@ -10,7 +10,7 @@ Future<List<int>> testTicket(
   List<int> bytes = [];
 
   String formattedDate =
-      DateFormat.yMd('es-MX').add_jm().format(pedido.createdAt);
+      DateFormat.yMd('es-MX').add_jm().format(pedido.createdAt.toLocal());
 
   final nombre = pedido.usuario.nombre.split(' ');
 
@@ -27,12 +27,13 @@ Future<List<int>> testTicket(
     ),
     linesAfter: 1,
   );
-  bytes += generator.text(pedido.direccion,
+  bytes += generator.text(pedido.direccionNegocio.titulo,
       styles: const PosStyles(align: PosAlign.center));
   bytes += generator.hr();
 
   bytes += generator.row([
-    PosColumn(text: 'Cliente', width: 3, styles: const PosStyles(reverse: true)),
+    PosColumn(
+        text: 'Cliente', width: 3, styles: const PosStyles(reverse: true)),
     PosColumn(
         text: nombre[0],
         width: 9,
@@ -97,8 +98,8 @@ Future<List<int>> testTicket(
 
     for (var element3 in listado) {
       bytes += generator.row([
-        PosColumn(text: '', width: 1),
-        PosColumn(text: '${element.cantidad} ${element3.titulo}', width: 8),
+        PosColumn(text: '', width: 2),
+        PosColumn(text: '- ' + element3.titulo, width: 7),
         PosColumn(
             text: element3.valor
                 ? '\$ ${(element3.precio * element.cantidad).toStringAsFixed(2)}'

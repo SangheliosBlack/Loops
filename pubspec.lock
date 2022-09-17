@@ -190,6 +190,27 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "6.1.2"
+  firebase_analytics:
+    dependency: "direct main"
+    description:
+      name: firebase_analytics
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "9.3.1"
+  firebase_analytics_platform_interface:
+    dependency: transitive
+    description:
+      name: firebase_analytics_platform_interface
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "3.3.1"
+  firebase_analytics_web:
+    dependency: transitive
+    description:
+      name: firebase_analytics_web
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.4.2+1"
   firebase_core:
     dependency: "direct main"
     description:
@@ -326,6 +347,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.6"
+  flutter_polyline_points:
+    dependency: "direct main"
+    description:
+      name: flutter_polyline_points
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.0"
   flutter_rating_bar:
     dependency: "direct main"
     description:
@@ -532,6 +560,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "4.5.0"
+  jumping_dot:
+    dependency: "direct main"
+    description:
+      name: jumping_dot
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.4"
   libphonenumber:
     dependency: transitive
     description:
@@ -721,6 +756,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "4.1.2"
+  pinput:
+    dependency: "direct main"
+    description:
+      name: pinput
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.2.12"
   platform:
     dependency: transitive
     description:
@@ -838,6 +880,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.0"
+  smart_auth:
+    dependency: transitive
+    description:
+      name: smart_auth
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.5"
   smooth_page_indicator:
     dependency: "direct main"
     description:

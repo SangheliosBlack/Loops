@@ -54,9 +54,12 @@ class _PuntoVentaMainViewState extends State<PuntoVentaMainView> {
 
     final pushProvider = PushNotificationProvider();
     final socioService = Provider.of<SocioService>(context, listen: false);
-    final bluetoothProvider = Provider.of<BluetoothProvider>(context, listen: false);
+    final bluetoothProvider =
+        Provider.of<BluetoothProvider>(context, listen: false);
 
     socioService.obtenerPedidos(filter: '');
+
+    pushProvider.initNotifications();
 
     pushProvider.mensajes.listen((event) {
       FlutterRingtonePlayer.play(
@@ -302,6 +305,8 @@ class _PuntoVentaMainViewState extends State<PuntoVentaMainView> {
                                                     setState(() {
                                                       filter = '';
                                                       socioService
+                                                          .eliminarData();
+                                                      socioService
                                                           .obtenerPedidos(
                                                               filter: filter);
                                                     });
@@ -462,6 +467,7 @@ class _PuntoVentaMainViewState extends State<PuntoVentaMainView> {
                                                     RefreshIndicatorTriggerMode
                                                         .anywhere,
                                                 onRefresh: () async {
+                                                  socioService.eliminarData();
                                                   socioService.obtenerPedidos(
                                                       filter: filter);
                                                 },
@@ -514,6 +520,8 @@ class _PuntoVentaMainViewState extends State<PuntoVentaMainView> {
                                                     child: RefreshIndicator(
                                                       onRefresh: () async {
                                                         socioService
+                                                            .eliminarData();
+                                                        socioService
                                                             .obtenerPedidos(
                                                                 filter: filter);
                                                       },
@@ -562,9 +570,12 @@ class _PuntoVentaMainViewState extends State<PuntoVentaMainView> {
                                                                             context,
                                                                         int index) {
                                                                   return PedidoVentaWidget(
-                                                                      pedido: socioService
-                                                                          .ventaCache
-                                                                          .venta[index]);
+                                                                    pedido: socioService
+                                                                        .ventaCache
+                                                                        .venta[index],
+                                                                    showActions:
+                                                                        true, confirmar: true,
+                                                                  );
                                                                 }),
                                                       ),
                                                     ),
@@ -896,7 +907,7 @@ class _PuntoVentaMainViewState extends State<PuntoVentaMainView> {
     setState(() {
       filter = result;
     });
-
+    socioService.eliminarData();
     socioService.obtenerPedidos(filter: filter);
   }
 
@@ -965,15 +976,19 @@ class _PuntoVentaMainViewState extends State<PuntoVentaMainView> {
 
 class PedidoVentaWidget extends StatelessWidget {
   final PedidoProducto pedido;
+  final bool showActions;
+  final bool confirmar;
 
   const PedidoVentaWidget({
     Key? key,
     required this.pedido,
+    required this.showActions, required this.confirmar,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    String formattedDate = DateFormat.yMEd('es-MX').format(pedido.createdAt);
+    String formattedDate =
+        DateFormat.yMEd('es-MX').add_jm().format(pedido.createdAt.toLocal());
 
     return GestureDetector(
       onTap: () {
@@ -982,6 +997,8 @@ class PedidoVentaWidget extends StatelessWidget {
           MaterialPageRoute(
               builder: (context) => DetallesPedido(
                     pedido: pedido,
+                    showActions: showActions,
+                    confirmar: confirmar,
                   )),
         );
       },
@@ -991,57 +1008,68 @@ class PedidoVentaWidget extends StatelessWidget {
           borderRadius: BorderRadius.circular(15),
         ),
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text(
-              formattedDate,
-              style: GoogleFonts.quicksand(
-                  fontSize: 14, color: Colors.black.withOpacity(.8)),
+            Expanded(
+              child: Text(
+                formattedDate,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+                style: GoogleFonts.quicksand(
+                    fontSize: 13, color: Colors.black.withOpacity(.8)),
+              ),
             ),
             Row(
               children: [
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Container(
-                        padding: const EdgeInsets.all(5),
+                        padding: const EdgeInsets.all(3),
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(20),
                             border: Border.all(width: 1, color: Colors.black)),
                         child: const Icon(
                           Icons.arrow_upward,
-                          size: 12,
+                          size: 10,
                         )),
                     const SizedBox(
-                      width: 10,
+                      width: 7,
                     ),
                     Text(
                       '\$${pedido.total.toStringAsFixed(2)}',
                       style: GoogleFonts.quicksand(
-                          fontSize: 14, color: Colors.black.withOpacity(.8)),
+                          fontSize: 13, color: Colors.black.withOpacity(.8)),
                     ),
                   ],
                 ),
                 Container(
-                  margin: const EdgeInsets.only(left: 20),
+                  margin: const EdgeInsets.only(left: 10),
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
+                      const EdgeInsets.symmetric(horizontal: 11, vertical: 5),
                   decoration: BoxDecoration(
-                      color: const Color.fromRGBO(234, 234, 236, .4),
+                      color: !pedido.confirmado
+                          ? Colors.black.withOpacity(.8)
+                          : const Color.fromRGBO(234, 234, 236, .4),
                       borderRadius: BorderRadius.circular(15)),
                   child: Row(
                     children: [
                       Container(
                           margin: const EdgeInsets.only(right: 10),
-                          height: 5,
-                          width: 5,
+                          height: 4,
+                          width: 4,
                           decoration: BoxDecoration(
-                              color: Colors.black.withOpacity(.8),
+                              color: !pedido.confirmado
+                                  ? Colors.white
+                                  : Colors.black.withOpacity(.8),
                               shape: BoxShape.circle)),
                       Text(
                         calcularEstadoPedido(pedido: pedido),
                         style: GoogleFonts.quicksand(
-                            fontSize: 14, color: Colors.black.withOpacity(.8)),
+                            fontSize: 13,
+                            color: !pedido.confirmado
+                                ? Colors.white
+                                : Colors.black.withOpacity(.8)),
                       ),
                     ],
                   ),
@@ -1055,6 +1083,9 @@ class PedidoVentaWidget extends StatelessWidget {
   }
 
   String calcularEstadoPedido({required PedidoProducto pedido}) {
+    if (!pedido.confirmado) {
+      return 'Nuevo        ';
+    }
     if (!pedido.entregadoRepartidor) {
       return 'Incompleto';
     } else {

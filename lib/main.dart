@@ -10,11 +10,13 @@ import 'package:delivery/providers/login_form_provider.dart';
 import 'package:delivery/providers/register_form_provider.dart';
 import 'package:delivery/routes/router.dart';
 import 'package:delivery/service/auth_service.dart';
+import 'package:delivery/service/bluetooth_servide.dart';
 import 'package:delivery/service/local_storage.dart';
 import 'package:delivery/service/navigator_service.dart';
 import 'package:delivery/service/permission_status.dart';
 import 'package:delivery/service/puto_dial.dart';
 import 'package:delivery/service/socket_service.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
@@ -78,6 +80,7 @@ class AppState extends StatelessWidget {
     /*new StripeService()..init();*/
     return MultiProvider(providers: [
       ChangeNotifierProvider(lazy: false, create: (_) => SocketService()),
+      ChangeNotifierProvider(lazy: false, create: (_) => BluetoothProvider()),
       ChangeNotifierProvider(
           lazy: false, create: (_) => RegisterFromProvider()),
       ChangeNotifierProvider(lazy: false, create: (_) => LoginFromProvider()),
@@ -102,15 +105,16 @@ class _MyAppState extends State<MyApp> {
     super.initState();
 
     // final pushProvider = PushNotificationProvider();
-    // final socioService = Provider.of<SocioService>(context, listen: false);
     // pushProvider.initNotifications();
 
     // pushProvider.mensajes.listen((event) {
-    //   if (event.evento == '1') {
-    //     socioService.pedidosCodigo.add(event);
-    //   }
+    //   print('mensaje');
     // });
   }
+
+  static FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+  static FirebaseAnalyticsObserver observer =
+      FirebaseAnalyticsObserver(analytics: analytics);
 
   @override
   Widget build(BuildContext context) {
@@ -121,6 +125,7 @@ class _MyAppState extends State<MyApp> {
         statusBarIconBrightness: Brightness.light));
 
     return MaterialApp(
+      navigatorObservers: <NavigatorObserver>[observer],
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       navigatorKey: navigationService.navigatorKey,

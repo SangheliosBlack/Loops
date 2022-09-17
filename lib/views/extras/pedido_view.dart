@@ -1,11 +1,16 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:delivery/models/eleccion_model.dart';
-import 'package:delivery/models/estado_pedido.dart';
+import 'package:delivery/models/estado_pedido_avanzado.dart';
 import 'package:delivery/models/productos.dart';
 import 'package:delivery/models/venta_response.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:timelines/timelines.dart';
+
+import 'package:pinput/pinput.dart';
 
 class PedidoView extends StatelessWidget {
   final Venta venta;
@@ -14,8 +19,9 @@ class PedidoView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String formattedDate =
-        DateFormat.yMMMMEEEEd('es-MX').add_jm().format(venta.createdAt);
+    String formattedDate = DateFormat.yMMMMEEEEd('es-MX')
+        .add_jm()
+        .format(venta.createdAt.toLocal());
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -101,7 +107,9 @@ class PedidoView extends StatelessWidget {
                                   ),
                                   Text(formattedDate,
                                       style: GoogleFonts.quicksand(
-                                          fontSize: 13, color: Colors.grey)),
+                                          fontSize: 13,
+                                          color: const Color.fromRGBO(
+                                              41, 199, 184, 1))),
                                 ],
                               ),
                               Text(
@@ -117,8 +125,8 @@ class PedidoView extends StatelessWidget {
                     ],
                   ),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    margin: const EdgeInsets.only(top: 15, bottom: 0),
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    margin: const EdgeInsets.only(top: 15, bottom: 10),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -128,16 +136,28 @@ class PedidoView extends StatelessWidget {
                           children: [
                             Text(
                               'Cantidad',
-                              style: GoogleFonts.quicksand(color: Colors.grey),
+                              style: GoogleFonts.quicksand(
+                                  color: Colors.grey, fontSize: 14),
                             ),
                             const SizedBox(
                               height: 5,
                             ),
-                            Text(
-                              '\$ ${venta.total}',
-                              style: GoogleFonts.quicksand(
-                                  color: Colors.black.withOpacity(.8),
-                                  fontWeight: FontWeight.w600),
+                            SizedBox(
+                              height: 45,
+                              child: Center(
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      '\$ ' + venta.total.toStringAsFixed(2),
+                                      style: GoogleFonts.quicksand(
+                                        fontSize: 25,
+                                        color: Colors.black.withOpacity(.8),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
                             )
                           ],
                         ),
@@ -147,42 +167,125 @@ class PedidoView extends StatelessWidget {
                           children: [
                             Text(
                               'Metodo de pago',
-                              style: GoogleFonts.quicksand(color: Colors.grey),
+                              style: GoogleFonts.quicksand(
+                                  color: Colors.grey, fontSize: 14),
                             ),
                             const SizedBox(
                               height: 5,
                             ),
-                            Text(
-                              venta.efectivo
-                                  ? 'Efectivo'
-                                  : '${venta.metodoPago!.charges.data[0].paymentMethodDetails.card.brand == "mastercard" ? "Mastercard" : "Visa"} ${venta.metodoPago?.charges.data[0].paymentMethodDetails.card.last4}',
-                              style: GoogleFonts.quicksand(
-                                  color: Colors.black.withOpacity(.8),
-                                  fontWeight: FontWeight.w600),
-                            )
-                          ],
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Estado',
-                              style: GoogleFonts.quicksand(color: Colors.grey),
-                            ),
-                            const SizedBox(
-                              height: 5,
-                            ),
-                            Text(
-                              _checkEstadoPedido(ventas: venta.pedidos),
-                              style: GoogleFonts.quicksand(
-                                  color: const Color.fromRGBO(41, 199, 184, 1),
-                                  fontWeight: FontWeight.w600),
-                            )
+                            venta.efectivo
+                                ? Row(
+                                    children: [
+                                      Container(
+                                        width: 65,
+                                        height: 45,
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            color: const Color.fromRGBO(
+                                                137, 226, 137, 1)),
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 10, horizontal: 27),
+                                        child: Text(
+                                          '\$',
+                                          style: GoogleFonts.quicksand(
+                                              color: Colors.white,
+                                              fontSize: 20),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 12),
+                                      Text('Efectivo',
+                                          style: GoogleFonts.quicksand(
+                                            fontSize: 17,
+                                            color: Colors.black.withOpacity(.8),
+                                          ))
+                                    ],
+                                  )
+                                : Row(
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Container(
+                                            width: 65,
+                                            height: 45,
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 5, vertical: 0),
+                                            decoration: BoxDecoration(
+                                                color: venta
+                                                            .metodoPago!
+                                                            .charges
+                                                            .data[0]
+                                                            .paymentMethodDetails
+                                                            .card
+                                                            .brand ==
+                                                        'visa'
+                                                    ? const Color.fromRGBO(
+                                                        232, 241, 254, 1)
+                                                    : const Color.fromRGBO(
+                                                        251, 231, 220, 1),
+                                                borderRadius:
+                                                    BorderRadius.circular(10)),
+                                            child: Row(
+                                              children: [
+                                                Container(
+                                                  color: Colors.transparent,
+                                                  height: 55,
+                                                  width: 55,
+                                                  child: SvgPicture.asset(
+                                                    venta
+                                                                .metodoPago!
+                                                                .charges
+                                                                .data[0]
+                                                                .paymentMethodDetails
+                                                                .card
+                                                                .brand ==
+                                                            'visa'
+                                                        ? 'assets/images/visa_color.svg'
+                                                        : 'assets/images/mc.svg',
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          const SizedBox(width: 10),
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                  venta
+                                                      .metodoPago!
+                                                      .charges
+                                                      .data[0]
+                                                      .paymentMethodDetails
+                                                      .card
+                                                      .last4,
+                                                  style: GoogleFonts.quicksand(
+                                                    fontSize: 25,
+                                                    color: Colors.black
+                                                        .withOpacity(1),
+                                                  ))
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  )
                           ],
                         ),
                       ],
                     ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Proceso',
+                        style: GoogleFonts.quicksand(
+                            color: Colors.black.withOpacity(.8), fontSize: 35),
+                      ),
+                    ],
                   ),
                   const SizedBox(
                     height: 20,
@@ -199,7 +302,8 @@ class PedidoView extends StatelessWidget {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(15),
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 25, horizontal: 5),
                     child: Column(
                       children: [
                         Row(
@@ -266,18 +370,22 @@ class PedidoView extends StatelessWidget {
                           ],
                         ),
                         const SizedBox(height: 10),
+                        Divider(
+                          color: Colors.black.withOpacity(.1),
+                        ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              'Total',
+                              'Total :',
                               style: GoogleFonts.quicksand(
-                                  fontWeight: FontWeight.w600),
+                                  fontSize: 30, color: Colors.black),
                             ),
                             Text(
                               '\$ ${venta.total.toStringAsFixed(2)}',
                               style: GoogleFonts.quicksand(
-                                  fontSize: 18, fontWeight: FontWeight.w600),
+                                  fontSize: 30,
+                                  color: const Color.fromRGBO(41, 199, 184, 1)),
                             )
                           ],
                         ),
@@ -292,63 +400,6 @@ class PedidoView extends StatelessWidget {
       ),
     );
   }
-
-  String _checkEstadoPedido({required List<PedidoProducto> ventas}) {
-    var estado = EstadoPedido(
-        preparado: 0, enviado: 0, entregado: 0, pagado: 0, confirmado: 0);
-
-    for (var element in ventas) {
-      if (element.preparado) {
-        estado.preparado++;
-      }
-      if (element.enviado) {
-        estado.enviado++;
-      }
-      if (element.entregado) {
-        estado.entregado++;
-      }
-      if (element.pagado) {
-        estado.pagado++;
-      }
-      if (element.confirmado) {
-        estado.pagado++;
-      }
-    }
-
-    if (estado.entregado > 0) {
-      if (estado.entregado >= ventas.length) {
-        return 'Entregado';
-      } else {
-        return 'Entregado!';
-      }
-    }
-    if (estado.enviado > 0) {
-      if (estado.enviado >= ventas.length) {
-        return 'Enviado';
-      } else {
-        return 'Enviado!';
-      }
-    }
-    if (estado.preparado > 0) {
-      if (estado.preparado >= ventas.length) {
-        return 'Preparado';
-      } else {
-        return 'Preparado !';
-      }
-    }
-    if (estado.confirmado > 0) {
-      if (estado.confirmado >= ventas.length) {
-        return 'Confirmado';
-      } else {
-        return 'Confirmado !';
-      }
-    }
-    if (estado.pagado > 0) {
-      return 'Pagado';
-    } else {
-      return 'Pago pendiente';
-    }
-  }
 }
 
 class EstadoWidget extends StatelessWidget {
@@ -357,253 +408,295 @@ class EstadoWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
+    TextEditingController controller = TextEditingController();
+    controller.text = pedido.codigoCliente;
+    var listado = calcularListado(pedido: pedido);
     return Column(
       children: [
         Container(
-            margin: const EdgeInsets.only(top: 5, bottom: 20),
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    const Expanded(child: Divider()),
-                    Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 15),
-                        child: Text(pedido.tienda,
-                            style: GoogleFonts.quicksand(
-                                fontSize: 18, color: Colors.black))),
-                    const Expanded(child: Divider()),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      pedido.confirmado
-                          ? '${pedido.tienda} reviso tu pedido!.'
-                          : '${pedido.tienda} aun no revisa tu pedido.',
-                      style: GoogleFonts.quicksand(
-                          fontSize: 13,
-                          color:
-                              pedido.confirmado ? Colors.blue : Colors.black),
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(15),
+              border: Border.all(width: 1, color: Colors.grey.withOpacity(.1))),
+          child: FixedTimeline.tileBuilder(
+            theme: TimelineThemeData(
+              nodePosition: 0,
+              color: const Color(0xff989898),
+              indicatorTheme: const IndicatorThemeData(
+                position: 0,
+                size: 20.0,
+              ),
+              connectorTheme: const ConnectorThemeData(
+                thickness: 1,
+              ),
+            ),
+            builder: TimelineTileBuilder.connected(
+              connectionDirection: ConnectionDirection.before,
+              itemCount: listado.length,
+              contentsBuilder: (_, index) {
+                return Padding(
+                  padding: const EdgeInsets.only(left: 8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        listado[index].titulo,
+                        style: GoogleFonts.quicksand(
+                            fontSize: 17,
+                            color: Colors.black.withOpacity(.8),
+                            fontWeight: FontWeight.w600),
+                      ),
+                      _InnerTimeline2(sub: listado[index].sub)
+                    ],
+                  ),
+                );
+              },
+              indicatorBuilder: (_, index) {
+                if (listado[index].complete) {
+                  return const DotIndicator(
+                    color: Color.fromRGBO(41, 199, 184, 1),
+                    child: Icon(
+                      Icons.check,
+                      color: Colors.white,
+                      size: 12.0,
                     ),
-                  ],
-                ),
-              ],
-            )),
+                  );
+                } else {
+                  return const OutlinedDotIndicator(
+                    borderWidth: 1,
+                    color: Color.fromRGBO(41, 199, 184, .1),
+                  );
+                }
+              },
+              connectorBuilder: (_, index, ___) => SolidLineConnector(
+                  color: listado[index].complete
+                      ? const Color.fromRGBO(41, 199, 184, 1)
+                      : const Color.fromRGBO(41, 199, 184, .1)),
+            ),
+          ),
+        ),
+        const SizedBox(
+          height: 15,
+        ),
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 0),
-          child: Row(
+          margin: const EdgeInsets.only(bottom: 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Column(
+              Text(
+                'Repartidor',
+                style: GoogleFonts.quicksand(fontSize: 45),
+              ),
+              const SizedBox(
+                height: 15,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Container(
-                    padding: const EdgeInsets.all(5),
-                    decoration: BoxDecoration(
-                        color: pedido.preparado
-                            ? const Color.fromRGBO(41, 199, 184, 1)
-                            : Colors.grey.withOpacity(.2),
-                        shape: BoxShape.circle),
-                    child: Icon(
-                      Icons.attach_money,
-                      size: 18,
-                      color: pedido.preparado ? Colors.white : Colors.grey,
-                    ),
+                  Row(
+                    children: [
+                      pedido.repartidor.nombre.isNotEmpty
+                          ? ClipRRect(
+                              borderRadius: BorderRadius.circular(100),
+                              child: SizedBox(
+                                  width: 40,
+                                  height: 40,
+                                  child: CachedNetworkImage(
+                                      fit: BoxFit.cover,
+                                      imageUrl:
+                                          pedido.repartidor.profilePhotoKey ??
+                                              '',
+                                      imageBuilder: (context, imageProvider) =>
+                                          Container(
+                                            decoration: BoxDecoration(
+                                              image: DecorationImage(
+                                                image: imageProvider,
+                                                fit: BoxFit.cover,
+                                                colorFilter: ColorFilter.mode(
+                                                  Colors.black.withOpacity(.15),
+                                                  BlendMode.color,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                      placeholder: (context, url) => Container(
+                                          padding: const EdgeInsets.all(100),
+                                          child:
+                                              const CircularProgressIndicator(
+                                            strokeWidth: 1,
+                                            color: Colors.black,
+                                          )),
+                                      errorWidget: (context, url, error) {
+                                        return const Icon(Icons.error);
+                                      })))
+                          : Container(
+                              height: 40,
+                              width: 40,
+                              decoration: BoxDecoration(
+                                  color: Colors.grey.withOpacity(.1),
+                                  borderRadius: BorderRadius.circular(100)),
+                              child: const Center(child: Icon(Icons.face))),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Column(
+                            children: [
+                              Text(
+                                pedido.repartidor.nombre.isNotEmpty
+                                    ? pedido.repartidor.nombre
+                                    : 'Pendiente',
+                                style: GoogleFonts.quicksand(fontSize: 15),
+                              ),
+                              const SizedBox(
+                                height: 3,
+                              ),
+                            ],
+                          ),
+                          pedido.repartidor.nombre.isNotEmpty
+                              ? Row(
+                                  children: [
+                                    Text(
+                                      pedido.repartidor.nombre.isNotEmpty
+                                          ? pedido.repartidor.dialCode
+                                          : 'Pendiente',
+                                      style: GoogleFonts.quicksand(
+                                          color: Colors.grey),
+                                    ),
+                                    const SizedBox(
+                                      width: 5,
+                                    ),
+                                    Text(
+                                      pedido.repartidor.nombre.isNotEmpty
+                                          ? pedido.repartidor.numeroCelular
+                                          : 'Pendiente',
+                                      style: GoogleFonts.quicksand(
+                                          color: Colors.grey),
+                                    ),
+                                  ],
+                                )
+                              : Container()
+                        ],
+                      ),
+                    ],
                   ),
+                  pedido.repartidor.numeroCelular.isNotEmpty
+                      ? GestureDetector(
+                          behavior: HitTestBehavior.translucent,
+                          onTap: () async {
+                            var number = pedido.repartidor.numeroCelular;
+                            FlutterPhoneDirectCaller.callNumber(number)
+                                .then((value) {
+                              try {
+                                if (value!) {
+                                  final snackBar = SnackBar(
+                                    duration: const Duration(seconds: 2),
+                                    backgroundColor: Colors.red,
+                                    content: Text(
+                                      'Permiso denegado, caracteristica limitada.',
+                                      style: GoogleFonts.quicksand(),
+                                    ),
+                                  );
+
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(snackBar);
+                                }
+                              // ignore: empty_catches
+                              } catch (e) {
+                                
+                              }
+                            });
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 8, horizontal: 15),
+                            decoration: BoxDecoration(
+                                border:
+                                    Border.all(width: 1, color: Colors.blue)),
+                            child: Text(
+                              'Llamar',
+                              style: GoogleFonts.quicksand(color: Colors.blue),
+                            ),
+                          ),
+                        )
+                      : Container(),
+                ],
+              ),
+            ],
+          ),
+        ),
+        SizedBox(
+          width: double.infinity,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Text(
+                'Instrucciones de Entrega',
+                style: GoogleFonts.quicksand(
+                    color: Colors.black.withOpacity(.8), fontSize: 35),
+              ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
                   const SizedBox(
                     height: 4,
                   ),
                   Text(
-                    'Pagado',
-                    style: GoogleFonts.quicksand(
-                      fontSize: 13,
-                      color: pedido.confirmado
-                          ? Colors.black.withOpacity(.8)
-                          : Colors.grey,
-                    ),
-                  )
-                ],
-              ),
-              Expanded(
-                  child: Container(
-                      margin: const EdgeInsets.only(bottom: 12),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            flex: 2,
-                            child: Container(
-                              height: 2,
-                              decoration: BoxDecoration(
-                                  color: Color.fromRGBO(
-                                      41, 199, 184, pedido.confirmado ? 1 : 0)),
-                            ),
-                          ),
-                          Expanded(
-                            flex: 1,
-                            child: Container(
-                              height: 2,
-                              decoration: BoxDecoration(
-                                  color: Color.fromRGBO(
-                                      41, 199, 184, pedido.preparado ? 1 : 0)),
-                            ),
-                          ),
-                        ],
-                      ))),
-              Column(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(5),
-                    decoration: BoxDecoration(
-                        color: pedido.preparado
-                            ? const Color.fromRGBO(41, 199, 184, 1)
-                            : Colors.grey.withOpacity(.2),
-                        shape: BoxShape.circle),
-                    child: Icon(
-                      Icons.outdoor_grill_outlined,
-                      size: 18,
-                      color: pedido.preparado ? Colors.white : Colors.grey,
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 4,
+                    'Para poder recibir tu pedido debes facilitar el siguiente codigo al rapartidor para poder recibirlo, en caso de no brindarlo, el repartidor no podra hacer entrega del mismo',
+                    style: GoogleFonts.quicksand(color: Colors.grey),
                   ),
                   Text(
-                    'Preparado',
-                    style: GoogleFonts.quicksand(
-                      fontSize: 13,
-                      color: pedido.preparado
-                          ? Colors.black.withOpacity(.8)
-                          : Colors.grey,
-                    ),
-                  )
-                ],
-              ),
-              Expanded(
-                  child: Container(
-                      margin: const EdgeInsets.only(bottom: 12),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            flex: 2,
-                            child: Container(
-                              height: 2,
-                              decoration: BoxDecoration(
-                                  color: Color.fromRGBO(
-                                      41, 199, 184, pedido.preparado ? 1 : 0)),
-                            ),
-                          ),
-                          Expanded(
-                            flex: 1,
-                            child: Container(
-                              height: 2,
-                              decoration: BoxDecoration(
-                                  color: Color.fromRGBO(
-                                      41,
-                                      199,
-                                      184,
-                                      pedido.preparado
-                                          ? pedido.enviado
-                                              ? 1
-                                              : .1
-                                          : 0)),
-                            ),
-                          ),
-                        ],
-                      ))),
-              Column(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(5),
-                    decoration: BoxDecoration(
-                        color: pedido.enviado
-                            ? const Color.fromRGBO(41, 199, 184, 1)
-                            : Colors.grey.withOpacity(.2),
-                        shape: BoxShape.circle),
-                    child: Icon(
-                      Icons.moped_outlined,
-                      size: 18,
-                      color: pedido.enviado ? Colors.white : Colors.grey,
-                    ),
+                    'Tu codigo es :',
+                    style: GoogleFonts.quicksand(),
                   ),
                   const SizedBox(
-                    height: 4,
+                    height: 15,
                   ),
-                  Text(
-                    'Enviado',
-                    style: GoogleFonts.quicksand(
-                      fontSize: 13,
-                      color: pedido.enviado
-                          ? Colors.black.withOpacity(.8)
-                          : Colors.grey,
-                    ),
+                  Pinput(
+                    enabled: false,
+                    controller: controller,
+                    readOnly: true,
+                    defaultPinTheme: PinTheme(
+                        width: width / 4,
+                        height: (width / 4) - 20,
+                        textStyle: GoogleFonts.quicksand(
+                            color: const Color.fromRGBO(41, 199, 184, 1),
+                            fontSize: 25),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(15),
+                            color: const Color.fromRGBO(41, 199, 184, .1))),
                   )
-                ],
-              ),
-              Expanded(
-                  child: Container(
-                      margin: const EdgeInsets.only(bottom: 12),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            flex: 2,
-                            child: Container(
-                              height: 2,
-                              decoration: BoxDecoration(
-                                  color: Color.fromRGBO(
-                                      41, 199, 184, pedido.enviado ? 1 : 0)),
-                            ),
-                          ),
-                          Expanded(
-                            flex: 1,
-                            child: Container(
-                              height: 2,
-                              decoration: BoxDecoration(
-                                  color: Color.fromRGBO(
-                                      41,
-                                      199,
-                                      184,
-                                      pedido.enviado
-                                          ? pedido.entregado
-                                              ? 1
-                                              : .1
-                                          : 0)),
-                            ),
-                          ),
-                        ],
-                      ))),
-              Column(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(5),
-                    decoration: BoxDecoration(
-                        color: pedido.entregado
-                            ? const Color.fromRGBO(41, 199, 184, 1)
-                            : Colors.grey.withOpacity(.2),
-                        shape: BoxShape.circle),
-                    child: Icon(
-                      Icons.done_all,
-                      size: 18,
-                      color: pedido.entregado ? Colors.white : Colors.grey,
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 4,
-                  ),
-                  Text('Entregado',
-                      style: GoogleFonts.quicksand(
-                        fontSize: 13,
-                        color: pedido.entregado
-                            ? Colors.black.withOpacity(.8)
-                            : Colors.grey,
-                      ))
                 ],
               ),
             ],
           ),
         ),
         const SizedBox(
-          height: 35,
+          height: 25,
+        ),
+        SizedBox(
+          width: double.infinity,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Text(
+                'Detalles',
+                style: GoogleFonts.quicksand(
+                    color: Colors.black.withOpacity(.8), fontSize: 35),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(
+          height: 15,
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -629,11 +722,11 @@ class EstadoWidget extends StatelessWidget {
                   width: 15,
                 ),
                 Text(
-                  'Cantidad',
+                  'C',
                   style: GoogleFonts.quicksand(color: Colors.black),
                 ),
                 const SizedBox(
-                  width: 15,
+                  width: 26,
                 ),
               ],
             )
@@ -663,28 +756,78 @@ class EstadoWidget extends StatelessWidget {
               ),
             ),
           ),
+        ),
+        Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.only(top: 5, bottom: 5),
+              child: Text(
+                '* Cargos extra',
+                style: GoogleFonts.quicksand(color: Colors.blue),
+              ),
+            ),
+          ],
         )
       ],
     );
   }
 
-  EstadoPedido calcularEnvio({required Venta venta}) {
-    return EstadoPedido(
-        preparado: venta.pedidos
-            .map((e) => e.preparado ? 1 : 0)
-            .reduce((value, element) => value + element),
-        enviado: venta.pedidos
-            .map((e) => e.enviado ? 1 : 0)
-            .reduce((value, element) => value + element),
-        entregado: venta.pedidos
-            .map((e) => e.entregado ? 1 : 0)
-            .reduce((value, element) => value + element),
-        pagado: venta.pedidos
-            .map((e) => e.pagado ? 1 : 0)
-            .reduce((value, element) => value + element),
-        confirmado: venta.pedidos
-            .map((e) => e.confirmado ? 1 : 0)
-            .reduce((value, element) => value + element));
+  List<EstadoPedidoAvanzado> calcularListado({required PedidoProducto pedido}) {
+    List<EstadoPedidoAvanzado> listado = [];
+
+    listado.add(EstadoPedidoAvanzado(
+        titulo: 'Proceso de pedido',
+        sub: [
+          Sub(
+              estado: true,
+              titulo: 'Creacion del pedido',
+              time: pedido.createdAt),
+          Sub(
+              estado: pedido.confirmado,
+              titulo: 'Confirmado por ${pedido.tienda}',
+              time: pedido.confirmado
+                  ? pedido.confirmacionTiempo
+                  : DateTime(0000, 0, 0, 0, 0))
+        ],
+        complete: pedido.confirmado ? true : false));
+
+    listado.add(EstadoPedidoAvanzado(
+        titulo: 'Envio',
+        sub: [
+          Sub(
+              estado: pedido.entregadoRepartidor,
+              titulo: 'Entregado al repartidor',
+              time: pedido.entregadoRepartidor
+                  ? pedido.entregadoRepartidorTiempo
+                  : DateTime(0000, 0, 0, 0, 0)),
+          Sub(
+              estado: pedido.entregadoRepartidor,
+              titulo: 'Repartidor en domicilio',
+              time: pedido.entregadoRepartidor
+                  ? pedido.entregadoRepartidorTiempo
+                  : DateTime(0000, 0, 0, 0, 0))
+        ],
+        complete: pedido.entregadoRepartidor));
+
+    listado.add(EstadoPedidoAvanzado(
+        titulo: 'Cliente',
+        sub: [
+          Sub(
+              estado: pedido.entregadoRepartidor,
+              titulo: 'Entregado al cliente',
+              time: pedido.entregadoRepartidor
+                  ? pedido.entregadoRepartidorTiempo
+                  : DateTime(0000, 0, 0, 0, 0)),
+          Sub(
+              estado: pedido.entregadoRepartidor,
+              titulo: 'Repartidor calificado',
+              time: pedido.entregadoRepartidor
+                  ? pedido.entregadoRepartidorTiempo
+                  : DateTime(0000, 0, 0, 0, 0))
+        ],
+        complete: pedido.entregadoRepartidor));
+
+    return listado;
   }
 }
 
@@ -713,21 +856,23 @@ class ItemPedidoWidget extends StatelessWidget {
               ),
             ),
             SizedBox(
-              width: 85,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Expanded(
-                    child: Text(
-                      '\$ ${producto.precio.toStringAsFixed(2)}',
-                      style: GoogleFonts.quicksand(
-                          color: Colors.black, fontSize: 15),
-                    ),
-                  ),
                   Text(
-                    producto.cantidad.toString(),
+                    '\$ ${producto.precio.toStringAsFixed(2)}',
                     style: GoogleFonts.quicksand(
                         color: Colors.black, fontSize: 15),
+                  ),
+                  SizedBox(
+                    width: 32,
+                    child: Center(
+                      child: Text(
+                        producto.cantidad.toString(),
+                        style: GoogleFonts.quicksand(
+                            color: Colors.black, fontSize: 15),
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -741,34 +886,40 @@ class ItemPedidoWidget extends StatelessWidget {
           physics: const NeverScrollableScrollPhysics(),
           scrollDirection: Axis.vertical,
           shrinkWrap: true,
-          padding: const EdgeInsets.all(0),
+          padding: const EdgeInsets.only(left: 15),
           itemBuilder: (BuildContext context, int index) {
             return Row(
               children: [
-                Text(
-                  elecciones(producto: producto)[index].titulo,
-                  style: GoogleFonts.quicksand(
-                      color: Colors.black.withOpacity(.5), fontSize: 15),
-                ),
-                const Spacer(),
-                Text(
-                  elecciones(producto: producto)[index].valor
-                      ? '+ \$ ${elecciones(producto: producto)[index].precio.toStringAsFixed(2)}'
-                      : '',
-                  style: GoogleFonts.quicksand(
-                    color: Colors.blue,
-                    fontSize: 15,
+                Expanded(
+                  child: Text(
+                    elecciones(producto: producto)[index].titulo,
+                    overflow: TextOverflow.visible,
+                    style: GoogleFonts.quicksand(
+                        color: Colors.black.withOpacity(.5), fontSize: 15),
                   ),
                 ),
-                const SizedBox(
-                  width: 65,
+                SizedBox(
+                  child: Text(
+                    elecciones(producto: producto)[index].valor
+                        ? '+ \$ ${elecciones(producto: producto)[index].precio.toStringAsFixed(2)}'
+                        : '',
+                    style: GoogleFonts.quicksand(
+                      color: Colors.blue,
+                      fontSize: 15,
+                    ),
+                  ),
                 ),
-                Text(
-                  elecciones(producto: producto)[index].valor
-                      ? producto.cantidad.toString()
-                      : '',
-                  style:
-                      GoogleFonts.quicksand(color: Colors.black, fontSize: 15),
+                SizedBox(
+                  width: 32,
+                  child: Center(
+                    child: Text(
+                      elecciones(producto: producto)[index].valor
+                          ? producto.cantidad.toString()
+                          : '',
+                      style: GoogleFonts.quicksand(
+                          color: Colors.black, fontSize: 15),
+                    ),
+                  ),
                 ),
               ],
             );
@@ -815,5 +966,82 @@ class ItemPedidoWidget extends StatelessWidget {
     }));
 
     return listado;
+  }
+}
+
+class _InnerTimeline2 extends StatelessWidget {
+  const _InnerTimeline2({
+    required this.sub,
+  });
+
+  final List<Sub> sub;
+
+  @override
+  Widget build(BuildContext context) {
+    bool isEdgeIndex(int index) {
+      return index == 0 || index == sub.length + 1;
+    }
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: FixedTimeline.tileBuilder(
+        theme: TimelineTheme.of(context).copyWith(
+          nodePosition: 0,
+          connectorTheme: TimelineTheme.of(context).connectorTheme.copyWith(
+                thickness: 1.0,
+              ),
+          indicatorTheme: TimelineTheme.of(context).indicatorTheme.copyWith(
+                size: 10.0,
+                position: 0.5,
+              ),
+        ),
+        builder: TimelineTileBuilder(
+          indicatorBuilder: (_, index) => !isEdgeIndex(index)
+              ? Indicator.outlined(
+                  borderWidth: 1.0,
+                  color: sub[index - 1].estado
+                      ? const Color.fromRGBO(41, 199, 184, 1)
+                      : Colors.grey,
+                )
+              : null,
+          startConnectorBuilder: (_, index) =>
+              Connector.solidLine(color: Colors.grey.withOpacity(.2)),
+          endConnectorBuilder: (_, index) =>
+              Connector.solidLine(color: Colors.grey.withOpacity(.2)),
+          contentsBuilder: (_, index) {
+            if (isEdgeIndex(index)) {
+              return null;
+            }
+            String formattedDate =
+                DateFormat.jm('es-MX').format(sub[index - 1].time.toLocal());
+            var other = DateTime(0000, 0, 0, 0, 1);
+
+            return Padding(
+              padding: const EdgeInsets.only(left: 8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    sub[index - 1].time.compareTo(other) > 0
+                        ? formattedDate +
+                            '   ' +
+                            sub[index - 1].titulo.toString()
+                        : '--:--   ' + sub[index - 1].titulo.toString(),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                    style: GoogleFonts.quicksand(color: Colors.grey),
+                  ),
+                ],
+              ),
+            );
+          },
+          itemExtentBuilder: (_, index) => isEdgeIndex(index) ? 10.0 : 30.0,
+          nodeItemOverlapBuilder: (_, index) =>
+              isEdgeIndex(index) ? true : null,
+          itemCount: sub.length + 2,
+        ),
+      ),
+    );
   }
 }

@@ -1,8 +1,8 @@
-import 'package:delivery/models/estado_pedido.dart';
 import 'package:delivery/models/venta_response.dart';
 import 'package:delivery/service/ventas_service.dart';
 import 'package:delivery/views/extras/pedido_view.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -88,8 +88,9 @@ class PedidoWidgetFold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String formattedDate =
-        DateFormat.yMMMMEEEEd('es-MX').add_jm().format(venta.createdAt);
+    String formattedDate = DateFormat.yMMMMEEEEd('es-MX')
+        .add_jm()
+        .format(venta.createdAt.toLocal());
 
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
@@ -141,7 +142,9 @@ class PedidoWidgetFold extends StatelessWidget {
                             ),
                             Text(formattedDate,
                                 style: GoogleFonts.quicksand(
-                                    fontSize: 13, color: Colors.grey)),
+                                    fontSize: 13,
+                                    color:
+                                        const Color.fromRGBO(41, 199, 184, 1))),
                           ],
                         ),
                         Text(
@@ -156,7 +159,7 @@ class PedidoWidgetFold extends StatelessWidget {
               ],
             ),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 10),
               margin: const EdgeInsets.only(top: 15, bottom: 0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -167,16 +170,28 @@ class PedidoWidgetFold extends StatelessWidget {
                     children: [
                       Text(
                         'Cantidad',
-                        style: GoogleFonts.quicksand(color: Colors.grey),
+                        style: GoogleFonts.quicksand(
+                            color: Colors.grey, fontSize: 14),
                       ),
                       const SizedBox(
                         height: 5,
                       ),
-                      Text(
-                        '\$ ${venta.total.toStringAsFixed(2)}',
-                        style: GoogleFonts.quicksand(
-                            color: Colors.black.withOpacity(.8),
-                            fontWeight: FontWeight.w600),
+                      SizedBox(
+                        height: 45,
+                        child: Center(
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                '\$ ' + venta.total.toStringAsFixed(2),
+                                style: GoogleFonts.quicksand(
+                                  fontSize: 25,
+                                  color: Colors.black.withOpacity(.8),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       )
                     ],
                   ),
@@ -186,38 +201,109 @@ class PedidoWidgetFold extends StatelessWidget {
                     children: [
                       Text(
                         'Metodo de pago',
-                        style: GoogleFonts.quicksand(color: Colors.grey),
+                        style: GoogleFonts.quicksand(
+                            color: Colors.grey, fontSize: 14),
                       ),
                       const SizedBox(
                         height: 5,
                       ),
-                      Text(
-                        venta.efectivo
-                            ? 'Efectivo'
-                            : '${venta.metodoPago!.charges.data[0].paymentMethodDetails.card.brand == "mastercard" ? "Mastercard" : "Visa"} ${venta.metodoPago?.charges.data[0].paymentMethodDetails.card.last4}',
-                        style: GoogleFonts.quicksand(
-                            color: Colors.black.withOpacity(.8),
-                            fontWeight: FontWeight.w600),
-                      )
-                    ],
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Estado',
-                        style: GoogleFonts.quicksand(color: Colors.grey),
-                      ),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      Text(
-                        _checkEstadoPedido(ventas: venta.pedidos),
-                        style: GoogleFonts.quicksand(
-                            color: const Color.fromRGBO(41, 199, 184, 1),
-                            fontWeight: FontWeight.w600),
-                      )
+                      venta.efectivo
+                          ? Row(
+                              children: [
+                                Container(
+                                  width: 65,
+                                  height: 45,
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      color: const Color.fromRGBO(
+                                          137, 226, 137, 1)),
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 10, horizontal: 27),
+                                  child: Text(
+                                    '\$',
+                                    style: GoogleFonts.quicksand(
+                                        color: Colors.white, fontSize: 20),
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Text('Efectivo',
+                                    style: GoogleFonts.quicksand(
+                                      fontSize: 15,
+                                      color: Colors.black.withOpacity(.8),
+                                    ))
+                              ],
+                            )
+                          : Row(
+                              children: [
+                                Row(
+                                  children: [
+                                    Container(
+                                      width: 65,
+                                      height: 45,
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 5, vertical: 0),
+                                      decoration: BoxDecoration(
+                                          color: venta
+                                                      .metodoPago!
+                                                      .charges
+                                                      .data[0]
+                                                      .paymentMethodDetails
+                                                      .card
+                                                      .brand ==
+                                                  'visa'
+                                              ? const Color.fromRGBO(
+                                                  232, 241, 254, 1)
+                                              : const Color.fromRGBO(
+                                                  251, 231, 220, 1),
+                                          borderRadius:
+                                              BorderRadius.circular(10)),
+                                      child: Row(
+                                        children: [
+                                          Container(
+                                            color: Colors.transparent,
+                                            height: 55,
+                                            width: 55,
+                                            child: SvgPicture.asset(
+                                              venta
+                                                          .metodoPago!
+                                                          .charges
+                                                          .data[0]
+                                                          .paymentMethodDetails
+                                                          .card
+                                                          .brand ==
+                                                      'visa'
+                                                  ? 'assets/images/visa_color.svg'
+                                                  : 'assets/images/mc.svg',
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                            venta
+                                                .metodoPago!
+                                                .charges
+                                                .data[0]
+                                                .paymentMethodDetails
+                                                .card
+                                                .last4,
+                                            style: GoogleFonts.quicksand(
+                                              fontSize: 25,
+                                              color:
+                                                  Colors.black.withOpacity(1),
+                                            ))
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            )
                     ],
                   ),
                 ],
@@ -229,60 +315,5 @@ class PedidoWidgetFold extends StatelessWidget {
     );
   }
 
-  String _checkEstadoPedido({required List<PedidoProducto> ventas}) {
-    var estado = EstadoPedido(
-        preparado: 0, enviado: 0, entregado: 0, pagado: 0, confirmado: 0);
-
-    for (var element in ventas) {
-      if (element.preparado) {
-        estado.preparado++;
-      }
-      if (element.enviado) {
-        estado.enviado++;
-      }
-      if (element.entregado) {
-        estado.entregado++;
-      }
-      if (element.pagado) {
-        estado.pagado++;
-      }
-      if (element.confirmado) {
-        estado.pagado++;
-      }
-    }
-
-    if (estado.entregado > 0) {
-      if (estado.entregado >= ventas.length) {
-        return 'Entregado';
-      } else {
-        return 'Entregado!';
-      }
-    }
-    if (estado.enviado > 0) {
-      if (estado.enviado >= ventas.length) {
-        return 'Enviado';
-      } else {
-        return 'Enviado!';
-      }
-    }
-    if (estado.preparado > 0) {
-      if (estado.preparado >= ventas.length) {
-        return 'Preparado';
-      } else {
-        return 'Preparado !';
-      }
-    }
-    if (estado.confirmado > 0) {
-      if (estado.confirmado >= ventas.length) {
-        return 'Confirmado';
-      } else {
-        return 'Confirmado !';
-      }
-    }
-    if (estado.pagado > 0) {
-      return 'Pagado';
-    } else {
-      return 'Pago pendiente';
-    }
-  }
+  
 }

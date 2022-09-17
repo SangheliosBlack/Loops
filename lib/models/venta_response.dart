@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:delivery/models/cesta.dart';
 import 'package:delivery/models/direccion.dart';
 import 'package:delivery/models/productos.dart';
+import 'package:delivery/models/ruta.dart';
 import 'package:delivery/models/usuario.dart';
 import 'package:delivery/models/usuario_venta.dart';
 
@@ -736,22 +737,27 @@ class PedidoProducto {
       required this.tienda,
       required this.repartidor,
       required this.imagen,
-      required this.ubicacion,
-      required this.pagado,
-      required this.preparado,
       required this.confirmado,
-      required this.enviado,
-      required this.direccion,
-      required this.entregado,
       required this.efectivo,
       required this.usuario,
       required this.createdAt,
       required this.updatedAt,
       required this.entregadoRepartidor,
+      required this.entregadoCliente,
       required this.confirmacionTiempo,
       required this.codigoRepartidor,
+      required this.codigoCliente,
       required this.entregadoRepartidorTiempo,
+      required this.entregadoClienteTiempo,
       required this.idVenta,
+      required this.repartidorCalificado,
+      required this.repartidorDomicilio,
+      required this.repartidorCalificadoTiempo,
+      required this.repartidorDomicilioTiempo,
+      required this.envio,
+      required this.direccionNegocio,
+      required this.direccionCliente,
+      required this.ruta,
       required this.tiempoEspera});
 
   List<Producto> productos;
@@ -760,27 +766,42 @@ class PedidoProducto {
   String tienda;
   Usuario repartidor;
   String imagen;
-  Ubicacion ubicacion;
-  bool pagado;
   bool confirmado;
   bool efectivo;
-  bool preparado;
-  String direccion;
-  bool enviado;
-  bool entregado;
+  num envio;
   UsuarioVenta usuario;
   DateTime createdAt;
   bool entregadoRepartidor;
+  bool entregadoCliente;
   DateTime confirmacionTiempo;
   DateTime entregadoRepartidorTiempo;
+  DateTime entregadoClienteTiempo;
   String codigoRepartidor;
+  String codigoCliente;
   String idVenta;
+  Direccion direccionNegocio;
+  Direccion direccionCliente;
+
+  bool repartidorDomicilio;
+  bool repartidorCalificado;
+  Ruta ruta;
+
+  DateTime repartidorDomicilioTiempo;
+  DateTime repartidorCalificadoTiempo;
 
   DateTime updatedAt;
   int tiempoEspera;
 
   factory PedidoProducto.fromJson(Map<String, dynamic> json) {
     return PedidoProducto(
+      ruta: Ruta.fromJson(json['ruta']),
+      direccionCliente: Direccion.fromJson(json['direccion_cliente']),
+      direccionNegocio: Direccion.fromJson(json['direccion_negocio']),
+      envio: json['envio'],
+      repartidorCalificado: json['repartidor_calificado'],
+      repartidorDomicilio: json['repartidor_domicilio'],
+      entregadoCliente: json['entregado_cliente'],
+      codigoCliente: json['codigo_cliente'],
       idVenta: json['id_venta'],
       codigoRepartidor: json['codigo_repartidor'],
       productos: List<Producto>.from(
@@ -793,6 +814,15 @@ class PedidoProducto {
           : DateTime(0000, 00, 00, 00, 00),
       entregadoRepartidorTiempo: json['entrega_repartidor_tiempo'] != null
           ? DateTime.parse(json["entrega_repartidor_tiempo"])
+          : DateTime(0000, 00, 00, 00, 00),
+      repartidorCalificadoTiempo: json['repartidor_calificado_tiempo'] != null
+          ? DateTime.parse(json["repartidor_calificado_tiempo"])
+          : DateTime(0000, 00, 00, 00, 00),
+      repartidorDomicilioTiempo: json['repartidor_domicilio_tiempo'] != null
+          ? DateTime.parse(json["repartidor_domicilio_tiempo"])
+          : DateTime(0000, 00, 00, 00, 00),
+      entregadoClienteTiempo: json['entrega_cliente_tiempo'] != null
+          ? DateTime.parse(json["entrega_cliente_tiempo"])
           : DateTime(0000, 00, 00, 00, 00),
       repartidor: json['repartidor'] != null
           ? Usuario.fromJson(json["repartidor"])
@@ -826,15 +856,9 @@ class PedidoProducto {
                       predeterminado: false,
                       titulo: ''),
                   efectivo: false,
-                  codigo: '')),
+                  codigo: ''), onlineRepartidor: false),
       imagen: json["imagen"],
-      ubicacion: Ubicacion.fromJson(json["ubicacion"]),
-      pagado: json["pagado"],
-      preparado: json["preparado"],
-      enviado: json["enviado"],
-      entregado: json["entregado"],
       confirmado: json["confirmado"],
-      direccion: json['direccion'],
       efectivo: json['efectivo'],
       usuario: UsuarioVenta.fromJson(json['usuario']),
       createdAt: DateTime.parse(json["createdAt"]),
@@ -851,13 +875,7 @@ class PedidoProducto {
         "tienda": tienda,
         "repartidor": repartidor,
         "imagen": imagen,
-        "ubicacion": ubicacion.toJson(),
-        "pagado": pagado,
         "confirmado": confirmado,
-        "direccion": direccion,
-        "preparado": preparado,
-        "enviado": enviado,
-        "entregado": entregado,
       };
 }
 

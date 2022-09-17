@@ -2,7 +2,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:delivery/helpers/mostrar_carga.dart';
 import 'package:delivery/helpers/ticket.dart';
-import 'package:delivery/models/estado_pedido.dart';
 import 'package:delivery/models/estado_pedido_avanzado.dart';
 import 'package:delivery/models/venta_response.dart';
 import 'package:delivery/service/bluetooth_servide.dart';
@@ -21,8 +20,15 @@ import 'package:provider/provider.dart';
 import 'package:timelines/timelines.dart';
 
 class DetallesPedido extends StatefulWidget {
+  final bool confirmar;
   final PedidoProducto pedido;
-  const DetallesPedido({Key? key, required this.pedido}) : super(key: key);
+  final bool showActions;
+  const DetallesPedido(
+      {Key? key,
+      required this.pedido,
+      required this.showActions,
+      required this.confirmar})
+      : super(key: key);
 
   @override
   State<DetallesPedido> createState() => _DetallesPedidoState();
@@ -36,7 +42,7 @@ class _DetallesPedidoState extends State<DetallesPedido> {
     super.initState();
     final socioService = Provider.of<SocioService>(context, listen: false);
     Future.delayed(const Duration(seconds: 0)).then((_) async {
-      if (!widget.pedido.confirmado) {
+      if (!widget.pedido.confirmado && widget.confirmar) {
         await socioService.confirmacionPedido(
             id: widget.pedido.idVenta, venta: widget.pedido.id);
         final snackBar = SnackBar(
@@ -67,10 +73,11 @@ class _DetallesPedidoState extends State<DetallesPedido> {
 
   @override
   Widget build(BuildContext context) {
-    String formattedDate =
-        DateFormat.yMMMMEEEEd('es-MX').add_jm().format(widget.pedido.createdAt);
+    String formattedDate = DateFormat.yMMMMEEEEd('es-MX')
+        .add_jm()
+        .format(widget.pedido.createdAt.toLocal());
     DateTime formattedDate2 =
-        widget.pedido.createdAt.add(const Duration(minutes: 20));
+        widget.pedido.createdAt.toLocal().add(const Duration(minutes: 20));
 
     String formattedDatex = DateFormat.jm('es-MX').format(formattedDate2);
 
@@ -251,51 +258,56 @@ class _DetallesPedidoState extends State<DetallesPedido> {
                 padding: const EdgeInsets.symmetric(vertical: 10),
                 child: Row(
                   children: [
-                    GestureDetector(
-                      behavior: HitTestBehavior.translucent,
-                      onTap: (() {
-                        if (bluetoothService.isConnected) {
-                          starPrint(
-                              bluetoothProvider: bluetoothService,
-                              producto: widget.pedido,
-                              context: context);
-                        } else {
-                          final snackBar = SnackBar(
-                            duration: const Duration(seconds: 3),
-                            backgroundColor: Colors.black,
-                            content: Row(
-                              children: [
-                                const Icon(
-                                  Icons.print_disabled,
-                                  color: Colors.white,
-                                  size: 20,
-                                ),
-                                const SizedBox(
-                                  width: 15,
-                                ),
-                                Text(
-                                  'Impresora no conectada',
-                                  style: GoogleFonts.quicksand(
-                                      color: Colors.white),
-                                ),
-                              ],
-                            ),
-                          );
+                    widget.showActions
+                        ? GestureDetector(
+                            behavior: HitTestBehavior.translucent,
+                            onTap: (() {
+                              if (bluetoothService.isConnected) {
+                                starPrint(
+                                    bluetoothProvider: bluetoothService,
+                                    producto: widget.pedido,
+                                    context: context);
+                              } else {
+                                final snackBar = SnackBar(
+                                  duration: const Duration(seconds: 3),
+                                  backgroundColor: Colors.black,
+                                  content: Row(
+                                    children: [
+                                      const Icon(
+                                        Icons.print_disabled,
+                                        color: Colors.white,
+                                        size: 20,
+                                      ),
+                                      const SizedBox(
+                                        width: 15,
+                                      ),
+                                      Text(
+                                        'Impresora no conectada',
+                                        style: GoogleFonts.quicksand(
+                                            color: Colors.white),
+                                      ),
+                                    ],
+                                  ),
+                                );
 
-                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                        }
-                      }),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 5, horizontal: 10),
-                        decoration: BoxDecoration(
-                            border: Border.all(width: 1, color: Colors.blue)),
-                        child: Text(
-                          'Imprimir ticket',
-                          style: GoogleFonts.quicksand(color: Colors.blue),
-                        ),
-                      ),
-                    ),
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(snackBar);
+                              }
+                            }),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 5, horizontal: 10),
+                              decoration: BoxDecoration(
+                                  border:
+                                      Border.all(width: 1, color: Colors.blue)),
+                              child: Text(
+                                'Imprimir ticket',
+                                style:
+                                    GoogleFonts.quicksand(color: Colors.blue),
+                              ),
+                            ),
+                          )
+                        : Container(),
                     const SizedBox(
                       width: 10,
                     ),
@@ -570,165 +582,186 @@ class _DetallesPedidoState extends State<DetallesPedido> {
                     const SizedBox(
                       height: 10,
                     ),
-                    AnimatedSize(
-                      duration: const Duration(milliseconds: 500),
-                      child: !widget.pedido.entregadoRepartidor
-                          ? Column(
-                              children: [
-                                VerificationCode(
-                                    itemSize: (width - 90) / 4,
-                                    underlineWidth: 1,
-                                    textStyle: GoogleFonts.quicksand(
-                                        fontSize: 20.0,
-                                        color: const Color.fromRGBO(
-                                            41, 199, 184, 1)),
-                                    keyboardType: TextInputType.number,
-                                    underlineColor: Colors.blue,
-                                    length: 4,
-                                    cursorColor: Colors.blue,
-                                    digitsOnly: true,
-                                    onCompleted: (String value) async {
-                                      if (value ==
-                                          widget.pedido.codigoRepartidor) {
-                                        mostrarCarga(context);
+                    widget.showActions
+                        ? AnimatedSize(
+                            duration: const Duration(milliseconds: 500),
+                            child: !widget.pedido.entregadoRepartidor
+                                ? Column(
+                                    children: [
+                                      VerificationCode(
+                                          itemSize: (width - 90) / 4,
+                                          underlineWidth: 1,
+                                          textStyle: GoogleFonts.quicksand(
+                                              fontSize: 20.0,
+                                              color: const Color.fromRGBO(
+                                                  41, 199, 184, 1)),
+                                          keyboardType: TextInputType.number,
+                                          underlineColor: Colors.blue,
+                                          length: 4,
+                                          cursorColor: Colors.blue,
+                                          digitsOnly: true,
+                                          onCompleted: (String value) async {
+                                            if (value ==
+                                                widget
+                                                    .pedido.codigoRepartidor) {
+                                              mostrarCarga(context);
 
-                                        final estado = await socioService
-                                            .confirmarCodigoRepartidor(
-                                                idSubventa: widget.pedido.id,
-                                                idVenta: widget.pedido.idVenta);
+                                              final estado = await socioService
+                                                  .confirmarCodigoRepartidor(
+                                                      idSubventa:
+                                                          widget.pedido.id,
+                                                      idVenta: widget
+                                                          .pedido.idVenta);
 
-                                        Navigator.pop(context);
-                                        if (estado) {
-                                          showModalBottomSheet(
-                                              barrierColor:
-                                                  Colors.black.withOpacity(.2),
-                                              elevation: 1,
-                                              context: context,
-                                              builder: (context) {
-                                                return Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.center,
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
+                                              Navigator.pop(context);
+                                              if (estado) {
+                                                showModalBottomSheet(
+                                                    barrierColor: Colors.black
+                                                        .withOpacity(.2),
+                                                    elevation: 1,
+                                                    context: context,
+                                                    builder: (context) {
+                                                      return Column(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .center,
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          const Icon(
+                                                            Icons.verified,
+                                                            color:
+                                                                Color.fromRGBO(
+                                                                    41,
+                                                                    199,
+                                                                    184,
+                                                                    1),
+                                                            size: 110,
+                                                          ),
+                                                          Text(
+                                                            'Codigo confirmado!',
+                                                            style: GoogleFonts
+                                                                .quicksand(
+                                                                    color: Colors
+                                                                        .black,
+                                                                    fontSize:
+                                                                        25),
+                                                          ),
+                                                          const SizedBox(
+                                                            height: 5,
+                                                          ),
+                                                          Text(
+                                                              'Entregar pedido a repartidor',
+                                                              style: GoogleFonts
+                                                                  .quicksand(
+                                                                      color: Colors
+                                                                          .grey,
+                                                                      fontSize:
+                                                                          15)),
+                                                          GestureDetector(
+                                                            behavior:
+                                                                HitTestBehavior
+                                                                    .translucent,
+                                                            onTap: () {
+                                                              Navigator.pop(
+                                                                  context);
+                                                            },
+                                                            child: Container(
+                                                                padding:
+                                                                    const EdgeInsets.all(
+                                                                        15),
+                                                                margin:
+                                                                    const EdgeInsets
+                                                                            .only(
+                                                                        top: 25,
+                                                                        left:
+                                                                            25,
+                                                                        right:
+                                                                            25),
+                                                                decoration: BoxDecoration(
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            15),
+                                                                    border: Border.all(
+                                                                        width:
+                                                                            1,
+                                                                        color: Colors
+                                                                            .grey
+                                                                            .withOpacity(
+                                                                                .2))),
+                                                                width: double
+                                                                    .infinity,
+                                                                child: Center(
+                                                                  child: Text(
+                                                                      'Continuar',
+                                                                      style: GoogleFonts.quicksand(
+                                                                          color:
+                                                                              Colors.black)),
+                                                                )),
+                                                          )
+                                                        ],
+                                                      );
+                                                    });
+                                              } else {
+                                                final snackBar = SnackBar(
+                                                  duration: const Duration(
+                                                      seconds: 3),
+                                                  backgroundColor: Colors.black,
+                                                  content: Row(
+                                                    children: [
+                                                      Text(
+                                                        'Error al confirmar',
+                                                        style: GoogleFonts
+                                                            .quicksand(
+                                                                color: Colors
+                                                                    .white),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                );
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(snackBar);
+                                              }
+                                            } else {
+                                              final snackBar = SnackBar(
+                                                duration:
+                                                    const Duration(seconds: 3),
+                                                backgroundColor: Colors.black,
+                                                content: Row(
                                                   children: [
-                                                    const Icon(
-                                                      Icons.verified,
-                                                      color: Color.fromRGBO(
-                                                          41, 199, 184, 1),
-                                                      size: 110,
-                                                    ),
                                                     Text(
-                                                      'Codigo confirmado!',
+                                                      'Codigo incorrecto',
                                                       style:
                                                           GoogleFonts.quicksand(
                                                               color:
-                                                                  Colors.black,
-                                                              fontSize: 25),
+                                                                  Colors.white),
                                                     ),
-                                                    const SizedBox(
-                                                      height: 5,
-                                                    ),
-                                                    Text(
-                                                        'Entregar pedido a repartidor',
-                                                        style: GoogleFonts
-                                                            .quicksand(
-                                                                color:
-                                                                    Colors.grey,
-                                                                fontSize: 15)),
-                                                    GestureDetector(
-                                                      behavior: HitTestBehavior
-                                                          .translucent,
-                                                      onTap: () {
-                                                        Navigator.pop(context);
-                                                      },
-                                                      child: Container(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(15),
-                                                          margin:
-                                                              const EdgeInsets
-                                                                      .only(
-                                                                  top: 25,
-                                                                  left: 25,
-                                                                  right: 25),
-                                                          decoration: BoxDecoration(
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          15),
-                                                              border: Border.all(
-                                                                  width: 1,
-                                                                  color: Colors
-                                                                      .grey
-                                                                      .withOpacity(
-                                                                          .2))),
-                                                          width:
-                                                              double.infinity,
-                                                          child: Center(
-                                                            child: Text(
-                                                                'Continuar',
-                                                                style: GoogleFonts
-                                                                    .quicksand(
-                                                                        color: Colors
-                                                                            .black)),
-                                                          )),
-                                                    )
                                                   ],
-                                                );
-                                              });
-                                        } else {
-                                          final snackBar = SnackBar(
-                                            duration:
-                                                const Duration(seconds: 3),
-                                            backgroundColor: Colors.black,
-                                            content: Row(
-                                              children: [
-                                                Text(
-                                                  'Error al confirmar',
-                                                  style: GoogleFonts.quicksand(
-                                                      color: Colors.white),
                                                 ),
-                                              ],
-                                            ),
-                                          );
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(snackBar);
-                                        }
-                                      } else {
-                                        final snackBar = SnackBar(
-                                          duration: const Duration(seconds: 3),
-                                          backgroundColor: Colors.black,
-                                          content: Row(
-                                            children: [
-                                              Text(
-                                                'Codigo incorrecto',
-                                                style: GoogleFonts.quicksand(
-                                                    color: Colors.white),
-                                              ),
-                                            ],
-                                          ),
-                                        );
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(snackBar);
-                                      }
-                                    },
-                                    onEditing: (bool value) {
-                                      setState(() {
-                                        _onEditing = value;
-                                      });
-                                      if (!_onEditing) {
-                                        FocusScope.of(context).unfocus();
-                                      }
-                                    }),
-                                Text(
-                                  '* El repartidor debe facilitar un codigo de 4 digitos para poder entregar el pedido, de lo contrario no podra seguir con el proceso.',
-                                  style: GoogleFonts.quicksand(
-                                      color: Colors.grey, fontSize: 13),
-                                )
-                              ],
-                            )
-                          : Container(),
-                    )
+                                              );
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(snackBar);
+                                            }
+                                          },
+                                          onEditing: (bool value) {
+                                            setState(() {
+                                              _onEditing = value;
+                                            });
+                                            if (!_onEditing) {
+                                              FocusScope.of(context).unfocus();
+                                            }
+                                          }),
+                                      Text(
+                                        '* El repartidor debe facilitar un codigo de 4 digitos para poder entregar el pedido, de lo contrario no podra seguir con el proceso.',
+                                        style: GoogleFonts.quicksand(
+                                            color: Colors.grey, fontSize: 13),
+                                      )
+                                    ],
+                                  )
+                                : Container(),
+                          )
+                        : Container()
                   ],
                 ),
               ),
@@ -844,83 +877,64 @@ class _DetallesPedidoState extends State<DetallesPedido> {
     return index == 0 || index == 23 + 1;
   }
 
-  EstadoPedido calcularEnvio({required Venta venta}) {
-    return EstadoPedido(
-        preparado: venta.pedidos
-            .map((e) => e.preparado ? 1 : 0)
-            .reduce((value, element) => value + element),
-        enviado: venta.pedidos
-            .map((e) => e.enviado ? 1 : 0)
-            .reduce((value, element) => value + element),
-        entregado: venta.pedidos
-            .map((e) => e.entregado ? 1 : 0)
-            .reduce((value, element) => value + element),
-        pagado: venta.pedidos
-            .map((e) => e.pagado ? 1 : 0)
-            .reduce((value, element) => value + element),
-        confirmado: venta.pedidos
-            .map((e) => e.confirmado ? 1 : 0)
-            .reduce((value, element) => value + element));
-  }
-
   
 }
 
 Future<void> starPrint(
-      {required BluetoothProvider bluetoothProvider,
-      required PedidoProducto producto,
-      required BuildContext context}) async {
-    mostrarCarga(context);
+    {required BluetoothProvider bluetoothProvider,
+    required PedidoProducto producto,
+    required BuildContext context}) async {
+  mostrarCarga(context);
 
-    const PaperSize paper = PaperSize.mm58;
-    final profile = await CapabilityProfile.load();
+  const PaperSize paper = PaperSize.mm58;
+  final profile = await CapabilityProfile.load();
 
-    final PosPrintResult resul = await bluetoothProvider.printerBluetoothManager
-        .printTicket(await testTicket(paper, profile, producto));
+  final PosPrintResult resul = await bluetoothProvider.printerBluetoothManager
+      .printTicket(await testTicket(paper, profile, producto));
 
-    var estado = '';
+  var estado = '';
 
-    if (resul == PosPrintResult.printInProgress) {}
+  if (resul == PosPrintResult.printInProgress) {}
 
-    switch (resul) {
-      case PosPrintResult.printInProgress:
-        estado = 'Impresion en progreso';
-        break;
-      case PosPrintResult.printerNotSelected:
-        estado = 'Impresora no selecciondo';
-        break;
-      case PosPrintResult.scanInProgress:
-        estado = 'Escaneo en progreso';
-        break;
-      case PosPrintResult.success:
-        estado = 'Impresion realizada';
-        break;
-      case PosPrintResult.ticketEmpty:
-        estado = 'Impresora sin papel';
-        break;
-      case PosPrintResult.timeout:
-        estado = 'Tiempo de espera agotado';
-        break;
-      default:
-    }
-
-    Navigator.pop(context);
-
-    final snackBar = SnackBar(
-      duration: const Duration(seconds: 3),
-      backgroundColor: Colors.black,
-      content: Row(
-        children: [
-          Text(
-            estado,
-            style: GoogleFonts.quicksand(color: Colors.white),
-          ),
-        ],
-      ),
-    );
-
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  switch (resul) {
+    case PosPrintResult.printInProgress:
+      estado = 'Impresion en progreso';
+      break;
+    case PosPrintResult.printerNotSelected:
+      estado = 'Impresora no selecciondo';
+      break;
+    case PosPrintResult.scanInProgress:
+      estado = 'Escaneo en progreso';
+      break;
+    case PosPrintResult.success:
+      estado = 'Impresion realizada';
+      break;
+    case PosPrintResult.ticketEmpty:
+      estado = 'Impresora sin papel';
+      break;
+    case PosPrintResult.timeout:
+      estado = 'Tiempo de espera agotado';
+      break;
+    default:
   }
+
+  Navigator.pop(context);
+
+  final snackBar = SnackBar(
+    duration: const Duration(seconds: 3),
+    backgroundColor: Colors.black,
+    content: Row(
+      children: [
+        Text(
+          estado,
+          style: GoogleFonts.quicksand(color: Colors.white),
+        ),
+      ],
+    ),
+  );
+
+  ScaffoldMessenger.of(context).showSnackBar(snackBar);
+}
 
 class _InnerTimeline extends StatelessWidget {
   const _InnerTimeline({
@@ -966,7 +980,7 @@ class _InnerTimeline extends StatelessWidget {
               return null;
             }
             String formattedDate =
-                DateFormat.jm('es-MX').format(sub[index - 1].time);
+                DateFormat.jm('es-MX').format(sub[index - 1].time.toLocal());
             var other = DateTime(0000, 0, 0, 0, 1);
 
             return Padding(

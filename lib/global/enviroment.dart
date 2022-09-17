@@ -36,8 +36,8 @@ class Statics {
     {'icono': Icons.moped, 'titulo': 'En linea 1', 'precio': '150.00'},
     {'icono': Icons.point_of_sale, 'titulo': 'En linea 2', 'precio': '180.00'}
   ];
-  // static String apiUrl = 'https://server-delivery-production.herokuapp.com/api';
-    static String apiUrl = 'http://192.168.100.12:3000/api';
+  static String apiUrl = 'https://server-delivery-production.herokuapp.com/api';
+  // static String apiUrl = 'http://192.168.100.12:3000/api';
   static List<dynamic> listSetting = [
     {
       'icono': Icons.credit_card_outlined,
@@ -51,7 +51,7 @@ class Statics {
     },
     {
       'icono': Icons.query_stats,
-      'titulo': 'Mis pagos',
+      'titulo': 'Mis pedidos',
       'ruta': '/drawer/pedidos'
     },
     {'icono': Icons.logout, 'titulo': 'Cerrar sesion', 'ruta': 'logout'},
@@ -253,6 +253,199 @@ class Statics {
             },
             {
                 "weight": 1.2
+            }
+        ]
+    }
+]
+  ''';
+  static String mapStyle2 = '''
+  [
+    {
+        "featureType": "all",
+        "elementType": "all",
+        "stylers": [
+            {
+                "saturation": "32"
+            },
+            {
+                "lightness": "-3"
+            },
+            {
+                "visibility": "on"
+            },
+            {
+                "weight": "1.18"
+            }
+        ]
+    },
+    {
+        "featureType": "all",
+        "elementType": "labels",
+        "stylers": [
+            {
+                "visibility": "simplified"
+            },
+            {
+                "hue": "#ff0000"
+            },
+            {
+                "invert_lightness": true
+            }
+        ]
+    },
+    {
+        "featureType": "all",
+        "elementType": "labels.text",
+        "stylers": [
+            {
+                "visibility": "simplified"
+            },
+            {
+                "hue": "#ff0000"
+            }
+        ]
+    },
+    {
+        "featureType": "all",
+        "elementType": "labels.text.fill",
+        "stylers": [
+            {
+                "visibility": "on"
+            },
+            {
+                "hue": "#ff0000"
+            }
+        ]
+    },
+    {
+        "featureType": "all",
+        "elementType": "labels.text.stroke",
+        "stylers": [
+            {
+                "visibility": "simplified"
+            }
+        ]
+    },
+    {
+        "featureType": "administrative",
+        "elementType": "labels",
+        "stylers": [
+            {
+                "visibility": "off"
+            }
+        ]
+    },
+    {
+        "featureType": "landscape",
+        "elementType": "labels",
+        "stylers": [
+            {
+                "visibility": "off"
+            }
+        ]
+    },
+    {
+        "featureType": "landscape.man_made",
+        "elementType": "all",
+        "stylers": [
+            {
+                "saturation": "-70"
+            },
+            {
+                "lightness": "14"
+            }
+        ]
+    },
+    {
+        "featureType": "poi",
+        "elementType": "labels",
+        "stylers": [
+            {
+                "visibility": "off"
+            }
+        ]
+    },
+    {
+        "featureType": "road",
+        "elementType": "labels",
+        "stylers": [
+            {
+                "visibility": "off"
+            }
+        ]
+    },
+    {
+        "featureType": "road.local",
+        "elementType": "labels.text",
+        "stylers": [
+            {
+                "visibility": "on"
+            },
+            {
+                "color": "#9d9d9e"
+            },
+            {
+                "saturation": "-40"
+            },
+            {
+                "lightness": "-48"
+            },
+            {
+                "weight": "0.01"
+            }
+        ]
+    },
+    {
+        "featureType": "road.local",
+        "elementType": "labels.text.fill",
+        "stylers": [
+            {
+                "visibility": "off"
+            }
+        ]
+    },
+    {
+        "featureType": "road.local",
+        "elementType": "labels.text.stroke",
+        "stylers": [
+            {
+                "visibility": "on"
+            },
+            {
+                "color": "#737373"
+            }
+        ]
+    },
+    {
+        "featureType": "transit",
+        "elementType": "labels",
+        "stylers": [
+            {
+                "visibility": "off"
+            }
+        ]
+    },
+    {
+        "featureType": "water",
+        "elementType": "all",
+        "stylers": [
+            {
+                "saturation": "100"
+            },
+            {
+                "lightness": "-14"
+            }
+        ]
+    },
+    {
+        "featureType": "water",
+        "elementType": "labels",
+        "stylers": [
+            {
+                "visibility": "off"
+            },
+            {
+                "lightness": "12"
             }
         ]
     }

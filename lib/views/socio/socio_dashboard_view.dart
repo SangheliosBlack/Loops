@@ -1,7 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:delivery/models/tienda.dart';
 import 'package:delivery/service/auth_service.dart';
+import 'package:delivery/service/socio_service.dart';
 import 'package:delivery/service/tiendas_service.dart';
+import 'package:delivery/views/punto_venta/calendario.dart';
+import 'package:delivery/views/punto_venta/punto_venta_main.dart';
 import 'package:delivery/views/socio/editar_tienda_view.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -20,6 +23,16 @@ String tiendaUrl = '';
 
 class _SocioDashBoardViewState extends State<SocioDashBoardView>
     with AutomaticKeepAliveClientMixin {
+  String filter = '';
+
+  @override
+  void initState() {
+    super.initState();
+    final socioService = Provider.of<SocioService>(context, listen: false);
+
+    socioService.obtenerPedidos(filter: filter);
+  }
+
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
@@ -27,7 +40,7 @@ class _SocioDashBoardViewState extends State<SocioDashBoardView>
     final tiendasService = Provider.of<TiendasService>(context);
     final authServiceService = Provider.of<AuthService>(context);
     super.build(context);
-
+    final socioService = Provider.of<SocioService>(context);
     return Scaffold(
       backgroundColor: Colors.white,
       body: FutureBuilder(
@@ -52,7 +65,7 @@ class _SocioDashBoardViewState extends State<SocioDashBoardView>
                         panelBorderRadiusBegin: 35.0,
                         panelBorderRadiusEnd: 35.0,
                         panelMinSize: 0,
-                        panelMaxSize: 222,
+                        panelMaxSize: 270,
                         parallaxOffset: 0.3,
                         isDismissible: true,
                         appBarHeight: 80.0,
@@ -165,149 +178,458 @@ class _SocioDashBoardViewState extends State<SocioDashBoardView>
                                   ),
                                 ],
                               )
-                            : SingleChildScrollView(
-                                physics: const BouncingScrollPhysics(),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Container(
-                                      padding: const EdgeInsets.only(
-                                          bottom: 90, top: 30),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: [
-                                          Stack(
-                                            children: [
-                                              Container(
-                                                padding:
-                                                    const EdgeInsets.all(10),
-                                                decoration: const BoxDecoration(
-                                                    color: Colors.white,
-                                                    shape: BoxShape.circle),
-                                                child: Hero(
-                                                  tag:
-                                                      '${tienda.imagenPerfil}+socio',
-                                                  child: SizedBox(
-                                                    width: 170,
-                                                    height: 170,
-                                                    child: ClipRRect(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              100),
-                                                      child: CachedNetworkImage(
-                                                          fit: BoxFit.cover,
-                                                          imageUrl: tienda
-                                                              .imagenPerfil,
-                                                          imageBuilder: (context,
-                                                                  imageProvider) =>
-                                                              Container(
-                                                                decoration:
-                                                                    BoxDecoration(
+                            : Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.only(
+                                        bottom: 90, top: 30),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Stack(
+                                          children: [
+                                            Container(
+                                              padding: const EdgeInsets.all(10),
+                                              decoration: const BoxDecoration(
+                                                  color: Colors.white,
+                                                  shape: BoxShape.circle),
+                                              child: Hero(
+                                                tag:
+                                                    '${tienda.imagenPerfil}+socio',
+                                                child: SizedBox(
+                                                  width: 170,
+                                                  height: 170,
+                                                  child: ClipRRect(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            100),
+                                                    child: CachedNetworkImage(
+                                                        fit: BoxFit.cover,
+                                                        imageUrl:
+                                                            tienda.imagenPerfil,
+                                                        imageBuilder: (context,
+                                                                imageProvider) =>
+                                                            Container(
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                image:
+                                                                    DecorationImage(
                                                                   image:
-                                                                      DecorationImage(
-                                                                    image:
-                                                                        imageProvider,
-                                                                    fit: BoxFit
-                                                                        .cover,
-                                                                    colorFilter:
-                                                                        ColorFilter
-                                                                            .mode(
-                                                                      Colors
-                                                                          .black
-                                                                          .withOpacity(
-                                                                              .15),
-                                                                      BlendMode
-                                                                          .color,
-                                                                    ),
+                                                                      imageProvider,
+                                                                  fit: BoxFit
+                                                                      .cover,
+                                                                  colorFilter:
+                                                                      ColorFilter
+                                                                          .mode(
+                                                                    Colors.black
+                                                                        .withOpacity(
+                                                                            .15),
+                                                                    BlendMode
+                                                                        .color,
                                                                   ),
                                                                 ),
                                                               ),
-                                                          placeholder: (context,
-                                                                  url) =>
-                                                              Container(
-                                                                  padding:
-                                                                      const EdgeInsets
-                                                                              .all(
-                                                                          100),
-                                                                  child:
-                                                                      const CircularProgressIndicator(
-                                                                    strokeWidth:
-                                                                        1,
-                                                                    color: Colors
-                                                                        .black,
-                                                                  )),
-                                                          errorWidget: (context,
-                                                              url, error) {
-                                                            return const Icon(
-                                                                Icons.error);
-                                                          }),
-                                                    ),
+                                                            ),
+                                                        placeholder: (context,
+                                                                url) =>
+                                                            Container(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                            .all(
+                                                                        100),
+                                                                child:
+                                                                    const CircularProgressIndicator(
+                                                                  strokeWidth:
+                                                                      1,
+                                                                  color: Colors
+                                                                      .black,
+                                                                )),
+                                                        errorWidget: (context,
+                                                            url, error) {
+                                                          return const Icon(
+                                                              Icons.error);
+                                                        }),
                                                   ),
                                                 ),
                                               ),
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 10),
+                                        Column(
+                                          children: [
+                                            Container(
+                                              margin: const EdgeInsets.only(
+                                                  top: 20),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 25),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: [
+                                                  Row(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.start,
+                                                    children: [
+                                                      AnimatedSize(
+                                                        duration:
+                                                            const Duration(
+                                                                milliseconds:
+                                                                    200),
+                                                        child: Container(
+                                                          margin:
+                                                              const EdgeInsets
+                                                                  .only(top: 0),
+                                                          padding:
+                                                              const EdgeInsets
+                                                                      .symmetric(
+                                                                  vertical: 10,
+                                                                  horizontal:
+                                                                      20),
+                                                          decoration: BoxDecoration(
+                                                              color: const Color
+                                                                      .fromRGBO(
+                                                                  41,
+                                                                  199,
+                                                                  184,
+                                                                  1),
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          25)),
+                                                          child: Row(
+                                                            children: [
+                                                              Text(
+                                                                filter == ''
+                                                                    ? 'Hoy'
+                                                                    : filter,
+                                                                style: GoogleFonts
+                                                                    .quicksand(
+                                                                        color: Colors
+                                                                            .white,
+                                                                        fontSize:
+                                                                            12),
+                                                              ),
+                                                              GestureDetector(
+                                                                behavior:
+                                                                    HitTestBehavior
+                                                                        .translucent,
+                                                                onTap:
+                                                                    filter == ''
+                                                                        ? null
+                                                                        : () {
+                                                                            setState(() {
+                                                                              filter = '';
+                                                                              socioService.eliminarData();
+                                                                              socioService.obtenerPedidos(filter: filter);
+                                                                            });
+                                                                          },
+                                                                child:
+                                                                    Container(
+                                                                  padding:
+                                                                      const EdgeInsets
+                                                                          .all(3),
+                                                                  margin: const EdgeInsets
+                                                                          .only(
+                                                                      left: 10),
+                                                                  decoration: BoxDecoration(
+                                                                      color: Colors
+                                                                          .white
+                                                                          .withOpacity(filter == ''
+                                                                              ? .2
+                                                                              : .5),
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              100)),
+                                                                  child:
+                                                                      const Icon(
+                                                                    Icons.close,
+                                                                    size: 18,
+                                                                    color: Color
+                                                                        .fromRGBO(
+                                                                            41,
+                                                                            199,
+                                                                            184,
+                                                                            1),
+                                                                  ),
+                                                                ),
+                                                              )
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  Row(
+                                                    children: [
+                                                      GestureDetector(
+                                                        onTap: () {
+                                                          _navigateAndDisplaySelection(
+                                                              context: context,
+                                                              socioService:
+                                                                  socioService);
+                                                        },
+                                                        child: Container(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .all(5),
+                                                            child: const Icon(
+                                                              Icons
+                                                                  .calendar_month,
+                                                              color:
+                                                                  Colors.black,
+                                                            )),
+                                                      )
+                                                    ],
+                                                  )
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        Container(
+                                          margin:
+                                              const EdgeInsets.only(top: 20),
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 25),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Row(
+                                                children: [
+                                                  Text(
+                                                    'Fecha',
+                                                    style:
+                                                        GoogleFonts.quicksand(
+                                                            color:
+                                                                Colors.black),
+                                                  ),
+                                                  const Icon(
+                                                    Icons.expand_more,
+                                                    color: Colors.grey,
+                                                  )
+                                                ],
+                                              ),
+                                              Row(
+                                                children: [
+                                                  Row(
+                                                    children: [
+                                                      Text(
+                                                        'Monto',
+                                                        style: GoogleFonts
+                                                            .quicksand(
+                                                                color: Colors
+                                                                    .black),
+                                                      ),
+                                                      const Icon(
+                                                        Icons.expand_more,
+                                                        color: Colors.grey,
+                                                      )
+                                                    ],
+                                                  ),
+                                                  const SizedBox(width: 35),
+                                                  Row(
+                                                    children: [
+                                                      Text(
+                                                        'Estado',
+                                                        style: GoogleFonts
+                                                            .quicksand(
+                                                                color: Colors
+                                                                    .black),
+                                                      ),
+                                                      const Icon(
+                                                        Icons.expand_more,
+                                                        color: Colors.grey,
+                                                      )
+                                                    ],
+                                                  )
+                                                ],
+                                              )
                                             ],
                                           ),
-                                          authServiceService.puntoVentaStatus ==
-                                                  PuntoVenta.isAvailable
-                                              ? Container()
-                                              : SizedBox(
-                                                  height: 93,
-                                                  child: ListView.separated(
-                                                    padding: const EdgeInsets
-                                                            .symmetric(
-                                                        horizontal: 25,
-                                                        vertical: 10),
-                                                    scrollDirection:
-                                                        Axis.horizontal,
-                                                    itemBuilder: (BuildContext
-                                                                context,
-                                                            int index) =>
-                                                        const MiembroEquipo(),
-                                                    itemCount: 1,
-                                                    separatorBuilder:
-                                                        (BuildContext context,
-                                                                int index) =>
-                                                            const SizedBox(
-                                                      width: 5,
+                                        ),
+                                        Container(
+                                          margin: const EdgeInsets.symmetric(
+                                              vertical: 4),
+                                          child: Divider(
+                                            color: Colors.grey.withOpacity(.1),
+                                          ),
+                                        ),
+                                        AnimatedSize(
+                                          duration:
+                                              const Duration(milliseconds: 500),
+                                          child: !socioService.ventasCargadas
+                                              ? SizedBox(
+                                                  width: double.infinity,
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .center,
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    children: const [
+                                                      SizedBox(
+                                                        height: 100,
+                                                        width: 100,
+                                                        child:
+                                                            CircularProgressIndicator(
+                                                          strokeWidth: 1,
+                                                          color: Colors.white,
+                                                          backgroundColor:
+                                                              Color.fromRGBO(51,
+                                                                  53, 54, 1),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                )
+                                              : socioService.ventasCargadas &&
+                                                      socioService.ventaCache
+                                                          .venta.isEmpty
+                                                  ? RefreshIndicator(
+                                                      triggerMode:
+                                                          RefreshIndicatorTriggerMode
+                                                              .anywhere,
+                                                      onRefresh: () async {
+                                                        socioService
+                                                            .eliminarData();
+                                                        socioService
+                                                            .obtenerPedidos(
+                                                                filter: filter);
+                                                      },
+                                                      child:
+                                                          SingleChildScrollView(
+                                                        physics:
+                                                            const AlwaysScrollableScrollPhysics(),
+                                                        child: Container(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                      .symmetric(
+                                                                  vertical: 15),
+                                                          width:
+                                                              double.infinity,
+                                                          margin:
+                                                              const EdgeInsets
+                                                                      .only(
+                                                                  top: 25,
+                                                                  left: 25,
+                                                                  right: 25),
+                                                          child: Column(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .start,
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .center,
+                                                            children: [
+                                                              const Icon(
+                                                                Icons
+                                                                    .search_off,
+                                                                size: 65,
+                                                              ),
+                                                              const SizedBox(
+                                                                height: 5,
+                                                              ),
+                                                              Text(
+                                                                'Sin resultados',
+                                                                style: GoogleFonts
+                                                                    .quicksand(
+                                                                        fontSize:
+                                                                            15,
+                                                                        color: Colors
+                                                                            .black),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    )
+                                                  : Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        RefreshIndicator(
+                                                          onRefresh: () async {
+                                                            socioService
+                                                                .eliminarData();
+                                                            socioService
+                                                                .obtenerPedidos(
+                                                                    filter:
+                                                                        filter);
+                                                          },
+                                                          child:
+                                                              SingleChildScrollView(
+                                                            physics:
+                                                                const AlwaysScrollableScrollPhysics(),
+                                                            child: ListView
+                                                                .separated(
+                                                                    physics:
+                                                                        const NeverScrollableScrollPhysics(),
+                                                                    padding: const EdgeInsets
+                                                                            .symmetric(
+                                                                        horizontal:
+                                                                            25,
+                                                                        vertical:
+                                                                            5),
+                                                                    itemCount: socioService
+                                                                        .ventaCache
+                                                                        .venta
+                                                                        .length,
+                                                                    shrinkWrap:
+                                                                        true,
+                                                                    separatorBuilder:
+                                                                        (BuildContext
+                                                                                context,
+                                                                            int
+                                                                                index) {
+                                                                      return Container(
+                                                                        margin: const EdgeInsets.symmetric(
+                                                                            vertical:
+                                                                                4),
+                                                                        child:
+                                                                            Divider(
+                                                                          color: Colors
+                                                                              .grey
+                                                                              .withOpacity(.1),
+                                                                        ),
+                                                                      );
+                                                                    },
+                                                                    itemBuilder:
+                                                                        (BuildContext
+                                                                                context,
+                                                                            int index) {
+                                                                      return PedidoVentaWidget(
+                                                                          pedido: socioService
+                                                                              .ventaCache
+                                                                              .venta[index], showActions: false, confirmar: false,);
+                                                                    }),
+                                                          ),
+                                                        ),
+                                                      ],
                                                     ),
-                                                  ),
-                                                ),
-                                          const SizedBox(height: 10),
-                                          Container(
-                                            height: 170,
-                                            width: double.infinity,
-                                            margin: const EdgeInsets.symmetric(
-                                                horizontal: 25),
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                Text(
-                                                  'Sin pedidos por ahora :(',
-                                                  style: GoogleFonts.quicksand(
-                                                    color: Colors.black
-                                                        .withOpacity(.4),
-                                                    fontSize: 20,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          )
-                                        ],
-                                      ),
+                                        )
+                                      ],
                                     ),
-                                  ],
-                                ),
+                                  ),
+                                ],
                               ),
                         panel: Container(
-                          padding: const EdgeInsets.only(top: 25),
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[100],
                           ),
-                          height: 140,
+                          height: 200,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -330,8 +652,10 @@ class _SocioDashBoardViewState extends State<SocioDashBoardView>
                               const SizedBox(
                                 height: 20,
                               ),
-                              Expanded(
+                              SizedBox(
+                                height: 135,
                                 child: ListView.separated(
+                                  shrinkWrap: true,
                                   physics: const BouncingScrollPhysics(),
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 25),
@@ -457,6 +781,25 @@ class _SocioDashBoardViewState extends State<SocioDashBoardView>
     );
   }
 
+  Future<void> _navigateAndDisplaySelection(
+      {required BuildContext context,
+      required SocioService socioService}) async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const CalendarioWidget()),
+    );
+
+    if (result == null) return;
+
+    if (!mounted) return;
+
+    setState(() {
+      filter = result;
+    });
+    socioService.eliminarData();
+    socioService.obtenerPedidos(filter: filter);
+  }
+
   showAlertDialog(BuildContext context, bool state) {
     // set up the button
     Widget okButton = TextButton(
@@ -506,41 +849,4 @@ class _SocioDashBoardViewState extends State<SocioDashBoardView>
 
   @override
   bool get wantKeepAlive => true;
-}
-
-class MiembroEquipo extends StatelessWidget {
-  const MiembroEquipo({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      behavior: HitTestBehavior.translucent,
-      onTap: () {},
-      child: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(5),
-            width: 50,
-            height: 50,
-            decoration: BoxDecoration(
-                border:
-                    Border.all(width: 1, color: Colors.grey.withOpacity(.2)),
-                color: Colors.white,
-                shape: BoxShape.circle),
-            child: const Icon(
-              Icons.add,
-              color: Color.fromRGBO(62, 204, 191, 1),
-            ),
-          ),
-          const SizedBox(height: 5),
-          Text(
-            'Equipo',
-            style: GoogleFonts.quicksand(),
-          )
-        ],
-      ),
-    );
-  }
 }

@@ -6,7 +6,6 @@ import 'package:delivery/views/dashboard_view.dart';
 import 'package:delivery/views/login_view.dart';
 import 'package:delivery/views/order_register_view.dart';
 import 'package:delivery/views/orden_view.dart';
-import 'package:delivery/views/drawer/settings_drawer_view.dart';
 import 'package:fluro/fluro.dart';
 import 'package:provider/provider.dart';
 
@@ -35,15 +34,7 @@ class DashBoardHandlers {
   });
 
   /*HOME*/
-  static Handler settings = Handler(handlerFunc: (context, params) {
-    final authProvider = Provider.of<AuthService>(context!);
-    if (authProvider.authStatus == AuthStatus.authenticated) {
-      return const SettingsView();
-    } else {
-      const LoginView();
-    }
-    return null;
-  });
+  
   static Handler order = Handler(handlerFunc: (context, params) {
     final authProvider = Provider.of<AuthService>(context!);
     if (authProvider.authStatus == AuthStatus.authenticated) {

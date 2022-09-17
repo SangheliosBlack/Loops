@@ -70,17 +70,37 @@ class SocioService with ChangeNotifier {
 
   bool ventasCargadas = false;
 
-  obtenerPedidos({required String filter}) async {
+  eliminarData() {
     ventasCargadas = false;
     ventaCache.venta = [];
+    notifyListeners();
+  }
 
-    await Future.delayed(const Duration(milliseconds: 1000));
-
+  obtenerPedidos({required String filter}) async {
     final data = {'filtro': filter};
 
     try {
       final resp = await http.post(
           Uri.parse('${Statics.apiUrl}/tiendas/pedidos'),
+          body: jsonEncode(data),
+          headers: {
+            'Content-Type': 'application/json',
+            'x-token': await AuthService.getToken()
+          });
+
+      final ventas = ventaProFromJson(resp.body);
+      ventaCache = ventas;
+      ventasCargadas = true;
+      notifyListeners();
+    } catch (e) {}
+  }
+
+  obtenerEnvios({required String filter}) async {
+    final data = {'filtro': filter};
+
+    try {
+      final resp = await http.post(
+          Uri.parse('${Statics.apiUrl}/repartidor/envios'),
           body: jsonEncode(data),
           headers: {
             'Content-Type': 'application/json',
@@ -171,28 +191,29 @@ class SocioService with ChangeNotifier {
     }
   }
 
-  Future getTienda() async {
-    final data = {"token": await AuthService.getPuntoVenta()};
-
-    await Future.delayed(const Duration(seconds: 1));
+  getTienda() async {
     try {
-      final resp = await http.post(
-          Uri.parse('${Statics.apiUrl}/tiendas/obtenerTienda'),
-          body: jsonEncode(data),
-          headers: {
-            'Content-Type': 'application/json',
-            'x-token': await AuthService.getToken()
-          });
+      final data = {"token": await AuthService.getPuntoVenta()};
+      await Future.delayed(const Duration(seconds: 1));
+      try {
+        final resp = await http.post(
+            Uri.parse('${Statics.apiUrl}/tiendas/obtenerTienda'),
+            body: jsonEncode(data),
+            headers: {
+              'Content-Type': 'application/json',
+              'x-token': await AuthService.getToken()
+            });
 
-      final tiendaParse = tiendaFromJson(resp.body);
+        final tiendaParse = tiendaFromJson(resp.body);
 
-      tienda = tiendaParse;
+        if (resp.statusCode == 200) {
+          tienda = tiendaParse;
 
-      loadStatus = LoadStatus.isInitialized;
+          loadStatus = LoadStatus.isInitialized;
 
-      notifyListeners();
-
-      return tienda;
+          notifyListeners();
+        }
+      } catch (e) {}
     } catch (e) {}
   }
 }

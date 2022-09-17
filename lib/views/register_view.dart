@@ -1,6 +1,7 @@
 import 'package:delivery/models/errors.dart';
 import 'package:delivery/providers/register_form_provider.dart';
 import 'package:delivery/service/auth_service.dart';
+import 'package:delivery/service/navigator_service.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -413,7 +414,8 @@ class _RegisterViewState extends State<RegisterView> {
                                                   widget.dialCode);
 
                                           if (registroOk.isEmpty) {
-                                            Navigator.pop(context);
+                                            navigationService
+                                                .navigateToReplace('dashboard');
                                             Navigator.pop(context);
                                           } else {
                                             registerFormProvider

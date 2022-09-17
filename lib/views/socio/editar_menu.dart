@@ -1,5 +1,5 @@
 import 'package:delivery/models/tienda.dart';
-import 'package:delivery/widgets/producto_general.dart';
+import 'package:delivery/widgets/producto_general_socio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -25,21 +25,52 @@ class EditarMenuView extends StatelessWidget {
         backgroundColor: Colors.white,
         elevation: 0,
       ),
-      body:  AnnotatedRegion(
+      body: AnnotatedRegion(
         value: SystemUiOverlayStyle.dark,
-        child:ListView.separated(
-      padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 20),
-      shrinkWrap: true,
-      physics: const BouncingScrollPhysics(),
-      itemBuilder: (BuildContext context, int index) => ProductoGeneral(
-        producto:tienda.listaProductos[index],
-      ),
-      itemCount: tienda.listaProductos.length,
-      separatorBuilder: (BuildContext context, int index) =>
-          const SizedBox(height: 10),
-    ),
+        child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          child: Column(
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Producto',
+                      style: GoogleFonts.quicksand(
+                          color: Colors.black.withOpacity(0.8), fontSize: 25),
+                    ),
+                    Text(
+                      'Precio',
+                      style: GoogleFonts.quicksand(
+                          color: Colors.black.withOpacity(0.8), fontSize: 25),
+                    )
+                  ],
+                ),
+              ),
+              ListView.separated(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 25),
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemBuilder: (BuildContext context, int index) =>
+                    ProductoGeneralSocio(
+                  producto: tienda.listaProductos[index],
+                ),
+                itemCount: tienda.listaProductos.length,
+                separatorBuilder: (BuildContext context, int index) =>
+                    Container(
+                  padding: const EdgeInsets.symmetric(vertical: 5),
+                  child: Divider(
+                    color: Colors.grey.withOpacity(.1),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
 }
-

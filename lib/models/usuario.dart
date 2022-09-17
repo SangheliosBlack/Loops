@@ -25,6 +25,7 @@ class Usuario {
       required this.dialCode,
       required this.repartidor,
       required this.ultimaTarea,
+      required this.onlineRepartidor,
       required this.transito,
       required this.cesta});
   bool online;
@@ -48,8 +49,10 @@ class Usuario {
   bool repartidor;
   DateTime ultimaTarea;
   bool transito;
+  bool onlineRepartidor;
 
   factory Usuario.fromJson(Map<String, dynamic> json) => Usuario(
+    onlineRepartidor: json['online_repartidor'],
       online: json["online"],
       dialCode: json["dialCode"],
       direcciones: List<dynamic>.from(json["direcciones"].map((x) => x)),
@@ -70,8 +73,7 @@ class Usuario {
       codigo: json['codigo'] ?? '',
       nombreCodigo: json['nombreCodigo'] ?? "",
       idCodigo: json['idCodigo'] ?? "",
-      negocios: json['repartidor'] == true ? []: List<TiendaPrev>.from(
-          json['negocios'].map((x) => TiendaPrev.fromJson(x))));
+      negocios: []);
 }
 
 class TiendaPrev {

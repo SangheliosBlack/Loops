@@ -1,9 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:delivery/helpers/calculando_alerta.dart';
+import 'package:delivery/helpers/haversine.dart';
+import 'package:delivery/models/direccion.dart';
 import 'package:delivery/models/lista_opciones.dart';
 import 'package:delivery/models/productos.dart';
 import 'package:delivery/models/tienda.dart';
 import 'package:delivery/service/auth_service.dart';
+import 'package:delivery/service/direcciones.service.dart';
+import 'package:delivery/service/llenar_pantallas.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -33,6 +37,8 @@ class _VerProductoViewState extends State<VerProductoView> {
   @override
   Widget build(BuildContext context) {
     final authService = Provider.of<AuthService>(context);
+    final pantallasService = Provider.of<LlenarPantallasService>(context);
+    final direccionesService = Provider.of<DireccionesService>(context);
 
     double width = MediaQuery.of(context).size.width;
     return WillPopScope(
@@ -162,7 +168,7 @@ class _VerProductoViewState extends State<VerProductoView> {
                                 onRatingUpdate: (rating) {},
                               ),
                             ),
-                            const SizedBox(height: 7),
+                            const SizedBox(height: 5),
                             Text(
                               widget.producto.descripcion,
                               textAlign: TextAlign.start,
@@ -199,288 +205,342 @@ class _VerProductoViewState extends State<VerProductoView> {
                   ),
                 ),
               ),
-              Container(
-                margin: const EdgeInsets.symmetric(vertical: 35),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    GestureDetector(
-                      behavior: HitTestBehavior.translucent,
-                      onTap: cantidad > 1
-                          ? () {
-                              if (mounted) {
-                                setState(() {
-                                  cantidad--;
-                                });
+              !widget.soloTienda
+                  ? Container(
+                      margin: const EdgeInsets.symmetric(vertical: 35),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          GestureDetector(
+                            behavior: HitTestBehavior.translucent,
+                            onTap: cantidad > 1
+                                ? () {
+                                    if (mounted) {
+                                      setState(() {
+                                        cantidad--;
+                                      });
+                                    }
+                                  }
+                                : null,
+                            child: AnimatedContainer(
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: cantidad == 0
+                                    ? Border.all(
+                                        width: 1,
+                                        color: Colors.red.withOpacity(.8))
+                                    : Border.all(
+                                        width: 1,
+                                        color: Colors.grey.withOpacity(
+                                            cantidad > 1 ? .2 : .1)),
+                              ),
+                              duration: const Duration(milliseconds: 500),
+                              child: Icon(
+                                Icons.remove,
+                                color: cantidad == 0
+                                    ? Colors.red.withOpacity(.8)
+                                    : Colors.grey
+                                        .withOpacity(cantidad > 1 ? 1 : .4),
+                              ),
+                            ),
+                          ),
+                          Container(
+                              width: 30,
+                              margin:
+                                  const EdgeInsets.symmetric(horizontal: 20),
+                              child: Center(
+                                child: Text(cantidad.toString(),
+                                    style: GoogleFonts.quicksand(
+                                        color: Colors.black.withOpacity(.8),
+                                        fontSize: 30)),
+                              )),
+                          GestureDetector(
+                            behavior: HitTestBehavior.translucent,
+                            onTap: () {
+                              if (cantidad < 15) {
+                                if (mounted) {
+                                  setState(() {
+                                    cantidad++;
+                                  });
+                                }
                               }
-                            }
-                          : null,
-                      child: AnimatedContainer(
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: cantidad == 0
-                              ? Border.all(
-                                  width: 1, color: Colors.red.withOpacity(.8))
-                              : Border.all(
-                                  width: 1,
-                                  color: Colors.grey
-                                      .withOpacity(cantidad > 1 ? .2 : .1)),
-                        ),
-                        duration: const Duration(milliseconds: 500),
-                        child: Icon(
-                          Icons.remove,
-                          color: cantidad == 0
-                              ? Colors.red.withOpacity(.8)
-                              : Colors.grey.withOpacity(cantidad > 1 ? 1 : .4),
-                        ),
-                      ),
-                    ),
-                    Container(
-                        width: 30,
-                        margin: const EdgeInsets.symmetric(horizontal: 20),
-                        child: Center(
-                          child: Text(cantidad.toString(),
-                              style: GoogleFonts.quicksand(
-                                  color: Colors.black.withOpacity(.8),
-                                  fontSize: 30)),
-                        )),
-                    GestureDetector(
-                      behavior: HitTestBehavior.translucent,
-                      onTap: () {
-                        if (cantidad < 15) {
-                          if (mounted) {
-                            setState(() {
-                              cantidad++;
-                            });
-                          }
-                        }
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                              width: 1, color: Colors.grey.withOpacity(.2)),
-                        ),
-                        child: const Icon(
-                          Icons.add,
-                          color: Colors.grey,
-                        ),
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                    width: 1,
+                                    color: Colors.grey.withOpacity(.2)),
+                              ),
+                              child: const Icon(
+                                Icons.add,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          )
+                        ],
                       ),
                     )
-                  ],
-                ),
-              ),
-              Container(
-                margin: const EdgeInsets.only(bottom: 20),
-                padding: const EdgeInsets.symmetric(horizontal: 25),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    AnimatedSize(
-                      duration: const Duration(milliseconds: 400),
+                  : Container(),
+              !widget.soloTienda
+                  ? Container(
+                      margin: const EdgeInsets.only(bottom: 20),
+                      padding: const EdgeInsets.symmetric(horizontal: 25),
                       child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Column(
-                            children: [
-                              Text('Total :',
-                                  style: GoogleFonts.quicksand(
-                                      color: Colors.grey)),
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text('\$',
-                                      style: GoogleFonts.playfairDisplay(
-                                        fontWeight: FontWeight.bold,
-                                        color:
-                                            const Color.fromRGBO(65, 65, 66, 1),
-                                        fontSize: 19,
-                                      )),
-                                  const SizedBox(width: 3),
-                                  Row(
-                                    children: [
-                                      Text(
-                                          (widget.producto.precio * cantidad)
-                                              .toStringAsFixed(2),
-                                          style: GoogleFonts.quicksand(
-                                            color: const Color.fromRGBO(
-                                                65, 65, 66, 1),
-                                            fontSize: 25,
-                                          )),
-                                    ],
-                                  ),
-                                ],
-                              )
-                            ],
-                          ),
-                          authService.calcularOpcionesExtra(
-                                          opciones: widget.producto.opciones) *
-                                      cantidad >
-                                  0
-                              ? Row(
+                          AnimatedSize(
+                            duration: const Duration(milliseconds: 400),
+                            child: Row(
+                              children: [
+                                Column(
                                   children: [
-                                    Column(
-                                      children: [
-                                        const SizedBox(
-                                          height: 18,
-                                        ),
-                                        Row(
-                                          children: [
-                                            const SizedBox(width: 3),
-                                            Center(
-                                              child: Text('+',
-                                                  style: GoogleFonts
-                                                      .playfairDisplay(
-                                                    color: Colors.blue,
-                                                    fontSize: 17,
-                                                  )),
-                                            ),
-                                            const SizedBox(width: 3),
-                                          ],
-                                        )
-                                      ],
-                                    ),
-                                    Column(
+                                    Text('Total :',
+                                        style: GoogleFonts.quicksand(
+                                            color: Colors.grey)),
+                                    Row(
                                       crossAxisAlignment:
-                                          CrossAxisAlignment.center,
+                                          CrossAxisAlignment.start,
                                       children: [
-                                        Text('Extra :',
-                                            style: GoogleFonts.quicksand(
-                                                color: Colors.blue)),
+                                        Text('\$',
+                                            style: GoogleFonts.playfairDisplay(
+                                              fontWeight: FontWeight.bold,
+                                              color: const Color.fromRGBO(
+                                                  65, 65, 66, 1),
+                                              fontSize: 19,
+                                            )),
+                                        const SizedBox(width: 3),
                                         Row(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
                                           children: [
-                                            Row(
-                                              children: [
-                                                Text(
-                                                    (authService.calcularOpcionesExtra(
-                                                                opciones: widget
-                                                                    .producto
-                                                                    .opciones) *
-                                                            cantidad)
-                                                        .toStringAsFixed(2),
-                                                    style:
-                                                        GoogleFonts.quicksand(
-                                                      color: Colors.blue,
-                                                      fontSize: 25,
-                                                    )),
-                                              ],
-                                            ),
+                                            Text(
+                                                (widget.producto.precio *
+                                                        cantidad)
+                                                    .toStringAsFixed(2),
+                                                style: GoogleFonts.quicksand(
+                                                  color: const Color.fromRGBO(
+                                                      65, 65, 66, 1),
+                                                  fontSize: 25,
+                                                )),
                                           ],
-                                        )
+                                        ),
                                       ],
-                                    ),
+                                    )
                                   ],
+                                ),
+                                authService.calcularOpcionesExtra(
+                                                opciones:
+                                                    widget.producto.opciones) *
+                                            cantidad >
+                                        0
+                                    ? Row(
+                                        children: [
+                                          Column(
+                                            children: [
+                                              const SizedBox(
+                                                height: 18,
+                                              ),
+                                              Row(
+                                                children: [
+                                                  const SizedBox(width: 3),
+                                                  Center(
+                                                    child: Text('+',
+                                                        style: GoogleFonts
+                                                            .playfairDisplay(
+                                                          color: Colors.blue,
+                                                          fontSize: 17,
+                                                        )),
+                                                  ),
+                                                  const SizedBox(width: 3),
+                                                ],
+                                              )
+                                            ],
+                                          ),
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              Text('Extra :',
+                                                  style: GoogleFonts.quicksand(
+                                                      color: Colors.blue)),
+                                              Row(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: [
+                                                  Row(
+                                                    children: [
+                                                      Text(
+                                                          (authService.calcularOpcionesExtra(
+                                                                      opciones: widget
+                                                                          .producto
+                                                                          .opciones) *
+                                                                  cantidad)
+                                                              .toStringAsFixed(
+                                                                  2),
+                                                          style: GoogleFonts
+                                                              .quicksand(
+                                                            color: Colors.blue,
+                                                            fontSize: 25,
+                                                          )),
+                                                    ],
+                                                  ),
+                                                ],
+                                              )
+                                            ],
+                                          ),
+                                        ],
+                                      )
+                                    : Container()
+                              ],
+                            ),
+                          ),
+                          !widget.soloTienda
+                              ? Expanded(
+                                  child: Builder(builder: (context) {
+                                    obtenerFavorito(
+                                        List<Direccion> direcciones) {
+                                      final busqueda = direcciones.indexWhere(
+                                          (element) => element.predeterminado);
+                                      return busqueda;
+                                    }
+
+                                    var objeto = pantallasService.tiendas
+                                        .firstWhere((element) =>
+                                            element.nombre ==
+                                            widget.producto.tienda);
+
+                                    return GestureDetector(
+                                      behavior: HitTestBehavior.translucent,
+                                      onTap: widget.tienda.online == false
+                                          ? () async {
+                                              final snackBar = SnackBar(
+                                                duration:
+                                                    const Duration(seconds: 3),
+                                                backgroundColor: Colors.red,
+                                                content: Text(
+                                                  '${widget.tienda.nombre} se encuentra fuera de servicio vuelve en su horario de atencion entre ${DateFormat('h:mm a', 'es-MX').format(widget.tienda.horario.apertura).toString()} y ${DateFormat('h:mm a', 'es-MX').format(widget.tienda.horario.cierre).toString()}',
+                                                  style:
+                                                      GoogleFonts.quicksand(),
+                                                ),
+                                              );
+
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(snackBar);
+                                            }
+                                          : authService.listadoTemp.fold<num>(
+                                                      0,
+                                                      (previousValue,
+                                                              element) =>
+                                                          element
+                                                              .listado.length +
+                                                          previousValue) >=
+                                                  widget
+                                                      .producto.opciones
+                                                      .fold<num>(
+                                                          0,
+                                                          (previousValue,
+                                                                  element) =>
+                                                              element.minimo +
+                                                              previousValue)
+                                              ? () async {
+                                                  calculandoAlerta(context);
+                                                  await authService.agregarProductoCesta(
+                                                      producto: widget.producto,
+                                                      cantidad: cantidad,
+                                                      listado: opcionesFinales(opciones: authService.listadoTemp),
+                                                      envio: calculateDistance(
+                                                          lat1: objeto.coordenadas.latitud,
+                                                          lon1: objeto.coordenadas.longitud,
+                                                          lat2: direccionesService
+                                                              .direcciones[authService.usuario.cesta.direccion.titulo != ''
+                                                                  ? direccionesService.direcciones.indexWhere((element) => authService.usuario.cesta.direccion.titulo == element.titulo)
+                                                                  : obtenerFavorito(direccionesService.direcciones) != -1
+                                                                      ? obtenerFavorito(direccionesService.direcciones)
+                                                                      : 0]
+                                                              .coordenadas
+                                                              .lat,
+                                                          lon2: direccionesService
+                                                              .direcciones[authService.usuario.cesta.direccion.titulo != ''
+                                                                  ? direccionesService.direcciones.indexWhere((element) => authService.usuario.cesta.direccion.titulo == element.titulo)
+                                                                  : obtenerFavorito(direccionesService.direcciones) != -1
+                                                                      ? obtenerFavorito(direccionesService.direcciones)
+                                                                      : 0]
+                                                              .coordenadas
+                                                              .lng));
+                                                  Navigator.pop(context);
+                                                  Navigator.pop(context);
+                                                  final snackBar = SnackBar(
+                                                    duration: const Duration(
+                                                        seconds: 2),
+                                                    backgroundColor:
+                                                        const Color.fromRGBO(
+                                                            0, 0, 0, 1),
+                                                    content: Text(
+                                                      '${widget.producto.nombre} x $cantidad agregado',
+                                                      style:
+                                                          GoogleFonts.quicksand(
+                                                        color: Colors.white,
+                                                      ),
+                                                    ),
+                                                  );
+
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(snackBar);
+                                                }
+                                              : null,
+                                      child: AnimatedContainer(
+                                          duration:
+                                              const Duration(milliseconds: 200),
+                                          margin:
+                                              const EdgeInsets.only(left: 20),
+                                          padding: const EdgeInsets.all(15),
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(35),
+                                              border: Border.all(
+                                                  width: 1,
+                                                  color: Colors.black.withOpacity(
+                                                      authService.listadoTemp.fold<num>(
+                                                                  0,
+                                                                  (previousValue, element) =>
+                                                                      element
+                                                                          .listado
+                                                                          .length +
+                                                                      previousValue) >=
+                                                              widget.producto.opciones
+                                                                  .fold<num>(0, (previousValue, element) => element.minimo + previousValue)
+                                                          ? .8
+                                                          : .1))),
+                                          child: Center(
+                                            child: Text(
+                                              'Agregar',
+                                              style: GoogleFonts.quicksand(
+                                                  color: Colors.black.withOpacity(authService
+                                                              .listadoTemp
+                                                              .fold<num>(
+                                                                  0,
+                                                                  (previousValue, element) =>
+                                                                      element.listado.length +
+                                                                      previousValue) >=
+                                                          widget.producto.opciones.fold<num>(
+                                                              0,
+                                                              (previousValue,
+                                                                      element) =>
+                                                                  element.minimo + previousValue)
+                                                      ? .8
+                                                      : .1),
+                                                  fontSize: 20),
+                                            ),
+                                          )),
+                                    );
+                                  }),
                                 )
                               : Container()
                         ],
                       ),
-                    ),
-                    Expanded(
-                      child: Builder(builder: (context) {
-                        return GestureDetector(
-                          behavior: HitTestBehavior.translucent,
-                          onTap: widget.tienda.online == false
-                              ? () async {
-                                  final snackBar = SnackBar(
-                                    duration: const Duration(seconds: 3),
-                                    backgroundColor: Colors.red,
-                                    content: Text(
-                                      '${widget.tienda.nombre} se encuentra fuera de servicio vuelve en su horario de atencion entre ${DateFormat('h:mm a', 'es-MX').format(widget.tienda.horario.apertura).toString()} y ${DateFormat('h:mm a', 'es-MX').format(widget.tienda.horario.cierre).toString()}',
-                                      style: GoogleFonts.quicksand(),
-                                    ),
-                                  );
-
-                                  ScaffoldMessenger.of(context)
-                                      .showSnackBar(snackBar);
-                                }
-                              : authService.listadoTemp.fold<num>(
-                                          0,
-                                          (previousValue, element) =>
-                                              element.listado.length +
-                                              previousValue) >=
-                                      widget.producto.opciones.fold<num>(
-                                          0,
-                                          (previousValue, element) =>
-                                              element.minimo + previousValue)
-                                  ? () async {
-                                      calculandoAlerta(context);
-                                      await authService.agregarProductoCesta(
-                                          producto: widget.producto,
-                                          cantidad: cantidad,
-                                          listado: opcionesFinales(
-                                              opciones:
-                                                  authService.listadoTemp));
-                                      Navigator.pop(context);
-                                      Navigator.pop(context);
-                                      final snackBar = SnackBar(
-                                        duration: const Duration(seconds: 2),
-                                        backgroundColor:
-                                            const Color.fromRGBO(0, 0, 0, 1),
-                                        content: Text(
-                                          '${widget.producto.nombre} x $cantidad agregado',
-                                          style: GoogleFonts.quicksand(
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                      );
-
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(snackBar);
-                                    }
-                                  : null,
-                          child: AnimatedContainer(
-                              duration: const Duration(milliseconds: 200),
-                              margin: const EdgeInsets.only(left: 20),
-                              padding: const EdgeInsets.all(15),
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(35),
-                                  border: Border.all(
-                                      width: 1,
-                                      color: Colors.black.withOpacity(authService
-                                                  .listadoTemp
-                                                  .fold<num>(
-                                                      0,
-                                                      (previousValue, element) =>
-                                                          element.listado.length +
-                                                          previousValue) >=
-                                              widget.producto.opciones.fold<num>(
-                                                  0,
-                                                  (previousValue, element) =>
-                                                      element.minimo +
-                                                      previousValue)
-                                          ? .8
-                                          : .1))),
-                              child: Center(
-                                child: Text(
-                                  'Agregar',
-                                  style: GoogleFonts.quicksand(
-                                      color: Colors.black.withOpacity(authService
-                                                  .listadoTemp
-                                                  .fold<num>(
-                                                      0,
-                                                      (previousValue, element) =>
-                                                          element
-                                                              .listado.length +
-                                                          previousValue) >=
-                                              widget.producto.opciones.fold<num>(
-                                                  0,
-                                                  (previousValue, element) =>
-                                                      element.minimo +
-                                                      previousValue)
-                                          ? .8
-                                          : .1),
-                                      fontSize: 20),
-                                ),
-                              )),
-                        );
-                      }),
                     )
-                  ],
-                ),
-              )
+                  : Container()
             ],
           ),
         ),

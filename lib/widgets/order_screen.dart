@@ -1349,7 +1349,7 @@ class _PaymentSummaryState extends State<PaymentSummary> {
                         )
                       : Container(),
                   Text(
-                    '\$ ${authService.calcularTotal() > 0 ? (18 * authService.calcularTiendas()).toStringAsFixed(2) : '0.00'}',
+                    '\$ ${authService.calcularTotal() > 0 ? authService.calcularEnvioAvanzado(tiendas: pantallaService.tiendas, direcciones: direccionesService.direcciones).toStringAsFixed(2) : '0.00'}',
                     style: GoogleFonts.quicksand(fontSize: 18),
                   ),
                 ],
@@ -1376,7 +1376,7 @@ class _PaymentSummaryState extends State<PaymentSummary> {
                         )
                       : Container(),
                   Text(
-                    '\$ ${authService.calcularTotal() > 0 ? ((11 * authService.calcularTiendas()) + (authService.calcularTiendas() > 1 ? 4 * authService.calcularTiendas() : 0)).toStringAsFixed(2) : '0.00'}',
+                    '\$ ${authService.calcularTotal() > 0 ? ((10.2 * authService.calcularTiendas()).toStringAsFixed(2)) : '0.00'}',
                     style: GoogleFonts.quicksand(fontSize: 18),
                   ),
                 ],
@@ -1411,7 +1411,7 @@ class _PaymentSummaryState extends State<PaymentSummary> {
                               ),
                               const SizedBox(width: 6),
                               Text(
-                                '- \$ ${authService.calcularTotal() > 0 ? (18 * authService.calcularTiendas()).toStringAsFixed(2) : '0.00'}',
+                                '- \$ ${authService.calcularTotal() > 0 ? authService.calcularEnvioAvanzado(tiendas: pantallaService.tiendas, direcciones: direccionesService.direcciones).toStringAsFixed(2) : '0.00'}',
                                 style: GoogleFonts.quicksand(
                                     fontSize: 18, color: Colors.blue),
                               ),
@@ -1432,12 +1432,19 @@ class _PaymentSummaryState extends State<PaymentSummary> {
                 style: GoogleFonts.quicksand(),
               ),
               Text(
-                '\$ ${authService.calcularTotal() == 0 ? "0.00" : ((authService.calcularTiendas() > 1 ? 4 * authService.calcularTiendas() : 0) + -(authService.usuario.cesta.codigo != '' ? 18 * authService.calcularTiendas() : 0) + authService.calcularTotal() + (11 * authService.calcularTiendas()) + (18 * authService.calcularTiendas())).toStringAsFixed(2)}',
+                '\$ ${authService.calcularTotal() == 0 ? "0.00" : (-(authService.usuario.cesta.codigo != '' ? authService.calcularEnvioAvanzado(tiendas: pantallaService.tiendas, direcciones: direccionesService.direcciones) : 0) + authService.calcularTotal() + (10.2 * authService.calcularTiendas()) + authService.calcularEnvioAvanzado(tiendas: pantallaService.tiendas, direcciones: direccionesService.direcciones)).toStringAsFixed(2)}',
                 style: GoogleFonts.quicksand(fontSize: 18),
               )
             ],
           ),
           const SizedBox(height: 10),
+          authService.calcularTotal() >= 999 &&
+                  authService.usuario.cesta.efectivo
+              ? Text(
+                  'Por politica de Loops los pedidos mayores a 999 mxn en efectivo no pueden ser procesados, agregue un metodo de pago para continuar.',
+                  style: GoogleFonts.quicksand(color: Colors.red),
+                )
+              : Container(),
           Row(
             children: [
               Expanded(
@@ -1448,7 +1455,107 @@ class _PaymentSummaryState extends State<PaymentSummary> {
                           false
                       ? authService.usuario.cesta.productos.isEmpty ||
                               direccionesService.direcciones.isEmpty
-                          ? null
+                          ? authService.calcularTotal() >= 999 &&
+                                  authService.usuario.cesta.efectivo
+                              ? null
+                              : () async {
+                                  calculandoAlerta(context);
+                                  /*NotificationApi.showNotification(
+                              title: 'Titulos',
+                              body: 'Body',
+                              payload: 'sarah.abs');*/
+                                  /*socketService.emit('mensaje-personal', {
+                            'direccion': direccionesService.direcciones[
+                                authService.usuario.cesta.direccion.titulo != ''
+                                    ? direccionesService.direcciones.indexWhere(
+                                        (element) =>
+                                            authService.usuario.cesta.direccion
+                                                .titulo ==
+                                            element.titulo)
+                                    : obtenerFavorito(direccionesService
+                                                .direcciones) !=
+                                            -1
+                                        ? obtenerFavorito(
+                                            direccionesService.direcciones)
+                                        : 0],
+                            'tarjeta': busqueda2 != -1
+                                ? tarjetasService.listaTarjetas[busqueda2].id
+                                : tarjetasService
+                                    .listaTarjetas[
+                                        busqueda != -1 ? busqueda : 0]
+                                    .id,
+                            'customer_id': authService.usuario.customerID,
+                            'efectivo': authService.usuario.cesta.efectivo,
+                            'prodcutos': authService.usuario.cesta.productos
+                          });*/
+                                  final busqueda = tarjetasService.listaTarjetas
+                                      .indexWhere((element) =>
+                                          element.id ==
+                                          customerService
+                                              .tarjetaPredeterminada);
+                                  final busqueda2 = tarjetasService
+                                      .listaTarjetas
+                                      .indexWhere((element) =>
+                                          element.id ==
+                                          authService.usuario.cesta.tarjeta);
+                                  final venta = await authService.crearPedido(
+                                      direccion: direccionesService.direcciones[
+                                          authService.usuario.cesta.direccion.titulo !=
+                                                  ''
+                                              ? direccionesService.direcciones
+                                                  .indexWhere((element) =>
+                                                      authService.usuario.cesta
+                                                          .direccion.titulo ==
+                                                      element.titulo)
+                                              : obtenerFavorito(direccionesService.direcciones) !=
+                                                      -1
+                                                  ? obtenerFavorito(
+                                                      direccionesService
+                                                          .direcciones)
+                                                  : 0],
+                                      tarjeta: busqueda2 != -1
+                                          ? tarjetasService
+                                              .listaTarjetas[busqueda2].id
+                                          : tarjetasService
+                                                  .listaTarjetas.isNotEmpty
+                                              ? tarjetasService
+                                                  .listaTarjetas[busqueda != -1 ? busqueda : 0]
+                                                  .id
+                                              : '',
+                                      customer: customerService.customer,
+                                      envio: authService.calcularEnvioAvanzado(tiendas: pantallaService.tiendas, direcciones: direccionesService.direcciones));
+
+                                  if (venta != null) {
+                                    pedidosService.agregarCompra(venta: venta);
+                                    // socketService.socket
+                                    //     .emit('enviar-pedido', venta);
+                                    scrollListView2(
+                                        controller: widget.controller);
+                                    Navigator.pop(context);
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => DoneView(
+                                                venta: venta,
+                                              )),
+                                    );
+                                  } else {
+                                    final snackBar = SnackBar(
+                                      duration: const Duration(seconds: 2),
+                                      backgroundColor:
+                                          const Color.fromRGBO(0, 0, 0, 1),
+                                      content: Text(
+                                        'Error desconocido',
+                                        style: GoogleFonts.quicksand(
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    );
+
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(snackBar);
+                                  }
+                                }
                           : () async {
                               calculandoAlerta(context);
                               /*NotificationApi.showNotification(
@@ -1493,8 +1600,7 @@ class _PaymentSummaryState extends State<PaymentSummary> {
                                           ''
                                       ? direccionesService.direcciones
                                           .indexWhere((element) =>
-                                              authService.usuario.cesta
-                                                  .direccion.titulo ==
+                                              authService.usuario.cesta.direccion.titulo ==
                                               element.titulo)
                                       : obtenerFavorito(direccionesService.direcciones) !=
                                               -1
@@ -1510,7 +1616,10 @@ class _PaymentSummaryState extends State<PaymentSummary> {
                                                   busqueda != -1 ? busqueda : 0]
                                               .id
                                           : '',
-                                  customer: customerService.customer);
+                                  customer: customerService.customer,
+                                  envio: authService.calcularEnvioAvanzado(
+                                      tiendas: pantallaService.tiendas,
+                                      direcciones: direccionesService.direcciones));
 
                               if (venta != null) {
                                 pedidosService.agregarCompra(venta: venta);
@@ -1551,7 +1660,10 @@ class _PaymentSummaryState extends State<PaymentSummary> {
                             false
                         ? authService.usuario.cesta.productos.isEmpty ||
                                 direccionesService.direcciones.isEmpty
-                            ? .1
+                            ? authService.calcularTotal() >= 999 &&
+                                    authService.usuario.cesta.efectivo
+                                ? .1
+                                : 1
                             : 1
                         : .1,
                     child: Container(
