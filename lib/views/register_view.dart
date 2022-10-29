@@ -2,6 +2,7 @@ import 'package:delivery/models/errors.dart';
 import 'package:delivery/providers/register_form_provider.dart';
 import 'package:delivery/service/auth_service.dart';
 import 'package:delivery/service/navigator_service.dart';
+import 'package:delivery/views/terminos_y_condiciones.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -375,7 +376,40 @@ class _RegisterViewState extends State<RegisterView> {
                                 ),
                               ),
                               const SizedBox(
-                                height: 20,
+                                height: 5,
+                              ),
+                              GestureDetector(
+                                behavior: HitTestBehavior.translucent,
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const TerminosCondicionesView()),
+                                  );
+                                },
+                                child: Container(
+                                  alignment: Alignment.center,
+                                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                                  margin: const EdgeInsets.only(bottom: 15),
+                                  child: RichText(
+                                    text: TextSpan(
+                                      text: 'Al hacer clic en ',
+                                      style: GoogleFonts.quicksand(
+                                          color: Colors.black.withOpacity(.8)),
+                                      children: <TextSpan>[
+                                        TextSpan(
+                                            text: '"Registrarme"',
+                                            style: GoogleFonts.quicksand(
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.blue)),
+                                        const TextSpan(
+                                            text:
+                                                ' , aceptas nuestras Condiciones, la Política de privacidad.'),
+                                      ],
+                                    ),
+                                  ),
+                                ),
                               ),
                               AnimatedContainer(
                                 height: 60,

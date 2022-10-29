@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:ffi';
 import 'dart:io';
 
 import 'package:delivery/global/enviroment.dart';
@@ -110,7 +109,6 @@ class AuthService with ChangeNotifier {
             'Content-Type': 'application/json',
             'x-token': await AuthService.getToken()
           });
-      print(resp.body);
       if (resp.statusCode == 200) {
         usuario.transito = true;
         notifyListeners();
@@ -119,7 +117,29 @@ class AuthService with ChangeNotifier {
         return false;
       }
     } catch (e) {
-      print(e);
+      return false;
+    }
+  }
+
+  Future<bool> transitoUsuarioOff() async {
+    final data = {'id': usuario.uid};
+
+    try {
+      final resp = await http.post(
+          Uri.parse('${Statics.apiUrl}/repartidor/transitoUsuarioOff'),
+          body: jsonEncode(data),
+          headers: {
+            'Content-Type': 'application/json',
+            'x-token': await AuthService.getToken()
+          });
+      if (resp.statusCode == 200) {
+        usuario.transito = true;
+        notifyListeners();
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
       return false;
     }
   }
@@ -218,6 +238,7 @@ class AuthService with ChangeNotifier {
   }
 
   Future<bool> isLoggedIn() async {
+    await Future.delayed(const Duration(seconds: 1));
     final pushProvider = PushNotificationProvider();
     final tokenFirebase = await pushProvider.firebaseMessaging.getToken();
     try {
@@ -248,14 +269,14 @@ class AuthService with ChangeNotifier {
   }
 
   Future _guardarToken(String token, bool isSocio, String token2) async {
+    await LocalStorage.prefs.setString('token', token);
+    await LocalStorage.prefs.setString('token2', token2);
     authStatus = AuthStatus.authenticated;
     buttonStatus = ButtonStatus.disponible;
     if (isSocio) {
       puntoVentaStatus = PuntoVenta.isAvailable;
-      LocalStorage.prefs.setString('punto_venta', token2);
     }
     notifyListeners();
-    LocalStorage.prefs.setString('token', token);
   }
 
   /*Future cambiarDireccionFavorita(String id) async {
@@ -274,7 +295,7 @@ class AuthService with ChangeNotifier {
   }
 
   static Future<String> getPuntoVenta() async {
-    final token = LocalStorage.prefs.getString('punto_venta');
+    final token = LocalStorage.prefs.getString('token2');
     return token!;
   }
 

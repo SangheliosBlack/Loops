@@ -395,7 +395,24 @@ class _StoreIndividualState extends State<StoreIndividual> {
                                             ],
                                           ),
                                         )
-                                      : Container()),
+                                      : Row(children: [
+                                        const Icon(
+                                          Icons.place_outlined,
+                                          color: Colors.white,
+                                          size: 15,
+                                        ),
+                                        const SizedBox(width: 5),
+                                        SizedBox(
+                                          width: width - 170,
+                                          child: Text(
+                                              widget.tienda.direccion,
+                                              overflow:
+                                                  TextOverflow.ellipsis,
+                                              style: GoogleFonts.quicksand(
+                                                  color: Colors.white,
+                                                  fontSize: 13)),
+                                        )
+                                      ])),
                               Positioned(
                                   left: 140,
                                   bottom: 120,

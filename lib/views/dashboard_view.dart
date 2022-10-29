@@ -391,14 +391,16 @@ class _DashBoardMainViewState extends State<DashBoardMainView>
           child: widget.llenarPantallasService.tiendas.isNotEmpty &&
                   widget.llenarPantallasService.categorias.isNotEmpty &&
                   widget.llenarPantallasService.productos.isNotEmpty
-              ? Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  BaraBusqueda(width: widget.width),
-                  const ListadoCategorias(),
-                  const SizedBox(height: 10),
-                  ListadoEstablecimientos(
-                      height: widget.height, width: widget.width),
-                  const ListaProductos(),
-                ])
+              ? Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                      BaraBusqueda(width: widget.width),
+                      const ListadoCategorias(),
+                      const SizedBox(height: 10),
+                      ListadoEstablecimientos(
+                          height: widget.height, width: widget.width),
+                      const ListaProductos(),
+                    ])
               : const LinearProgressIndicator(
                   minHeight: 1,
                   backgroundColor: Color.fromRGBO(41, 200, 182, 1),

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:delivery/global/enviroment.dart';
 import 'package:delivery/models/venta_response.dart';
 import 'package:delivery/service/auth_service.dart';
@@ -24,6 +26,7 @@ class PedidosService with ChangeNotifier {
         'x-token': await AuthService.getToken()
       });
 
+      log(resp.body);
       final lista = ventaResponseFromJson(resp.body);
 
       if (lista.isNotEmpty) {

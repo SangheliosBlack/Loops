@@ -15,7 +15,6 @@ Future<bool> confirmarEliminacion(
             shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(15.0))),
             content: SizedBox(
-              height: 250,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -26,7 +25,11 @@ Future<bool> confirmarEliminacion(
                         shape: BoxShape.circle,
                         color: Colors.grey.withOpacity(.05)),
                     child: Icon(
-                      tipo == 0 ? Icons.place : tipo == 1? Icons.credit_card : Icons.restaurant_menu,
+                      tipo == 0
+                          ? Icons.place
+                          : tipo == 1
+                              ? Icons.credit_card
+                              : Icons.restaurant_menu,
                       size: 50,
                       color: Colors.grey,
                     ),

@@ -595,6 +595,13 @@ class ListadoOpcinesWidget extends StatelessWidget {
                     style: GoogleFonts.quicksand(
                       fontSize: 16,
                     )),
+                opcion.listado.isNotEmpty
+                    ? Text(
+                        '+ ${opcion.listado.length}',
+                        style: GoogleFonts.quicksand(
+                            fontSize: 13, color: Colors.grey),
+                      )
+                    : Container()
                 /*Text(
                     authService.listadoTemp.indexWhere(
                                 (element) => element.index == index) ==

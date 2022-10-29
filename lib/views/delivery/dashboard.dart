@@ -1,4 +1,4 @@
-import 'dart:ui';
+// ignore_for_file: empty_catches
 
 import 'package:delivery/global/enviroment.dart';
 import 'package:delivery/helpers/mostrar_carga.dart';
@@ -72,7 +72,7 @@ class _DashBoardViewRepartidorState extends State<DashBoardViewRepartidor>
                 SingleChildScrollView(
                   physics: const NeverScrollableScrollPhysics(),
                   child: SizedBox(
-                    height: height,
+                    height: height - 30,
                     width: width,
                     child: GoogleMap(
                       padding: const EdgeInsets.all(10),
@@ -227,804 +227,952 @@ class _DashBoardViewRepartidorState extends State<DashBoardViewRepartidor>
                                       int valor = repartidorService.listaEnvios
                                           .indexWhere((element) =>
                                               !element.entregadoCliente);
-                                      final nombre = repartidorService
-                                          .listaEnvios[valor].usuario.nombre
-                                          .split(' ');
-                                      return AnimatedSize(
-                                        duration:
-                                            const Duration(milliseconds: 400),
-                                        child:
-                                            repartidorService.listaEnvios[valor]
-                                                    .entregadoRepartidor
-                                                ? Container(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            20),
-                                                    width: width,
-                                                    decoration: BoxDecoration(
-                                                        color: Colors.white,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(25)),
-                                                    child: Column(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .start,
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          Row(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .spaceBetween,
-                                                            children: [
-                                                              Text(
-                                                                nombre[0] +
-                                                                    ' ' +
-                                                                    nombre[1]
-                                                                        [0],
-                                                                style: GoogleFonts
-                                                                    .quicksand(
-                                                                        fontSize:
-                                                                            22,
-                                                                        color: Colors
-                                                                            .blue),
-                                                              ),
-                                                              GestureDetector(
-                                                                behavior:
-                                                                    HitTestBehavior
-                                                                        .translucent,
-                                                                onTap:
-                                                                    () async {
-                                                                  FlutterPhoneDirectCaller
-                                                                          .callNumber(
-                                                                              '4741030509')
-                                                                      .then(
-                                                                          (value) {
-                                                                    try {
-                                                                      if (value!) {
-                                                                        final snackBar =
-                                                                            SnackBar(
-                                                                          duration:
-                                                                              const Duration(seconds: 2),
-                                                                          backgroundColor:
-                                                                              Colors.red,
-                                                                          content:
-                                                                              Text(
-                                                                            'Permiso denegado, caracteristica limitada.',
-                                                                            style:
-                                                                                GoogleFonts.quicksand(),
-                                                                          ),
-                                                                        );
 
-                                                                        ScaffoldMessenger.of(context)
-                                                                            .showSnackBar(snackBar);
-                                                                      }
-                                                                    } catch (e) {}
-                                                                  });
-                                                                },
-                                                                child:
-                                                                    Container(
-                                                                  padding: const EdgeInsets
-                                                                          .symmetric(
-                                                                      vertical:
-                                                                          8,
-                                                                      horizontal:
-                                                                          15),
-                                                                  decoration: BoxDecoration(
-                                                                      border: Border.all(
-                                                                          width:
-                                                                              1,
-                                                                          color:
-                                                                              Colors.blue)),
-                                                                  child: Text(
-                                                                    'Llamar',
-                                                                    style: GoogleFonts
-                                                                        .quicksand(
-                                                                            color:
-                                                                                Colors.blue),
-                                                                  ),
-                                                                ),
-                                                              )
-                                                            ],
-                                                          ),
-                                                          const SizedBox(
-                                                            height: 10,
-                                                          ),
-                                                          Row(
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .center,
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .center,
-                                                            children: [
-                                                              Container(
-                                                                decoration: BoxDecoration(
-                                                                    shape: BoxShape
-                                                                        .circle,
-                                                                    border: Border.all(
-                                                                        width:
-                                                                            1,
-                                                                        color: Colors
-                                                                            .grey
-                                                                            .withOpacity(.2))),
-                                                                padding:
-                                                                    const EdgeInsets
-                                                                        .all(5),
-                                                                child:
-                                                                    const Icon(
-                                                                  Icons
-                                                                      .place_outlined,
-                                                                  color: Colors
-                                                                      .blueGrey,
-                                                                ),
-                                                              ),
-                                                              const SizedBox(
-                                                                width: 10,
-                                                              ),
-                                                              Expanded(
-                                                                child: Text(
-                                                                  repartidorService
-                                                                      .listaEnvios[
-                                                                          valor]
-                                                                      .direccionCliente
-                                                                      .titulo,
-                                                                  style: GoogleFonts.quicksand(
-                                                                      color: Colors
-                                                                          .black
-                                                                          .withOpacity(
-                                                                              .8),
-                                                                      fontSize:
-                                                                          15),
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          VerificationCode(
-                                                              itemSize: (width -
-                                                                      90) /
-                                                                  4,
-                                                              underlineWidth: 1,
-                                                              textStyle: GoogleFonts.quicksand(
-                                                                  fontSize:
-                                                                      20.0,
-                                                                  color:
-                                                                      const Color.fromRGBO(
-                                                                          41,
-                                                                          199,
-                                                                          184,
-                                                                          1)),
-                                                              keyboardType:
-                                                                  TextInputType
-                                                                      .number,
-                                                              underlineColor:
-                                                                  Colors.blue,
-                                                              length: 4,
-                                                              cursorColor:
-                                                                  Colors.blue,
-                                                              digitsOnly: true,
-                                                              onCompleted: (String
-                                                                  value) async {
-                                                                mostrarCarga(
-                                                                    context);
-                                                                await Future.delayed(
-                                                                    const Duration(
-                                                                        seconds:
-                                                                            1));
-                                                                Navigator.pop(
-                                                                    context);
-                                                                Navigator.push(
-                                                                  context,
-                                                                  MaterialPageRoute(
-                                                                      builder:
-                                                                          (context) =>
-                                                                              const DoneDeliveryView()),
-                                                                );
-                                                              },
-                                                              onEditing:
-                                                                  (bool value) {
-                                                                setState(() {
-                                                                  _onEditing =
-                                                                      value;
-                                                                });
-                                                                if (!_onEditing) {
-                                                                  FocusScope.of(
-                                                                          context)
-                                                                      .unfocus();
-                                                                }
-                                                              }),
-                                                          Text(
-                                                            '*Codigo de cliente',
-                                                            style: GoogleFonts
-                                                                .quicksand(
-                                                                    color: Colors
-                                                                        .blueGrey),
-                                                          )
-                                                        ]),
-                                                  )
-                                                : Container(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            20),
-                                                    width: width,
-                                                    decoration: BoxDecoration(
-                                                        color: Colors.white,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(25)),
-                                                    child: Column(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .start,
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          Row(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .spaceBetween,
-                                                            children: [
-                                                              Text(
-                                                                repartidorService
-                                                                    .listaEnvios[
-                                                                        valor]
-                                                                    .tienda,
-                                                                style: GoogleFonts
-                                                                    .quicksand(
-                                                                        fontSize:
-                                                                            22,
-                                                                        color: Colors
-                                                                            .blue),
-                                                              ),
-                                                              GestureDetector(
-                                                                behavior:
-                                                                    HitTestBehavior
-                                                                        .translucent,
-                                                                onTap:
-                                                                    () async {
-                                                                  FlutterPhoneDirectCaller
-                                                                          .callNumber(
-                                                                              '4741030509')
-                                                                      .then(
-                                                                          (value) {
-                                                                    try {
-                                                                      if (value!) {
-                                                                        final snackBar =
-                                                                            SnackBar(
-                                                                          duration:
-                                                                              const Duration(seconds: 2),
-                                                                          backgroundColor:
-                                                                              Colors.red,
-                                                                          content:
-                                                                              Text(
-                                                                            'Permiso denegado, caracteristica limitada.',
-                                                                            style:
-                                                                                GoogleFonts.quicksand(),
-                                                                          ),
-                                                                        );
-
-                                                                        ScaffoldMessenger.of(context)
-                                                                            .showSnackBar(snackBar);
-                                                                      }
-                                                                    } catch (e) {}
-                                                                  });
-                                                                },
-                                                                child:
-                                                                    Container(
-                                                                  padding: const EdgeInsets
-                                                                          .symmetric(
-                                                                      vertical:
-                                                                          8,
-                                                                      horizontal:
-                                                                          15),
-                                                                  decoration: BoxDecoration(
-                                                                      border: Border.all(
-                                                                          width:
-                                                                              1,
-                                                                          color:
-                                                                              Colors.blue)),
-                                                                  child: Text(
-                                                                    'Llamar',
-                                                                    style: GoogleFonts
-                                                                        .quicksand(
-                                                                            color:
-                                                                                Colors.blue),
-                                                                  ),
-                                                                ),
-                                                              )
-                                                            ],
-                                                          ),
-                                                          const SizedBox(
-                                                            height: 10,
-                                                          ),
-                                                          Row(
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .center,
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .center,
-                                                            children: [
-                                                              Container(
-                                                                decoration: BoxDecoration(
-                                                                    shape: BoxShape
-                                                                        .circle,
-                                                                    border: Border.all(
-                                                                        width:
-                                                                            1,
-                                                                        color: Colors
-                                                                            .grey
-                                                                            .withOpacity(.2))),
-                                                                padding:
-                                                                    const EdgeInsets
-                                                                        .all(5),
-                                                                child:
-                                                                    const Icon(
-                                                                  Icons
-                                                                      .place_outlined,
-                                                                  color: Colors
-                                                                      .blueGrey,
-                                                                ),
-                                                              ),
-                                                              const SizedBox(
-                                                                width: 10,
-                                                              ),
-                                                              Expanded(
-                                                                child: Text(
-                                                                  repartidorService
-                                                                      .listaEnvios[
-                                                                          valor]
-                                                                      .direccionNegocio
-                                                                      .titulo,
-                                                                  style: GoogleFonts.quicksand(
-                                                                      color: Colors
-                                                                          .black
-                                                                          .withOpacity(
-                                                                              .8),
-                                                                      fontSize:
-                                                                          15),
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          Container(
-                                                            width: width,
-                                                            margin:
-                                                                const EdgeInsets
-                                                                        .only(
-                                                                    top: 15),
-                                                            child: Column(
+                                      if (valor != -1) {
+                                        final nombre = repartidorService
+                                            .listaEnvios[valor].usuario.nombre
+                                            .split(' ');
+                                        return AnimatedSize(
+                                          duration:
+                                              const Duration(milliseconds: 400),
+                                          child:
+                                              repartidorService
+                                                      .listaEnvios[valor]
+                                                      .entregadoRepartidor
+                                                  ? Container(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              20),
+                                                      width: width,
+                                                      decoration: BoxDecoration(
+                                                          color: Colors.white,
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                      25)),
+                                                      child: Column(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .start,
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            Row(
                                                               mainAxisAlignment:
                                                                   MainAxisAlignment
-                                                                      .center,
+                                                                      .spaceBetween,
+                                                              children: [
+                                                                Text(
+                                                                  nombre[0] +
+                                                                      ' ' +
+                                                                      nombre[1]
+                                                                          [0],
+                                                                  style: GoogleFonts.quicksand(
+                                                                      fontSize:
+                                                                          22,
+                                                                      color: Colors
+                                                                          .blue),
+                                                                ),
+                                                                GestureDetector(
+                                                                  behavior:
+                                                                      HitTestBehavior
+                                                                          .translucent,
+                                                                  onTap:
+                                                                      () async {
+                                                                    FlutterPhoneDirectCaller.callNumber(
+                                                                            '4741030509')
+                                                                        .then(
+                                                                            (value) {
+                                                                      try {
+                                                                        if (value!) {
+                                                                          final snackBar =
+                                                                              SnackBar(
+                                                                            duration:
+                                                                                const Duration(seconds: 2),
+                                                                            backgroundColor:
+                                                                                Colors.red,
+                                                                            content:
+                                                                                Text(
+                                                                              'Permiso denegado, caracteristica limitada.',
+                                                                              style: GoogleFonts.quicksand(),
+                                                                            ),
+                                                                          );
+
+                                                                          ScaffoldMessenger.of(context)
+                                                                              .showSnackBar(snackBar);
+                                                                        }
+                                                                      } catch (e) {}
+                                                                    });
+                                                                  },
+                                                                  child:
+                                                                      Container(
+                                                                    padding: const EdgeInsets
+                                                                            .symmetric(
+                                                                        vertical:
+                                                                            8,
+                                                                        horizontal:
+                                                                            15),
+                                                                    decoration: BoxDecoration(
+                                                                        border: Border.all(
+                                                                            width:
+                                                                                1,
+                                                                            color:
+                                                                                Colors.blue)),
+                                                                    child: Text(
+                                                                      'Llamar',
+                                                                      style: GoogleFonts.quicksand(
+                                                                          color:
+                                                                              Colors.blue),
+                                                                    ),
+                                                                  ),
+                                                                )
+                                                              ],
+                                                            ),
+                                                            const SizedBox(
+                                                              height: 10,
+                                                            ),
+                                                            Row(
                                                               crossAxisAlignment:
                                                                   CrossAxisAlignment
                                                                       .center,
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .center,
+                                                              children: [
+                                                                Container(
+                                                                  decoration: BoxDecoration(
+                                                                      shape: BoxShape
+                                                                          .circle,
+                                                                      border: Border.all(
+                                                                          width:
+                                                                              1,
+                                                                          color: Colors
+                                                                              .grey
+                                                                              .withOpacity(.2))),
+                                                                  padding:
+                                                                      const EdgeInsets
+                                                                          .all(5),
+                                                                  child:
+                                                                      const Icon(
+                                                                    Icons
+                                                                        .place_outlined,
+                                                                    color: Colors
+                                                                        .blueGrey,
+                                                                  ),
+                                                                ),
+                                                                const SizedBox(
+                                                                  width: 10,
+                                                                ),
+                                                                Expanded(
+                                                                  child: Text(
+                                                                    repartidorService
+                                                                        .listaEnvios[
+                                                                            valor]
+                                                                        .direccionCliente
+                                                                        .titulo,
+                                                                    style: GoogleFonts.quicksand(
+                                                                        color: Colors
+                                                                            .black
+                                                                            .withOpacity(
+                                                                                .8),
+                                                                        fontSize:
+                                                                            15),
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                            VerificationCode(
+                                                                itemSize:
+                                                                    (width - 90) /
+                                                                        4,
+                                                                underlineWidth:
+                                                                    1,
+                                                                textStyle: GoogleFonts.quicksand(
+                                                                    fontSize:
+                                                                        20.0,
+                                                                    color:
+                                                                        const Color.fromRGBO(
+                                                                            41,
+                                                                            199,
+                                                                            184,
+                                                                            1)),
+                                                                keyboardType:
+                                                                    TextInputType
+                                                                        .number,
+                                                                underlineColor:
+                                                                    Colors.blue,
+                                                                length: 4,
+                                                                cursorColor:
+                                                                    Colors.blue,
+                                                                digitsOnly:
+                                                                    true,
+                                                                onCompleted: (String
+                                                                    value) async {
+                                                                  if (value ==
+                                                                      repartidorService
+                                                                          .listaEnvios[
+                                                                              valor]
+                                                                          .codigoCliente) {
+                                                                    mostrarCarga(
+                                                                        context);
+
+                                                                    final estado = await repartidorService.confirmarCodigoCliente(
+                                                                        idSubventa: repartidorService
+                                                                            .listaEnvios[
+                                                                                valor]
+                                                                            .id,
+                                                                        idVenta: repartidorService
+                                                                            .listaEnvios[valor]
+                                                                            .idVenta);
+
+                                                                    Navigator.pop(
+                                                                        context);
+                                                                    if (estado) {
+                                                                      await authProvider
+                                                                          .transitoUsuarioOff();
+                                                                      markers
+                                                                          .clear();
+                                                                      polylineCoordinates
+                                                                          .clear();
+                                                                      Navigator
+                                                                          .push(
+                                                                        context,
+                                                                        MaterialPageRoute(
+                                                                            builder: (context) =>
+                                                                                const DoneDeliveryView()),
+                                                                      );
+                                                                    } else {
+                                                                      final snackBar =
+                                                                          SnackBar(
+                                                                        duration:
+                                                                            const Duration(seconds: 3),
+                                                                        backgroundColor:
+                                                                            Colors.black,
+                                                                        content:
+                                                                            Row(
+                                                                          children: [
+                                                                            Text(
+                                                                              'Error al confirmar',
+                                                                              style: GoogleFonts.quicksand(color: Colors.white),
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                      );
+                                                                      ScaffoldMessenger.of(
+                                                                              context)
+                                                                          .showSnackBar(
+                                                                              snackBar);
+                                                                    }
+                                                                  } else {
+                                                                    final snackBar =
+                                                                        SnackBar(
+                                                                      duration: const Duration(
+                                                                          seconds:
+                                                                              3),
+                                                                      backgroundColor:
+                                                                          Colors
+                                                                              .black,
+                                                                      content:
+                                                                          Row(
+                                                                        children: [
+                                                                          Text(
+                                                                            'Codigo incorrecto',
+                                                                            style:
+                                                                                GoogleFonts.quicksand(color: Colors.white),
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                    );
+                                                                    ScaffoldMessenger.of(
+                                                                            context)
+                                                                        .showSnackBar(
+                                                                            snackBar);
+                                                                  }
+                                                                },
+                                                                onEditing: (bool
+                                                                    value) {
+                                                                  setState(() {
+                                                                    _onEditing =
+                                                                        value;
+                                                                  });
+                                                                  if (!_onEditing) {
+                                                                    FocusScope.of(
+                                                                            context)
+                                                                        .unfocus();
+                                                                  }
+                                                                }),
+                                                            Text(
+                                                              '*Codigo de cliente',
+                                                              style: GoogleFonts
+                                                                  .quicksand(
+                                                                      color: Colors
+                                                                          .blueGrey),
+                                                            )
+                                                          ]),
+                                                    )
+                                                  : Container(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              20),
+                                                      width: width,
+                                                      decoration: BoxDecoration(
+                                                          color: Colors.white,
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                      25)),
+                                                      child: Column(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .start,
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            Row(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .spaceBetween,
                                                               children: [
                                                                 Text(
                                                                   repartidorService
                                                                       .listaEnvios[
                                                                           valor]
-                                                                      .codigoRepartidor,
+                                                                      .tienda,
                                                                   style: GoogleFonts.quicksand(
                                                                       fontSize:
-                                                                          40,
+                                                                          22,
                                                                       color: Colors
                                                                           .blue),
+                                                                ),
+                                                                GestureDetector(
+                                                                  behavior:
+                                                                      HitTestBehavior
+                                                                          .translucent,
+                                                                  onTap:
+                                                                      () async {
+                                                                    FlutterPhoneDirectCaller.callNumber(
+                                                                            '4741030509')
+                                                                        .then(
+                                                                            (value) {
+                                                                      try {
+                                                                        if (value!) {
+                                                                          final snackBar =
+                                                                              SnackBar(
+                                                                            duration:
+                                                                                const Duration(seconds: 2),
+                                                                            backgroundColor:
+                                                                                Colors.red,
+                                                                            content:
+                                                                                Text(
+                                                                              'Permiso denegado, caracteristica limitada.',
+                                                                              style: GoogleFonts.quicksand(),
+                                                                            ),
+                                                                          );
+
+                                                                          ScaffoldMessenger.of(context)
+                                                                              .showSnackBar(snackBar);
+                                                                        }
+                                                                      } catch (e) {}
+                                                                    });
+                                                                  },
+                                                                  child:
+                                                                      Container(
+                                                                    padding: const EdgeInsets
+                                                                            .symmetric(
+                                                                        vertical:
+                                                                            8,
+                                                                        horizontal:
+                                                                            15),
+                                                                    decoration: BoxDecoration(
+                                                                        border: Border.all(
+                                                                            width:
+                                                                                1,
+                                                                            color:
+                                                                                Colors.blue)),
+                                                                    child: Text(
+                                                                      'Llamar',
+                                                                      style: GoogleFonts.quicksand(
+                                                                          color:
+                                                                              Colors.blue),
+                                                                    ),
+                                                                  ),
                                                                 )
                                                               ],
                                                             ),
-                                                          ),
-                                                          const SizedBox(
-                                                            height: 25,
-                                                          ),
-                                                          ConfirmationSlider(
-                                                            width: width - 70,
-                                                            height: 60,
-                                                            stickToEnd: false,
-                                                            shadow: BoxShadow(
-                                                                offset:
-                                                                    const Offset(
-                                                                        0, 0),
-                                                                color: Colors
-                                                                    .black
-                                                                    .withOpacity(
-                                                                        .2)),
-                                                            iconColor:
-                                                                Colors.black,
-                                                            text: 'Confirmar',
-                                                            foregroundColor:
-                                                                const Color
-                                                                        .fromRGBO(
-                                                                    41,
-                                                                    199,
-                                                                    184,
-                                                                    1),
-                                                            textStyle: GoogleFonts
-                                                                .quicksand(
+                                                            const SizedBox(
+                                                              height: 10,
+                                                            ),
+                                                            Row(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .center,
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .center,
+                                                              children: [
+                                                                Container(
+                                                                  decoration: BoxDecoration(
+                                                                      shape: BoxShape
+                                                                          .circle,
+                                                                      border: Border.all(
+                                                                          width:
+                                                                              1,
+                                                                          color: Colors
+                                                                              .grey
+                                                                              .withOpacity(.2))),
+                                                                  padding:
+                                                                      const EdgeInsets
+                                                                          .all(5),
+                                                                  child:
+                                                                      const Icon(
+                                                                    Icons
+                                                                        .place_outlined,
                                                                     color: Colors
-                                                                        .black
-                                                                        .withOpacity(
-                                                                            .8)),
-                                                            backgroundColor:
-                                                                Colors.white,
-                                                            backgroundColorEnd:
-                                                                const Color
-                                                                        .fromRGBO(
-                                                                    41,
-                                                                    199,
-                                                                    184,
-                                                                    1),
-                                                            onConfirmation: () {
-                                                              mapController.animateCamera(CameraUpdate.newLatLngZoom(
-                                                                  LatLng(
-                                                                      repartidorService
-                                                                          .listaEnvios[
-                                                                              valor]
-                                                                          .direccionCliente
-                                                                          .coordenadas
-                                                                          .lat
-                                                                          .toDouble(),
-                                                                      repartidorService
-                                                                          .listaEnvios[
-                                                                              valor]
-                                                                          .direccionCliente
-                                                                          .coordenadas
-                                                                          .lng
-                                                                          .toDouble()),
-                                                                  14));
-                                                              repartidorService
-                                                                  .confirmarEntrega();
-                                                            },
-                                                          ),
-                                                        ]),
-                                                  ),
-                                      );
+                                                                        .blueGrey,
+                                                                  ),
+                                                                ),
+                                                                const SizedBox(
+                                                                  width: 10,
+                                                                ),
+                                                                Expanded(
+                                                                  child: Text(
+                                                                    repartidorService
+                                                                        .listaEnvios[
+                                                                            valor]
+                                                                        .direccionNegocio
+                                                                        .titulo,
+                                                                    style: GoogleFonts.quicksand(
+                                                                        color: Colors
+                                                                            .black
+                                                                            .withOpacity(
+                                                                                .8),
+                                                                        fontSize:
+                                                                            15),
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                            Container(
+                                                              width: width,
+                                                              margin:
+                                                                  const EdgeInsets
+                                                                          .only(
+                                                                      top: 15),
+                                                              child: Column(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .center,
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .center,
+                                                                children: [
+                                                                  Text(
+                                                                    repartidorService
+                                                                        .listaEnvios[
+                                                                            valor]
+                                                                        .codigoRepartidor,
+                                                                    style: GoogleFonts.quicksand(
+                                                                        fontSize:
+                                                                            40,
+                                                                        color: Colors
+                                                                            .blue),
+                                                                  )
+                                                                ],
+                                                              ),
+                                                            ),
+                                                            const SizedBox(
+                                                              height: 25,
+                                                            ),
+                                                            ConfirmationSlider(
+                                                              width: width - 70,
+                                                              height: 60,
+                                                              stickToEnd: false,
+                                                              shadow: BoxShadow(
+                                                                  offset:
+                                                                      const Offset(
+                                                                          0, 0),
+                                                                  color: Colors
+                                                                      .black
+                                                                      .withOpacity(
+                                                                          .2)),
+                                                              iconColor:
+                                                                  Colors.black,
+                                                              text: 'Confirmar',
+                                                              foregroundColor:
+                                                                  const Color
+                                                                          .fromRGBO(
+                                                                      41,
+                                                                      199,
+                                                                      184,
+                                                                      1),
+                                                              textStyle: GoogleFonts
+                                                                  .quicksand(
+                                                                      color: Colors
+                                                                          .black
+                                                                          .withOpacity(
+                                                                              .8)),
+                                                              backgroundColor:
+                                                                  Colors.white,
+                                                              backgroundColorEnd:
+                                                                  const Color
+                                                                          .fromRGBO(
+                                                                      41,
+                                                                      199,
+                                                                      184,
+                                                                      1),
+                                                              onConfirmation:
+                                                                  () async {
+                                                                mostrarCarga(
+                                                                    context);
+
+                                                                final estado =
+                                                                    await repartidorService
+                                                                        .confirmarEntrega();
+                                                                if (estado) {
+                                                                  mapController.animateCamera(CameraUpdate.newLatLngZoom(
+                                                                      LatLng(
+                                                                          repartidorService
+                                                                              .listaEnvios[
+                                                                                  valor]
+                                                                              .direccionCliente
+                                                                              .coordenadas
+                                                                              .lat
+                                                                              .toDouble(),
+                                                                          repartidorService
+                                                                              .listaEnvios[valor]
+                                                                              .direccionCliente
+                                                                              .coordenadas
+                                                                              .lng
+                                                                              .toDouble()),
+                                                                      14));
+                                                                  Navigator.pop(
+                                                                      context);
+                                                                  final snackBar =
+                                                                      SnackBar(
+                                                                    duration: const Duration(
+                                                                        seconds:
+                                                                            4),
+                                                                    backgroundColor:
+                                                                        const Color.fromRGBO(
+                                                                            0,
+                                                                            0,
+                                                                            0,
+                                                                            .8),
+                                                                    content:
+                                                                        Text(
+                                                                      'Confirmado',
+                                                                      style: GoogleFonts
+                                                                          .quicksand(
+                                                                        color: Colors
+                                                                            .white,
+                                                                      ),
+                                                                    ),
+                                                                  );
+
+                                                                  ScaffoldMessenger.of(
+                                                                          context)
+                                                                      .showSnackBar(
+                                                                          snackBar);
+                                                                } else {
+                                                                  Navigator.pop(
+                                                                      context);
+                                                                  final snackBar =
+                                                                      SnackBar(
+                                                                    duration: const Duration(
+                                                                        seconds:
+                                                                            2),
+                                                                    backgroundColor:
+                                                                        const Color.fromRGBO(
+                                                                            0,
+                                                                            0,
+                                                                            0,
+                                                                            .8),
+                                                                    content:
+                                                                        Text(
+                                                                      'Viaje sin confirmar',
+                                                                      style: GoogleFonts
+                                                                          .quicksand(
+                                                                        color: Colors
+                                                                            .white,
+                                                                      ),
+                                                                    ),
+                                                                  );
+
+                                                                  ScaffoldMessenger.of(
+                                                                          context)
+                                                                      .showSnackBar(
+                                                                          snackBar);
+                                                                }
+                                                              },
+                                                            ),
+                                                          ]),
+                                                    ),
+                                        );
+                                      } else {
+                                        return Container();
+                                      }
                                     })
                                   : Builder(builder: (context) {
                                       int valor = repartidorService.listaEnvios
                                           .indexWhere((element) =>
                                               !element.entregadoCliente);
                                       return valor != -1
-                                          ? Container(
-                                              child: Column(
-                                                children: [
-                                                  Container(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            left: 25,
-                                                            right: 25,
-                                                            bottom: 25,
-                                                            top: 10),
-                                                    decoration: BoxDecoration(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(25),
-                                                        color: Colors.white),
-                                                    child: Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        const SizedBox(
-                                                          height: 10,
-                                                        ),
-                                                        Column(
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
+                                          ? Column(
+                                              children: [
+                                                Container(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          left: 25,
+                                                          right: 25,
+                                                          bottom: 25,
+                                                          top: 10),
+                                                  decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              25),
+                                                      color: Colors.white),
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.start,
+                                                    children: [
+                                                      const SizedBox(
+                                                        height: 10,
+                                                      ),
+                                                      Column(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Text(
+                                                            'Nueva orden!',
+                                                            style: GoogleFonts
+                                                                .quicksand(
+                                                              fontSize: 25,
+                                                              color:
+                                                                  Colors.black,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      Container(
+                                                        margin: const EdgeInsets
+                                                            .only(top: 10),
+                                                        child: Row(
                                                           mainAxisAlignment:
                                                               MainAxisAlignment
-                                                                  .start,
+                                                                  .spaceBetween,
                                                           children: [
-                                                            Text(
-                                                              'Nueva orden!',
-                                                              style: GoogleFonts
-                                                                  .quicksand(
-                                                                fontSize: 25,
-                                                                color: Colors
-                                                                    .black,
-                                                              ),
+                                                            Row(
+                                                              children: [
+                                                                Column(
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .start,
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .start,
+                                                                  children: [
+                                                                    Container(
+                                                                        width:
+                                                                            40,
+                                                                        height:
+                                                                            40,
+                                                                        padding:
+                                                                            const EdgeInsets.all(
+                                                                                10),
+                                                                        decoration:
+                                                                            BoxDecoration(
+                                                                          color:
+                                                                              Colors.white,
+                                                                          shape:
+                                                                              BoxShape.circle,
+                                                                          boxShadow: [
+                                                                            BoxShadow(
+                                                                              color: Colors.grey.withOpacity(0.05),
+                                                                              spreadRadius: 5,
+                                                                              blurRadius: 5,
+                                                                              offset: const Offset(0, 0), // changes position of shadow
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                        child:
+                                                                            Icon(
+                                                                          Icons
+                                                                              .attach_money,
+                                                                          size:
+                                                                              18,
+                                                                          color: Colors
+                                                                              .blueGrey
+                                                                              .withOpacity(.5),
+                                                                        )),
+                                                                    const SizedBox(
+                                                                      height:
+                                                                          10,
+                                                                    ),
+                                                                    Text(
+                                                                        '\$ ${repartidorService.listaEnvios[valor].envio.toStringAsFixed(2)}',
+                                                                        style: GoogleFonts
+                                                                            .quicksand(
+                                                                          color:
+                                                                              Colors.black,
+                                                                          fontSize:
+                                                                              16,
+                                                                        ))
+                                                                  ],
+                                                                ),
+                                                                const SizedBox(
+                                                                    width: 15),
+                                                                Column(
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .start,
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .start,
+                                                                  children: [
+                                                                    Container(
+                                                                        width:
+                                                                            40,
+                                                                        height:
+                                                                            40,
+                                                                        padding:
+                                                                            const EdgeInsets.all(
+                                                                                10),
+                                                                        decoration:
+                                                                            BoxDecoration(
+                                                                          color:
+                                                                              Colors.white,
+                                                                          shape:
+                                                                              BoxShape.circle,
+                                                                          boxShadow: [
+                                                                            BoxShadow(
+                                                                              color: Colors.grey.withOpacity(0.05),
+                                                                              spreadRadius: 5,
+                                                                              blurRadius: 5,
+                                                                              offset: const Offset(0, 0), // changes position of shadow
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                        child:
+                                                                            Icon(
+                                                                          Icons
+                                                                              .moped,
+                                                                          color: Colors
+                                                                              .blueGrey
+                                                                              .withOpacity(.5),
+                                                                          size:
+                                                                              18,
+                                                                        )),
+                                                                    const SizedBox(
+                                                                      height:
+                                                                          10,
+                                                                    ),
+                                                                    Text(
+                                                                        repartidorService
+                                                                            .listaEnvios[
+                                                                                valor]
+                                                                            .ruta
+                                                                            .distance
+                                                                            .text,
+                                                                        style: GoogleFonts
+                                                                            .quicksand(
+                                                                          color:
+                                                                              Colors.black,
+                                                                          fontSize:
+                                                                              16,
+                                                                        ))
+                                                                  ],
+                                                                ),
+                                                                const SizedBox(
+                                                                    width: 15),
+                                                                Column(
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .start,
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .start,
+                                                                  children: [
+                                                                    Container(
+                                                                        width:
+                                                                            40,
+                                                                        height:
+                                                                            40,
+                                                                        padding:
+                                                                            const EdgeInsets.all(
+                                                                                10),
+                                                                        decoration:
+                                                                            BoxDecoration(
+                                                                          color:
+                                                                              Colors.white,
+                                                                          shape:
+                                                                              BoxShape.circle,
+                                                                          boxShadow: [
+                                                                            BoxShadow(
+                                                                              color: Colors.grey.withOpacity(0.05),
+                                                                              spreadRadius: 5,
+                                                                              blurRadius: 5,
+                                                                              offset: const Offset(0, 0), // changes position of shadow
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                        child:
+                                                                            Icon(
+                                                                          Icons
+                                                                              .schedule,
+                                                                          color: Colors
+                                                                              .blueGrey
+                                                                              .withOpacity(.5),
+                                                                          size:
+                                                                              18,
+                                                                        )),
+                                                                    const SizedBox(
+                                                                      height:
+                                                                          10,
+                                                                    ),
+                                                                    Text(
+                                                                        repartidorService
+                                                                            .listaEnvios[
+                                                                                valor]
+                                                                            .ruta
+                                                                            .duration
+                                                                            .text,
+                                                                        style: GoogleFonts
+                                                                            .quicksand(
+                                                                          color:
+                                                                              Colors.black,
+                                                                          fontSize:
+                                                                              16,
+                                                                        ))
+                                                                  ],
+                                                                )
+                                                              ],
                                                             ),
+                                                            Column(
+                                                              children: [
+                                                                SizedBox(
+                                                                  width: 60,
+                                                                  child: Row(
+                                                                    children: [
+                                                                      Container(
+                                                                        margin: const EdgeInsets.only(
+                                                                            right:
+                                                                                10),
+                                                                        width:
+                                                                            12,
+                                                                        height:
+                                                                            12,
+                                                                        decoration: const BoxDecoration(
+                                                                            color: Color.fromRGBO(
+                                                                                0,
+                                                                                147,
+                                                                                255,
+                                                                                1),
+                                                                            shape:
+                                                                                BoxShape.circle),
+                                                                      ),
+                                                                      Text(
+                                                                          'Inicio',
+                                                                          style:
+                                                                              GoogleFonts.quicksand(color: Colors.black)),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                                SizedBox(
+                                                                  width: 60,
+                                                                  child: Row(
+                                                                    children: [
+                                                                      Container(
+                                                                        margin: const EdgeInsets.only(
+                                                                            right:
+                                                                                10),
+                                                                        width:
+                                                                            12,
+                                                                        height:
+                                                                            12,
+                                                                        decoration: const BoxDecoration(
+                                                                            color: Color.fromRGBO(
+                                                                                63,
+                                                                                225,
+                                                                                127,
+                                                                                1),
+                                                                            shape:
+                                                                                BoxShape.circle),
+                                                                      ),
+                                                                      Text(
+                                                                          'Fin',
+                                                                          style:
+                                                                              GoogleFonts.quicksand(color: Colors.black)),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            )
                                                           ],
                                                         ),
-                                                        Container(
-                                                          margin:
-                                                              const EdgeInsets
-                                                                      .only(
-                                                                  top: 10),
-                                                          child: Row(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .spaceBetween,
-                                                            children: [
-                                                              Row(
-                                                                children: [
-                                                                  Column(
-                                                                    crossAxisAlignment:
-                                                                        CrossAxisAlignment
-                                                                            .start,
-                                                                    mainAxisAlignment:
-                                                                        MainAxisAlignment
-                                                                            .start,
-                                                                    children: [
-                                                                      Container(
-                                                                          width:
-                                                                              40,
-                                                                          height:
-                                                                              40,
-                                                                          padding: const EdgeInsets.all(
-                                                                              10),
-                                                                          decoration:
-                                                                              BoxDecoration(
-                                                                            color:
-                                                                                Colors.white,
-                                                                            shape:
-                                                                                BoxShape.circle,
-                                                                            boxShadow: [
-                                                                              BoxShadow(
-                                                                                color: Colors.grey.withOpacity(0.05),
-                                                                                spreadRadius: 5,
-                                                                                blurRadius: 5,
-                                                                                offset: const Offset(0, 0), // changes position of shadow
-                                                                              ),
-                                                                            ],
-                                                                          ),
-                                                                          child:
-                                                                              Icon(
-                                                                            Icons.attach_money,
-                                                                            size:
-                                                                                18,
-                                                                            color:
-                                                                                Colors.blueGrey.withOpacity(.5),
-                                                                          )),
-                                                                      const SizedBox(
-                                                                        height:
-                                                                            10,
-                                                                      ),
-                                                                      Text(
-                                                                          '\$ ${repartidorService.listaEnvios[valor].envio.toStringAsFixed(2)}',
-                                                                          style:
-                                                                              GoogleFonts.quicksand(
-                                                                            color:
-                                                                                Colors.black,
-                                                                            fontSize:
-                                                                                16,
-                                                                          ))
-                                                                    ],
-                                                                  ),
-                                                                  const SizedBox(
-                                                                      width:
-                                                                          15),
-                                                                  Column(
-                                                                    crossAxisAlignment:
-                                                                        CrossAxisAlignment
-                                                                            .start,
-                                                                    mainAxisAlignment:
-                                                                        MainAxisAlignment
-                                                                            .start,
-                                                                    children: [
-                                                                      Container(
-                                                                          width:
-                                                                              40,
-                                                                          height:
-                                                                              40,
-                                                                          padding: const EdgeInsets.all(
-                                                                              10),
-                                                                          decoration:
-                                                                              BoxDecoration(
-                                                                            color:
-                                                                                Colors.white,
-                                                                            shape:
-                                                                                BoxShape.circle,
-                                                                            boxShadow: [
-                                                                              BoxShadow(
-                                                                                color: Colors.grey.withOpacity(0.05),
-                                                                                spreadRadius: 5,
-                                                                                blurRadius: 5,
-                                                                                offset: const Offset(0, 0), // changes position of shadow
-                                                                              ),
-                                                                            ],
-                                                                          ),
-                                                                          child:
-                                                                              Icon(
-                                                                            Icons.moped,
-                                                                            color:
-                                                                                Colors.blueGrey.withOpacity(.5),
-                                                                            size:
-                                                                                18,
-                                                                          )),
-                                                                      const SizedBox(
-                                                                        height:
-                                                                            10,
-                                                                      ),
-                                                                      Text(
-                                                                          repartidorService
-                                                                              .listaEnvios[
-                                                                                  valor]
-                                                                              .ruta
-                                                                              .distance
-                                                                              .text,
-                                                                          style:
-                                                                              GoogleFonts.quicksand(
-                                                                            color:
-                                                                                Colors.black,
-                                                                            fontSize:
-                                                                                16,
-                                                                          ))
-                                                                    ],
-                                                                  ),
-                                                                  const SizedBox(
-                                                                      width:
-                                                                          15),
-                                                                  Column(
-                                                                    crossAxisAlignment:
-                                                                        CrossAxisAlignment
-                                                                            .start,
-                                                                    mainAxisAlignment:
-                                                                        MainAxisAlignment
-                                                                            .start,
-                                                                    children: [
-                                                                      Container(
-                                                                          width:
-                                                                              40,
-                                                                          height:
-                                                                              40,
-                                                                          padding: const EdgeInsets.all(
-                                                                              10),
-                                                                          decoration:
-                                                                              BoxDecoration(
-                                                                            color:
-                                                                                Colors.white,
-                                                                            shape:
-                                                                                BoxShape.circle,
-                                                                            boxShadow: [
-                                                                              BoxShadow(
-                                                                                color: Colors.grey.withOpacity(0.05),
-                                                                                spreadRadius: 5,
-                                                                                blurRadius: 5,
-                                                                                offset: const Offset(0, 0), // changes position of shadow
-                                                                              ),
-                                                                            ],
-                                                                          ),
-                                                                          child:
-                                                                              Icon(
-                                                                            Icons.schedule,
-                                                                            color:
-                                                                                Colors.blueGrey.withOpacity(.5),
-                                                                            size:
-                                                                                18,
-                                                                          )),
-                                                                      const SizedBox(
-                                                                        height:
-                                                                            10,
-                                                                      ),
-                                                                      Text(
-                                                                          repartidorService
-                                                                              .listaEnvios[
-                                                                                  valor]
-                                                                              .ruta
-                                                                              .duration
-                                                                              .text,
-                                                                          style:
-                                                                              GoogleFonts.quicksand(
-                                                                            color:
-                                                                                Colors.black,
-                                                                            fontSize:
-                                                                                16,
-                                                                          ))
-                                                                    ],
-                                                                  )
-                                                                ],
-                                                              ),
-                                                              Column(
-                                                                children: [
-                                                                  SizedBox(
-                                                                    width: 60,
-                                                                    child: Row(
-                                                                      children: [
-                                                                        Container(
-                                                                          margin:
-                                                                              const EdgeInsets.only(right: 10),
-                                                                          width:
-                                                                              12,
-                                                                          height:
-                                                                              12,
-                                                                          decoration: const BoxDecoration(
-                                                                              color: Color.fromRGBO(0, 147, 255, 1),
-                                                                              shape: BoxShape.circle),
-                                                                        ),
-                                                                        Text(
-                                                                            'Inicio',
-                                                                            style:
-                                                                                GoogleFonts.quicksand(color: Colors.black)),
-                                                                      ],
-                                                                    ),
-                                                                  ),
-                                                                  SizedBox(
-                                                                    width: 60,
-                                                                    child: Row(
-                                                                      children: [
-                                                                        Container(
-                                                                          margin:
-                                                                              const EdgeInsets.only(right: 10),
-                                                                          width:
-                                                                              12,
-                                                                          height:
-                                                                              12,
-                                                                          decoration: const BoxDecoration(
-                                                                              color: Color.fromRGBO(63, 225, 127, 1),
-                                                                              shape: BoxShape.circle),
-                                                                        ),
-                                                                        Text(
-                                                                            'Fin',
-                                                                            style:
-                                                                                GoogleFonts.quicksand(color: Colors.black)),
-                                                                      ],
-                                                                    ),
-                                                                  ),
-                                                                ],
-                                                              )
-                                                            ],
-                                                          ),
+                                                      ),
+                                                      Container(
+                                                        margin: const EdgeInsets
+                                                            .only(top: 20),
+                                                        width: width,
+                                                        decoration:
+                                                            const BoxDecoration(
+                                                          color: Colors.white,
                                                         ),
-                                                        Container(
-                                                          margin:
-                                                              const EdgeInsets
-                                                                      .only(
-                                                                  top: 20),
-                                                          width: width,
-                                                          decoration:
-                                                              const BoxDecoration(
-                                                            color: Colors.white,
-                                                          ),
-                                                          child:
-                                                              ConfirmationSlider(
-                                                            height: 60,
-                                                            stickToEnd: false,
-                                                            shadow: BoxShadow(
-                                                                offset:
-                                                                    const Offset(
-                                                                        0, 0),
-                                                                color: Colors
-                                                                    .black
-                                                                    .withOpacity(
-                                                                        .2)),
-                                                            iconColor:
-                                                                Colors.black,
-                                                            text: 'Confirmar',
-                                                            foregroundColor:
-                                                                const Color
-                                                                        .fromRGBO(
-                                                                    41,
-                                                                    199,
-                                                                    184,
-                                                                    1),
-                                                            textStyle: GoogleFonts
-                                                                .quicksand(
-                                                                    color: Colors
-                                                                        .black
-                                                                        .withOpacity(
-                                                                            .8)),
-                                                            backgroundColor:
-                                                                Colors.white,
-                                                            backgroundColorEnd:
-                                                                const Color
-                                                                        .fromRGBO(
-                                                                    41,
-                                                                    199,
-                                                                    184,
-                                                                    1),
-                                                            onConfirmation:
-                                                                () async {
-                                                              mostrarCarga(
-                                                                  context);
+                                                        child:
+                                                            ConfirmationSlider(
+                                                          height: 60,
+                                                          stickToEnd: false,
+                                                          shadow: BoxShadow(
+                                                              offset:
+                                                                  const Offset(
+                                                                      0, 0),
+                                                              color: Colors
+                                                                  .black
+                                                                  .withOpacity(
+                                                                      .2)),
+                                                          iconColor:
+                                                              Colors.black,
+                                                          text: 'Confirmar',
+                                                          foregroundColor:
+                                                              const Color
+                                                                      .fromRGBO(
+                                                                  41,
+                                                                  199,
+                                                                  184,
+                                                                  1),
+                                                          textStyle: GoogleFonts
+                                                              .quicksand(
+                                                                  color: Colors
+                                                                      .black
+                                                                      .withOpacity(
+                                                                          .8)),
+                                                          backgroundColor:
+                                                              Colors.white,
+                                                          backgroundColorEnd:
+                                                              const Color
+                                                                      .fromRGBO(
+                                                                  41,
+                                                                  199,
+                                                                  184,
+                                                                  1),
+                                                          onConfirmation:
+                                                              () async {
+                                                            mostrarCarga(
+                                                                context);
+
+                                                            final estado =
+                                                                await authProvider
+                                                                    .transitoUsuario();
+                                                            if (estado) {
                                                               int valor = repartidorService
                                                                   .listaEnvios
                                                                   .indexWhere(
@@ -1048,79 +1196,75 @@ class _DashBoardViewRepartidorState extends State<DashBoardViewRepartidor>
                                                                           .lng
                                                                           .toDouble()),
                                                                   14));
-                                                              final estado =
-                                                                  await authProvider
-                                                                      .transitoUsuario();
-                                                              print(estado);
-                                                              if (estado) {
-                                                                Navigator.pop(
-                                                                    context);
-                                                                final snackBar =
-                                                                    SnackBar(
-                                                                  duration:
-                                                                      const Duration(
-                                                                          seconds:
-                                                                              4),
-                                                                  backgroundColor:
-                                                                      const Color
-                                                                              .fromRGBO(
-                                                                          0,
-                                                                          0,
-                                                                          0,
-                                                                          .8),
-                                                                  content: Text(
-                                                                    'Viaje aceptado!',
-                                                                    style: GoogleFonts
-                                                                        .quicksand(
-                                                                      color: Colors
-                                                                          .white,
-                                                                    ),
+                                                              Navigator.pop(
+                                                                  context);
+                                                              final snackBar =
+                                                                  SnackBar(
+                                                                duration:
+                                                                    const Duration(
+                                                                        seconds:
+                                                                            4),
+                                                                backgroundColor:
+                                                                    const Color
+                                                                            .fromRGBO(
+                                                                        0,
+                                                                        0,
+                                                                        0,
+                                                                        .8),
+                                                                content: Text(
+                                                                  'Viaje aceptado!',
+                                                                  style: GoogleFonts
+                                                                      .quicksand(
+                                                                    color: Colors
+                                                                        .white,
                                                                   ),
-                                                                );
+                                                                ),
+                                                              );
 
-                                                                ScaffoldMessenger.of(
-                                                                        context)
-                                                                    .showSnackBar(
-                                                                        snackBar);
-                                                              } else {
-                                                                Navigator.pop(
-                                                                    context);
-                                                                final snackBar =
-                                                                    SnackBar(
-                                                                  duration:
-                                                                      const Duration(
-                                                                          seconds:
-                                                                              2),
-                                                                  backgroundColor:
-                                                                      const Color
-                                                                              .fromRGBO(
-                                                                          0,
-                                                                          0,
-                                                                          0,
-                                                                          .8),
-                                                                  content: Text(
-                                                                    'Error al aceptar viaje',
-                                                                    style: GoogleFonts
-                                                                        .quicksand(
-                                                                      color: Colors
-                                                                          .white,
-                                                                    ),
+                                                              ScaffoldMessenger
+                                                                      .of(
+                                                                          context)
+                                                                  .showSnackBar(
+                                                                      snackBar);
+                                                            } else {
+                                                              Navigator.pop(
+                                                                  context);
+                                                              final snackBar =
+                                                                  SnackBar(
+                                                                duration:
+                                                                    const Duration(
+                                                                        seconds:
+                                                                            2),
+                                                                backgroundColor:
+                                                                    const Color
+                                                                            .fromRGBO(
+                                                                        0,
+                                                                        0,
+                                                                        0,
+                                                                        .8),
+                                                                content: Text(
+                                                                  'Error al aceptar viaje',
+                                                                  style: GoogleFonts
+                                                                      .quicksand(
+                                                                    color: Colors
+                                                                        .white,
                                                                   ),
-                                                                );
+                                                                ),
+                                                              );
 
-                                                                ScaffoldMessenger.of(
-                                                                        context)
-                                                                    .showSnackBar(
-                                                                        snackBar);
-                                                              }
-                                                            },
-                                                          ),
-                                                        )
-                                                      ],
-                                                    ),
+                                                              ScaffoldMessenger
+                                                                      .of(
+                                                                          context)
+                                                                  .showSnackBar(
+                                                                      snackBar);
+                                                            }
+                                                          },
+                                                        ),
+                                                      )
+                                                    ],
                                                   ),
-                                                ],
-                                              ),
+                                                ),
+                                              ],
                                             )
                                           : Container(
                                               padding:
@@ -1186,24 +1330,27 @@ class _DashBoardViewRepartidorState extends State<DashBoardViewRepartidor>
         Provider.of<RepartidorProvider>(context, listen: false);
     final listado = await repartidorService.cargarPedidosMomento();
     if (listado.isNotEmpty) {
-      int valor = listado.indexWhere((element) => !element.entregadoCliente);
-      _agregarMarcadores(envio: repartidorService.listaEnvios[valor]);
-      await Future.delayed(const Duration(milliseconds: 500));
-      mapController.animateCamera(CameraUpdate.newLatLngBounds(
-          LatLngBounds(
-              southwest: LatLng(
-                  repartidorService
-                          .listaEnvios[valor].ruta.bounds.southwest.lat -
-                      0.028,
-                  repartidorService
-                      .listaEnvios[valor].ruta.bounds.southwest.lng),
-              northeast: LatLng(
-                  repartidorService
-                          .listaEnvios[valor].ruta.bounds.northeast.lat +
-                      .015,
-                  repartidorService
-                      .listaEnvios[valor].ruta.bounds.northeast.lng)),
-          10));
+      int valor =
+          listado.indexWhere((element) => element.entregadoCliente == false);
+      if (valor != -1) {
+        _agregarMarcadores(envio: repartidorService.listaEnvios[valor]);
+        await Future.delayed(const Duration(milliseconds: 500));
+        mapController.animateCamera(CameraUpdate.newLatLngBounds(
+            LatLngBounds(
+                southwest: LatLng(
+                    repartidorService
+                            .listaEnvios[valor].ruta.bounds.southwest.lat -
+                        0.028,
+                    repartidorService
+                        .listaEnvios[valor].ruta.bounds.southwest.lng),
+                northeast: LatLng(
+                    repartidorService
+                            .listaEnvios[valor].ruta.bounds.northeast.lat +
+                        .015,
+                    repartidorService
+                        .listaEnvios[valor].ruta.bounds.northeast.lng)),
+            10));
+      }
     }
   }
 

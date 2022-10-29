@@ -279,7 +279,7 @@ class _EditarTiendaViewState extends State<EditarTiendaView> {
                                               mapController = controller;
                                             });
                                             controller
-                                                .setMapStyle(Statics.mapStyle);
+                                                .setMapStyle(Statics.mapStyle2);
                                           },
                                           myLocationButtonEnabled: false,
                                           zoomControlsEnabled: false,

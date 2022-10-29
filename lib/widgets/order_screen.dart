@@ -1454,108 +1454,10 @@ class _PaymentSummaryState extends State<PaymentSummary> {
                               pantallasService: pantallaService) ==
                           false
                       ? authService.usuario.cesta.productos.isEmpty ||
-                              direccionesService.direcciones.isEmpty
-                          ? authService.calcularTotal() >= 999 &&
+                              direccionesService.direcciones.isEmpty ||
+                              authService.calcularTotal() >= 999 &&
                                   authService.usuario.cesta.efectivo
-                              ? null
-                              : () async {
-                                  calculandoAlerta(context);
-                                  /*NotificationApi.showNotification(
-                              title: 'Titulos',
-                              body: 'Body',
-                              payload: 'sarah.abs');*/
-                                  /*socketService.emit('mensaje-personal', {
-                            'direccion': direccionesService.direcciones[
-                                authService.usuario.cesta.direccion.titulo != ''
-                                    ? direccionesService.direcciones.indexWhere(
-                                        (element) =>
-                                            authService.usuario.cesta.direccion
-                                                .titulo ==
-                                            element.titulo)
-                                    : obtenerFavorito(direccionesService
-                                                .direcciones) !=
-                                            -1
-                                        ? obtenerFavorito(
-                                            direccionesService.direcciones)
-                                        : 0],
-                            'tarjeta': busqueda2 != -1
-                                ? tarjetasService.listaTarjetas[busqueda2].id
-                                : tarjetasService
-                                    .listaTarjetas[
-                                        busqueda != -1 ? busqueda : 0]
-                                    .id,
-                            'customer_id': authService.usuario.customerID,
-                            'efectivo': authService.usuario.cesta.efectivo,
-                            'prodcutos': authService.usuario.cesta.productos
-                          });*/
-                                  final busqueda = tarjetasService.listaTarjetas
-                                      .indexWhere((element) =>
-                                          element.id ==
-                                          customerService
-                                              .tarjetaPredeterminada);
-                                  final busqueda2 = tarjetasService
-                                      .listaTarjetas
-                                      .indexWhere((element) =>
-                                          element.id ==
-                                          authService.usuario.cesta.tarjeta);
-                                  final venta = await authService.crearPedido(
-                                      direccion: direccionesService.direcciones[
-                                          authService.usuario.cesta.direccion.titulo !=
-                                                  ''
-                                              ? direccionesService.direcciones
-                                                  .indexWhere((element) =>
-                                                      authService.usuario.cesta
-                                                          .direccion.titulo ==
-                                                      element.titulo)
-                                              : obtenerFavorito(direccionesService.direcciones) !=
-                                                      -1
-                                                  ? obtenerFavorito(
-                                                      direccionesService
-                                                          .direcciones)
-                                                  : 0],
-                                      tarjeta: busqueda2 != -1
-                                          ? tarjetasService
-                                              .listaTarjetas[busqueda2].id
-                                          : tarjetasService
-                                                  .listaTarjetas.isNotEmpty
-                                              ? tarjetasService
-                                                  .listaTarjetas[busqueda != -1 ? busqueda : 0]
-                                                  .id
-                                              : '',
-                                      customer: customerService.customer,
-                                      envio: authService.calcularEnvioAvanzado(tiendas: pantallaService.tiendas, direcciones: direccionesService.direcciones));
-
-                                  if (venta != null) {
-                                    pedidosService.agregarCompra(venta: venta);
-                                    // socketService.socket
-                                    //     .emit('enviar-pedido', venta);
-                                    scrollListView2(
-                                        controller: widget.controller);
-                                    Navigator.pop(context);
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => DoneView(
-                                                venta: venta,
-                                              )),
-                                    );
-                                  } else {
-                                    final snackBar = SnackBar(
-                                      duration: const Duration(seconds: 2),
-                                      backgroundColor:
-                                          const Color.fromRGBO(0, 0, 0, 1),
-                                      content: Text(
-                                        'Error desconocido',
-                                        style: GoogleFonts.quicksand(
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                    );
-
-                                    ScaffoldMessenger.of(context)
-                                        .showSnackBar(snackBar);
-                                  }
-                                }
+                          ? null
                           : () async {
                               calculandoAlerta(context);
                               /*NotificationApi.showNotification(
@@ -1659,11 +1561,10 @@ class _PaymentSummaryState extends State<PaymentSummary> {
                                 pantallasService: pantallaService) ==
                             false
                         ? authService.usuario.cesta.productos.isEmpty ||
-                                direccionesService.direcciones.isEmpty
-                            ? authService.calcularTotal() >= 999 &&
+                                direccionesService.direcciones.isEmpty ||
+                                authService.calcularTotal() >= 999 &&
                                     authService.usuario.cesta.efectivo
-                                ? .1
-                                : 1
+                            ? .1
                             : 1
                         : .1,
                     child: Container(

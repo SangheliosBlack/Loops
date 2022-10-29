@@ -76,7 +76,7 @@ class _AutentificarCelularState extends State<AutentificarCelular> {
                                 hintStyle: GoogleFonts.quicksand(
                                     color: Colors.grey.withOpacity(.4)),
                                 border: InputBorder.none,
-                                hintText: '474 103 0509'),
+                                hintText: '474 747 4747'),
                             hintText: '',
                             textStyle: GoogleFonts.quicksand(fontSize: 22),
                             onInputChanged: (PhoneNumber number2) {
@@ -109,8 +109,7 @@ class _AutentificarCelularState extends State<AutentificarCelular> {
           const SizedBox(
             height: 15,
           ),
-          BotonAutentificar(
-              formKey: formKey, controller: controller)
+          BotonAutentificar(formKey: formKey, controller: controller)
         ],
       ),
     );

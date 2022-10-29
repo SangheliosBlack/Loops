@@ -22,7 +22,6 @@ class TiendasService with ChangeNotifier {
   }
 
   Future<List<Tienda>> verTodoTienda() async {
-    await Future.delayed(const Duration(milliseconds: 300));
     try {
       final resp = await http
           .get(Uri.parse('${Statics.apiUrl}/tiendas/verTodoTiendas'), headers: {
@@ -38,7 +37,6 @@ class TiendasService with ChangeNotifier {
   }
 
   Future<List<Producto>> verTodoProductos() async {
-    await Future.delayed(const Duration(seconds: 1));
     try {
       final resp = await http.get(
           Uri.parse('${Statics.apiUrl}/tiendas/verTodoProductos'),
@@ -54,8 +52,7 @@ class TiendasService with ChangeNotifier {
     }
   }
 
-  Future<List<Producto>> listaCategorias({required String filtro}) async {
-    await Future.delayed(const Duration(seconds: 1));
+  Future<Categorias> listaCategorias({required String filtro}) async {
     final data = {'filtro': filtro};
 
     try {
@@ -68,9 +65,9 @@ class TiendasService with ChangeNotifier {
           });
 
       final dataParse = categoriasFromJson(resp.body);
-      return dataParse.productos;
+      return dataParse;
     } catch (e) {
-      return [];
+      return Categorias(ok: false, productos: [], tiendas: []);
     }
   }
 
@@ -176,8 +173,7 @@ class TiendasService with ChangeNotifier {
   }
 
   Future<Tienda?> getTienda({required String tienda}) async {
-    final data = {"tienda": tienda, "token": await AuthService.getPuntoVenta()};
-
+    final data = {"tienda": tienda};
     try {
       final resp = await http.post(
           Uri.parse('${Statics.apiUrl}/tiendas/obtenerTienda'),

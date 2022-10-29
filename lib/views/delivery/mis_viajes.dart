@@ -83,7 +83,7 @@ class _MisViajesViewState extends State<MisViajesView> {
                               color: filter != '' ? Colors.black : Colors.white,
                               borderRadius: const BorderRadius.only(
                                   topRight: Radius.circular(15),
-                                  bottomRight:  Radius.circular(15))),
+                                  bottomRight: Radius.circular(15))),
                           child: Center(
                             child: Icon(
                               Icons.calendar_month,
@@ -298,14 +298,19 @@ class ViajeWidget extends StatelessWidget {
                     children: [
                       Hero(
                         tag: pedidoProducto.id,
-                        child: const Icon(Icons.verified,
-                            color: Color.fromRGBO(41, 199, 184, 1)),
+                        child: pedidoProducto.entregadoCliente
+                            ? const Icon(Icons.verified,
+                                color: Color.fromRGBO(41, 199, 184, 1))
+                            : const Icon(Icons.verified,
+                                color: Colors.blueGrey),
                       ),
                       const SizedBox(
                         width: 10,
                       ),
                       Text(
-                        'Completado',
+                        pedidoProducto.entregadoCliente
+                            ? 'Completado'
+                            : 'Pendiente',
                         style: GoogleFonts.quicksand(
                             color: Colors.black.withOpacity(.8)),
                       ),

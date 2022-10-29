@@ -21,6 +21,8 @@ class AdminHandlers {
     final permissionService = Provider.of<PermissionStatusProvider>(context);
     final socketService = Provider.of<SocketService>(context);
 
+  
+
     if (authService.puntoVentaStatus == PuntoVenta.isAvailable) {
       if (socketService.serverStatus == ServerStatus.Online) {
         return const PuntoVentaMainView();

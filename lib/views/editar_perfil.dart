@@ -87,13 +87,16 @@ class EditarPerfil extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  authService.usuario.correo,
-                  style: GoogleFonts.quicksand(
-                      color: Colors.black.withOpacity(.8), fontSize: 18),
+                Expanded(
+                  child: Text(
+                    authService.usuario.correo,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.quicksand(
+                        color: Colors.black.withOpacity(.8), fontSize: 18),
+                  ),
                 ),
                 Text(
-                  'Verificado',
+                  '',
                   style: GoogleFonts.quicksand(
                       color: Colors.green.withOpacity(.8), fontSize: 13),
                 ),

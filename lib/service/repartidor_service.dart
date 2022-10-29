@@ -1,5 +1,7 @@
 // ignore_for_file: empty_catches
 
+import 'dart:convert';
+
 import 'package:delivery/global/enviroment.dart';
 import 'package:delivery/models/google_directions.dart';
 import 'package:delivery/models/venta_response.dart';
@@ -40,12 +42,32 @@ class RepartidorProvider with ChangeNotifier {
         100));
   }
 
-  confirmarEntrega() async {
+  Future<bool> confirmarEntrega() async {
     await Future.delayed(const Duration(seconds: 1));
     int valor = listaEnvios.indexWhere((element) => !element.entregadoCliente);
-    listaEnvios[valor].entregadoRepartidor = true;
-    notifyListeners();
+    final data = {'id': listaEnvios[valor].id};
+
+    try {
+      final resp = await http.post(
+          Uri.parse('${Statics.apiUrl}/repartidor/confirmarPedidoEntregado'),
+          body: jsonEncode(data),
+          headers: {
+            'Content-Type': 'application/json',
+            'x-token': await AuthService.getToken()
+          });
+      if (resp.statusCode == 200) {
+        listaEnvios[valor].entregadoRepartidor = true;
+        notifyListeners();
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      return false;
+    }
   }
+
+  
 
   Future<List<PedidoProducto>> cargarPedidos() async {
     await Future.delayed(const Duration(milliseconds: 750));
@@ -98,6 +120,39 @@ class RepartidorProvider with ChangeNotifier {
       return envios;
     } catch (e) {
       return [];
+    }
+  }
+
+  Future<bool> confirmarCodigoCliente(
+      {required String idVenta, required String idSubventa}) async {
+    await Future.delayed(const Duration(milliseconds: 1000));
+
+    final data = {'uid': idVenta, 'uidVenta': idSubventa};
+
+    try {
+      final resp = await http.post(
+          Uri.parse('${Statics.apiUrl}/tiendas/confirmarPedidoCliente'),
+          body: jsonEncode(data),
+          headers: {
+            'Content-Type': 'application/json',
+            'x-token': await AuthService.getToken()
+          });
+
+      if (resp.statusCode == 200) {
+        listaEnvios[listaEnvios
+                .indexWhere((element) => element.id == idSubventa)]
+            .entregadoCliente = true;
+        listaEnvios[listaEnvios
+                .indexWhere((element) => element.id == idSubventa)]
+            .entregadoClienteTiempo = DateTime.now();
+
+        notifyListeners();
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      return false;
     }
   }
 }

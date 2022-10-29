@@ -70,13 +70,15 @@ class Tienda {
         uid: json["uid"] ?? json['_id'],
         horario: Horario.fromJson(json["horario"]),
         coordenadas: Coordenadas.fromJson(json["coordenadas"]),
-        listaProductos: List<Producto>.from(
-            json["listaProductos"].map((x) => Producto.fromJson(x))),
+        listaProductos: json["listadoProductos"] != null
+            ? List<Producto>.from(
+                json["listaProductos"].map((x) => Producto.fromJson(x)))
+            : [],
         imagenPerfil: json['imagen_perfil'],
         direccion: json['direccion'],
         online: json['online'],
         puntoVenta: json['punto_venta'] ?? '',
-        tiempoEspera: json['tiempo_espera'] ,
+        tiempoEspera: json['tiempo_espera'],
         autoImpresion: json['auto_impresion'],
         mac: json['mac'] ?? '',
       );

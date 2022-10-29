@@ -1,4 +1,5 @@
-import 'package:delivery/models/productos.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:delivery/models/categorias_response.dart';
 import 'package:delivery/service/tiendas_service.dart';
 import 'package:delivery/widgets/producto_general.dart';
 import 'package:flutter/material.dart';
@@ -26,23 +27,107 @@ class CategoriaView extends StatelessWidget {
       ),
       body: FutureBuilder(
         future: tiendaProvider.listaCategorias(filtro: titulo),
-        builder:
-            (BuildContext context, AsyncSnapshot<List<Producto>> snapshot) {
+        builder: (BuildContext context, AsyncSnapshot<Categorias> snapshot) {
           return AnimatedSwitcher(
               duration: const Duration(milliseconds: 200),
               child: snapshot.hasData
-                  ? ListView.separated(
-                      padding: const EdgeInsets.all(20),
-                      itemCount: snapshot.data!.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        return ProductoGeneral(
-                          producto: snapshot.data![index],
-                        );
-                      },
-                      separatorBuilder: (BuildContext context, int index) =>
-                          const SizedBox(
-                        height: 10,
-                      ),
+                  ? Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                            height: 100,
+                            child: ListView.separated(
+                              padding: const EdgeInsets.symmetric(horizontal: 25),
+                              shrinkWrap: true,
+                              scrollDirection: Axis.horizontal,
+                              itemBuilder: (BuildContext context, int index) {
+                                var tienda = snapshot.data!.tiendas[index];
+
+                                return Column(
+                                  children: [
+                                    Container(
+                                        padding: const EdgeInsets.all(7),
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(40),
+                                            border: Border.all(
+                                                width: 2,
+                                                color: const Color.fromRGBO(
+                                                    41, 199, 184, 1))),
+                                        height: 75,
+                                        width: 75,
+                                        child: ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(40),
+                                          child: CachedNetworkImage(
+                                              fit: BoxFit.cover,
+                                              imageUrl: tienda.imagenPerfil,
+                                              imageBuilder: (context,
+                                                      imageProvider) =>
+                                                  Container(
+                                                    decoration: BoxDecoration(
+                                                      image: DecorationImage(
+                                                        image: imageProvider,
+                                                        fit: BoxFit.cover,
+                                                        colorFilter:
+                                                            ColorFilter.mode(
+                                                          Colors.black
+                                                              .withOpacity(.15),
+                                                          BlendMode.color,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                              placeholder: (context, url) =>
+                                                  Container(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              100),
+                                                      child:
+                                                          const CircularProgressIndicator(
+                                                        strokeWidth: 1,
+                                                        color: Colors.black,
+                                                      )),
+                                              errorWidget:
+                                                  (context, url, error) {
+                                                return const Icon(Icons.error);
+                                              }),
+                                        )),
+                                    const SizedBox(height: 5),
+                                    Text(
+                                      tienda.nombre,
+                                      style: GoogleFonts.quicksand(),
+                                    )
+                                  ],
+                                );
+                              },
+                              itemCount: snapshot.data!.tiendas.length,
+                              separatorBuilder: (_, __) => const SizedBox(
+                                width: 5,
+                              ),
+                            )),
+                        const SizedBox(
+                          height: 15,
+                        ),
+                        Expanded(
+                          child: ListView.separated(
+                            shrinkWrap: true,
+                            physics: const BouncingScrollPhysics(),
+                            padding: const EdgeInsets.all(20),
+                            itemCount: snapshot.data!.productos.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return ProductoGeneral(
+                                producto: snapshot.data!.productos[index],
+                              );
+                            },
+                            separatorBuilder:
+                                (BuildContext context, int index) =>
+                                    const SizedBox(
+                              height: 10,
+                            ),
+                          ),
+                        ),
+                      ],
                     )
                   : Column(
                       mainAxisAlignment: MainAxisAlignment.start,

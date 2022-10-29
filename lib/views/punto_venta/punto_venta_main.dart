@@ -1,11 +1,11 @@
 // ignore_for_file: avoid_print
 
 import 'package:bluetooth_enable_fork/bluetooth_enable_fork.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:delivery/models/venta_response.dart';
 import 'package:delivery/providers/push_notifications_provider.dart';
 import 'package:delivery/service/auth_service.dart';
 import 'package:delivery/service/bluetooth_servide.dart';
+import 'package:delivery/service/local_storage.dart';
 import 'package:delivery/service/socio_service.dart';
 import 'package:delivery/service/socket_service.dart';
 import 'package:delivery/views/punto_venta/calendario.dart';
@@ -57,7 +57,7 @@ class _PuntoVentaMainViewState extends State<PuntoVentaMainView> {
     final bluetoothProvider =
         Provider.of<BluetoothProvider>(context, listen: false);
 
-    socioService.obtenerPedidos(filter: '');
+    socioService.obtenerPedidos(filter: '', token: LocalStorage.prefs.getString('token2') ??'');
 
     pushProvider.initNotifications();
 
@@ -68,7 +68,7 @@ class _PuntoVentaMainViewState extends State<PuntoVentaMainView> {
           asAlarm: true,
           volume: 1);
 
-      socioService.obtenerPedidos(filter: filter);
+      socioService.obtenerPedidos(filter: filter,token: LocalStorage.prefs.getString('token2') ??'');
       starPrint(
           bluetoothProvider: bluetoothProvider,
           producto: event.pedido,
@@ -220,50 +220,6 @@ class _PuntoVentaMainViewState extends State<PuntoVentaMainView> {
                         ],
                       ),
                     ),
-                    Row(
-                      children: [
-                        Container(
-                          margin: const EdgeInsets.only(left: 20),
-                          decoration: BoxDecoration(
-                              border: Border.all(
-                                  width: 1, color: Colors.grey.withOpacity(.1)),
-                              color: Colors.white,
-                              shape: BoxShape.circle),
-                          child: SizedBox(
-                            width: 90,
-                            height: 90,
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(100),
-                              child: CachedNetworkImage(
-                                  fit: BoxFit.cover,
-                                  imageUrl: socioService.tienda.imagenPerfil,
-                                  imageBuilder: (context, imageProvider) =>
-                                      Container(
-                                        decoration: BoxDecoration(
-                                          image: DecorationImage(
-                                            image: imageProvider,
-                                            fit: BoxFit.cover,
-                                            colorFilter: ColorFilter.mode(
-                                              Colors.black.withOpacity(.15),
-                                              BlendMode.color,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                  placeholder: (context, url) => Container(
-                                      padding: const EdgeInsets.all(100),
-                                      child: const CircularProgressIndicator(
-                                        strokeWidth: 1,
-                                        color: Colors.black,
-                                      )),
-                                  errorWidget: (context, url, error) {
-                                    return const Icon(Icons.error);
-                                  }),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
                     Column(
                       children: [
                         Container(
@@ -308,7 +264,7 @@ class _PuntoVentaMainViewState extends State<PuntoVentaMainView> {
                                                           .eliminarData();
                                                       socioService
                                                           .obtenerPedidos(
-                                                              filter: filter);
+                                                              filter: filter,token: LocalStorage.prefs.getString('token2') ??'');
                                                     });
                                                   },
                                             child: Container(
@@ -469,7 +425,7 @@ class _PuntoVentaMainViewState extends State<PuntoVentaMainView> {
                                                 onRefresh: () async {
                                                   socioService.eliminarData();
                                                   socioService.obtenerPedidos(
-                                                      filter: filter);
+                                                      filter: filter,token: LocalStorage.prefs.getString('token2') ??'');
                                                 },
                                                 child: SingleChildScrollView(
                                                   physics:
@@ -523,7 +479,7 @@ class _PuntoVentaMainViewState extends State<PuntoVentaMainView> {
                                                             .eliminarData();
                                                         socioService
                                                             .obtenerPedidos(
-                                                                filter: filter);
+                                                                filter: filter,token: LocalStorage.prefs.getString('token2') ??'');
                                                       },
                                                       child:
                                                           SingleChildScrollView(
@@ -574,7 +530,9 @@ class _PuntoVentaMainViewState extends State<PuntoVentaMainView> {
                                                                         .ventaCache
                                                                         .venta[index],
                                                                     showActions:
-                                                                        true, confirmar: true,
+                                                                        true,
+                                                                    confirmar:
+                                                                        true,
                                                                   );
                                                                 }),
                                                       ),
@@ -908,7 +866,7 @@ class _PuntoVentaMainViewState extends State<PuntoVentaMainView> {
       filter = result;
     });
     socioService.eliminarData();
-    socioService.obtenerPedidos(filter: filter);
+    socioService.obtenerPedidos(filter: filter,token: LocalStorage.prefs.getString('token2') ??'');
   }
 
   showAlertDialog(
@@ -982,7 +940,8 @@ class PedidoVentaWidget extends StatelessWidget {
   const PedidoVentaWidget({
     Key? key,
     required this.pedido,
-    required this.showActions, required this.confirmar,
+    required this.showActions,
+    required this.confirmar,
   }) : super(key: key);
 
   @override
@@ -1048,7 +1007,7 @@ class PedidoVentaWidget extends StatelessWidget {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 11, vertical: 5),
                   decoration: BoxDecoration(
-                      color: !pedido.confirmado
+                      color: !pedido.confirmado || !pedido.entregadoRepartidor
                           ? Colors.black.withOpacity(.8)
                           : const Color.fromRGBO(234, 234, 236, .4),
                       borderRadius: BorderRadius.circular(15)),
@@ -1059,7 +1018,8 @@ class PedidoVentaWidget extends StatelessWidget {
                           height: 4,
                           width: 4,
                           decoration: BoxDecoration(
-                              color: !pedido.confirmado
+                              color: !pedido.confirmado ||
+                                      !pedido.entregadoRepartidor
                                   ? Colors.white
                                   : Colors.black.withOpacity(.8),
                               shape: BoxShape.circle)),
@@ -1067,7 +1027,8 @@ class PedidoVentaWidget extends StatelessWidget {
                         calcularEstadoPedido(pedido: pedido),
                         style: GoogleFonts.quicksand(
                             fontSize: 13,
-                            color: !pedido.confirmado
+                            color: !pedido.confirmado ||
+                                    !pedido.entregadoRepartidor
                                 ? Colors.white
                                 : Colors.black.withOpacity(.8)),
                       ),

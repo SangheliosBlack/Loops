@@ -32,17 +32,23 @@ class ViajesDetallesView extends StatelessWidget {
                   children: [
                     Hero(
                       tag: envio.id,
-                      child: const Icon(
-                        Icons.verified,
-                        color: Color.fromRGBO(41, 199, 184, 1),
-                        size: 60,
-                      ),
+                      child: envio.entregadoCliente
+                          ? const Icon(
+                              Icons.verified,
+                              color: Color.fromRGBO(41, 199, 184, 1),
+                              size: 60,
+                            )
+                          : const Icon(
+                              Icons.pending,
+                              color: Colors.blueGrey,
+                              size: 60,
+                            ),
                     ),
                     const SizedBox(
                       height: 15,
                     ),
                     Text(
-                      'Completado',
+                      envio.entregadoCliente ? 'Completado' : 'Incompleto',
                       style: GoogleFonts.quicksand(
                           fontSize: 25, color: Colors.black),
                     ),
@@ -210,14 +216,12 @@ class ViajesDetallesView extends StatelessWidget {
                                             margin:
                                                 const EdgeInsets.only(top: 5),
                                             width: width - 105,
-                                            child: Expanded(
-                                              child: Text(
-                                                envio.direccionNegocio.titulo,
-                                                overflow: TextOverflow.ellipsis,
-                                                maxLines: 2,
-                                                style: GoogleFonts.quicksand(
-                                                    color: Colors.grey),
-                                              ),
+                                            child: Text(
+                                              envio.direccionNegocio.titulo,
+                                              overflow: TextOverflow.ellipsis,
+                                              maxLines: 2,
+                                              style: GoogleFonts.quicksand(
+                                                  color: Colors.grey),
                                             ),
                                           )
                                         ],
@@ -261,14 +265,12 @@ class ViajesDetallesView extends StatelessWidget {
                                             margin:
                                                 const EdgeInsets.only(top: 5),
                                             width: width - 105,
-                                            child: Expanded(
-                                              child: Text(
-                                                envio.direccionCliente.titulo,
-                                                overflow: TextOverflow.ellipsis,
-                                                maxLines: 2,
-                                                style: GoogleFonts.quicksand(
-                                                    color: Colors.grey),
-                                              ),
+                                            child: Text(
+                                              envio.direccionCliente.titulo,
+                                              overflow: TextOverflow.ellipsis,
+                                              maxLines: 2,
+                                              style: GoogleFonts.quicksand(
+                                                  color: Colors.grey),
                                             ),
                                           )
                                         ],
@@ -342,19 +344,25 @@ class ViajesDetallesView extends StatelessWidget {
                 const SizedBox(
                   height: 20,
                 ),
-                Text(
-                  'Total depositado',
-                  style: GoogleFonts.quicksand(
-                      color: Colors.black.withOpacity(.8), fontSize: 15),
-                ),
-                Text(
-                  '\$ 25.66',
-                  style: GoogleFonts.quicksand(
-                      color: const Color.fromRGBO(41, 199, 184, 1),
-                      fontSize: 55),
-                ),
-                const SizedBox(
-                  height: 60,
+                Column(
+                  children: [
+                    Text(
+                      envio.entregadoCliente
+                          ? 'Total depositado'
+                          : 'Total en espera...',
+                      style: GoogleFonts.quicksand(
+                          color: Colors.black.withOpacity(.8), fontSize: 15),
+                    ),
+                    Text(
+                      '\$ 25.66',
+                      style: GoogleFonts.quicksand(
+                          color: const Color.fromRGBO(41, 199, 184, 1),
+                          fontSize: 55),
+                    ),
+                    const SizedBox(
+                      height: 60,
+                    )
+                  ],
                 )
               ],
             ),

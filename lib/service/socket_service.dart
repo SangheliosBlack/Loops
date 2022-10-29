@@ -10,7 +10,6 @@ import 'package:socket_io_client/socket_io_client.dart' as IO;
 enum ServerStatus { Online, Offline, Connecting }
 
 class SocketService with ChangeNotifier {
-
   ServerStatus _serverStatus = ServerStatus.Connecting;
 
   late IO.Socket _socket;
@@ -21,7 +20,6 @@ class SocketService with ChangeNotifier {
   Function get emit => _socket.emit;
 
   void connect() async {
-
     final pushProvider = PushNotificationProvider();
 
     final tokenFB = await pushProvider.firebaseMessaging.getToken();
@@ -32,9 +30,9 @@ class SocketService with ChangeNotifier {
       'transports': ['websocket'],
       'autoConnect': true,
       'forceNew': true,
-      'extraHeaders': {'x-token': token,'token':tokenFB}
+      'extraHeaders': {'x-token': token, 'token': tokenFB}
     });
-    
+
     _socket.onConnect((_) {
       _serverStatus = ServerStatus.Online;
       notifyListeners();

@@ -1,6 +1,7 @@
 import 'package:delivery/service/auth_service.dart';
 import 'package:delivery/service/socket_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 class SplashLayout extends StatefulWidget {
@@ -18,15 +19,29 @@ class _SplashLayoutState extends State<SplashLayout> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: FutureBuilder(
-          future: checkLoginState(context),
-          builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-            return const CircularProgressIndicator(
-              strokeWidth: 1,
-            );
-          },
+    return AnnotatedRegion(
+      value: SystemUiOverlayStyle.dark,
+      child: Scaffold(
+        body: Center(
+          child: FutureBuilder(
+            future: checkLoginState(context),
+            builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 50),
+                      child:
+                          const Image(image: AssetImage('assets/images/loops2.png'))),
+                  const CircularProgressIndicator(
+                    strokeWidth: 1,
+                    color: Colors.black,
+                  ),
+                ],
+              );
+            },
+          ),
         ),
       ),
     );
@@ -36,13 +51,10 @@ class _SplashLayoutState extends State<SplashLayout> {
     final authService = Provider.of<AuthService>(context, listen: false);
     final socketService = Provider.of<SocketService>(context, listen: false);
 
-    
-
-    final isAutenticado =
-        await authService.isLoggedIn();
+    final isAutenticado = await authService.isLoggedIn();
 
     if (isAutenticado) {
-       socketService.connect();
+      socketService.connect();
     }
   }
 }

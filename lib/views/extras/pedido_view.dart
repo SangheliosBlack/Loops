@@ -59,11 +59,31 @@ class PedidoView extends StatelessWidget {
                               child: SizedBox(
                                 width: 60,
                                 height: 60,
-                                child: Image(
-                                  image: CachedNetworkImageProvider(
-                                      venta.pedidos[index].imagen),
-                                  fit: BoxFit.cover,
-                                ),
+                                child: CachedNetworkImage(
+                                    fit: BoxFit.cover,
+                                    imageUrl: venta.pedidos[index].imagen,
+                                    imageBuilder: (context, imageProvider) =>
+                                        Container(
+                                          decoration: BoxDecoration(
+                                            image: DecorationImage(
+                                              image: imageProvider,
+                                              fit: BoxFit.cover,
+                                              colorFilter: ColorFilter.mode(
+                                                Colors.black.withOpacity(.15),
+                                                BlendMode.color,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                    placeholder: (context, url) => Container(
+                                        padding: const EdgeInsets.all(100),
+                                        child: const CircularProgressIndicator(
+                                          strokeWidth: 1,
+                                          color: Colors.black,
+                                        )),
+                                    errorWidget: (context, url, error) {
+                                      return const Icon(Icons.error);
+                                    }),
                               ),
                             );
                           },
@@ -373,6 +393,9 @@ class PedidoView extends StatelessWidget {
                         Divider(
                           color: Colors.black.withOpacity(.1),
                         ),
+                        const SizedBox(
+                          height: 20,
+                        ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -592,23 +615,18 @@ class EstadoWidget extends StatelessWidget {
                             var number = pedido.repartidor.numeroCelular;
                             FlutterPhoneDirectCaller.callNumber(number)
                                 .then((value) {
-                              try {
-                                if (value!) {
-                                  final snackBar = SnackBar(
-                                    duration: const Duration(seconds: 2),
-                                    backgroundColor: Colors.red,
-                                    content: Text(
-                                      'Permiso denegado, caracteristica limitada.',
-                                      style: GoogleFonts.quicksand(),
-                                    ),
-                                  );
+                              if (value == null || value == false) {
+                                final snackBar = SnackBar(
+                                  duration: const Duration(seconds: 2),
+                                  backgroundColor: Colors.red,
+                                  content: Text(
+                                    'Permiso denegado, caracteristica limitada.',
+                                    style: GoogleFonts.quicksand(),
+                                  ),
+                                );
 
-                                  ScaffoldMessenger.of(context)
-                                      .showSnackBar(snackBar);
-                                }
-                              // ignore: empty_catches
-                              } catch (e) {
-                                
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(snackBar);
                               }
                             });
                           },
@@ -641,6 +659,28 @@ class EstadoWidget extends StatelessWidget {
                 style: GoogleFonts.quicksand(
                     color: Colors.black.withOpacity(.8), fontSize: 35),
               ),
+              Container(
+                  padding: const EdgeInsets.symmetric(vertical: 20),
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.place_outlined,
+                        color: Colors.blue,
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Expanded(
+                        child: Text(
+                          pedido.direccionCliente.titulo,
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 3,
+                          style: GoogleFonts.quicksand(
+                              color: Colors.black.withOpacity(.8)),
+                        ),
+                      ),
+                    ],
+                  )),
               Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,

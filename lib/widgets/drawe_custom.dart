@@ -33,102 +33,97 @@ class _DrawerCustomState extends State<DrawerCustom> {
             child: const Icon(Icons.arrow_back, color: Colors.black)),
         elevation: 0,
       ),
-      body: Column(
-        children: [
-          ListView(
-            shrinkWrap: true,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(25),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const SizedBox(height: 35),
-                    const SizedBox(height: 50),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(1000),
-                      child: SizedBox(
-                        width: 100,
-                        height: 100,
-                        child: Container(
-                          padding: const EdgeInsets.all(7),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(1000),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.only(top: 10),
-                      child: Text(
-                        authService.usuario.nombre,
-                        overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.quicksand(
-                          color: const Color(0xff444652),
-                          fontSize: 20,
-                        ),
-                      ),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.only(top: 2),
-                      child: Text(
-                        authService.usuario.correo,
-                        style: GoogleFonts.quicksand(
-                            fontSize: 14, color: Colors.grey),
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const EditarPerfil())),
+      body: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        child: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(25),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(1000),
+                    child: SizedBox(
+                      width: 200,
+                      height: 200,
                       child: Container(
-                        margin: const EdgeInsets.only(top: 25),
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 10, horizontal: 25),
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                              width: 1, color: Colors.grey.withOpacity(.1)),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Text('Editar',
-                            style: GoogleFonts.quicksand(color: Colors.black)),
+                        padding: const EdgeInsets.all(7),
+                        child: const Image(
+                            image: AssetImage('assets/images/loops2.png')),
                       ),
                     ),
-                    const SizedBox(height: 40),
-                    SizedBox(
-                      child: ListView.separated(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 0, vertical: 15),
-                          itemBuilder: (BuildContext context, int index) =>
-                              itemSettings(
-                                index: index,
-                                context: context,
-                                titulo: Statics.listSetting[index]['titulo'],
-                                icono: Statics.listSetting[index]['icono'],
-                                ruta: Statics.listSetting[index]['ruta'],
-                              ),
-                          separatorBuilder: (BuildContext context, int index) =>
-                              index != 2
-                                  ? const SizedBox(height: 15)
-                                  : Container(
-                                      margin: const EdgeInsets.symmetric(
-                                          vertical: 20),
-                                      width: double.infinity,
-                                      height: 1,
-                                      decoration: BoxDecoration(
-                                          color: Colors.grey.withOpacity(.1)),
-                                    ),
-                          itemCount: Statics.listSetting.length),
+                  ),
+                  Container(
+                    margin: const EdgeInsets.only(top: 10),
+                    child: Text(
+                      authService.usuario.nombre,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.quicksand(
+                        color: const Color(0xff444652),
+                        fontSize: 20,
+                      ),
                     ),
-                  ],
-                ),
+                  ),
+                  Container(
+                    margin: const EdgeInsets.only(top: 2),
+                    child: Text(
+                      authService.usuario.correo,
+                      style: GoogleFonts.quicksand(
+                          fontSize: 14, color: Colors.grey),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const EditarPerfil())),
+                    child: Container(
+                      margin: const EdgeInsets.only(top: 25),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 10, horizontal: 25),
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                            width: 1, color: Colors.grey.withOpacity(.1)),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text('Editar',
+                          style: GoogleFonts.quicksand(color: Colors.black)),
+                    ),
+                  ),
+                  const SizedBox(height: 40),
+                  SizedBox(
+                    child: ListView.separated(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 0, vertical: 15),
+                        itemBuilder: (BuildContext context, int index) =>
+                            itemSettings(
+                              index: index,
+                              context: context,
+                              titulo: Statics.listSetting[index]['titulo'],
+                              icono: Statics.listSetting[index]['icono'],
+                              ruta: Statics.listSetting[index]['ruta'],
+                            ),
+                        separatorBuilder: (BuildContext context, int index) =>
+                            index != 2
+                                ? const SizedBox(height: 15)
+                                : Container(
+                                    margin: const EdgeInsets.symmetric(
+                                        vertical: 20),
+                                    width: double.infinity,
+                                    height: 1,
+                                    decoration: BoxDecoration(
+                                        color: Colors.grey.withOpacity(.1)),
+                                  ),
+                        itemCount: Statics.listSetting.length),
+                  ),
+                ],
               ),
-            ],
-          ),
-        ],
+            ),
+          ],
+        ),
       ),
     );
   }

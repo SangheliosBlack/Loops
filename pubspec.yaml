@@ -32,6 +32,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   easy_debounce: ^2.0.1
+  flutter_launcher_icons: "^0.10.0"
   fluro: ^2.0.3
   flutter_rating_bar: ^4.0.0
   font_awesome_flutter: ^10.1.0
@@ -93,6 +94,12 @@ dev_dependencies:
 # following page: https://dart.dev/tools/pub/pubspec
 
 # The following section is specific to Flutter.
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/logo1.png"
+
+
 flutter:
 
   

@@ -1,6 +1,7 @@
 // ignore_for_file: empty_catches
 
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:delivery/global/enviroment.dart';
 import 'package:delivery/models/tienda.dart';
@@ -76,17 +77,19 @@ class SocioService with ChangeNotifier {
     notifyListeners();
   }
 
-  obtenerPedidos({required String filter}) async {
-    final data = {'filtro': filter};
+  obtenerPedidos({ String tienda = '',required String filter, required String token}) async {
+    final data = {'filtro': filter, 'token': token,'tienda':tienda};
 
     try {
-      final resp = await http.post(
+      final resp = await http.post (
           Uri.parse('${Statics.apiUrl}/tiendas/pedidos'),
           body: jsonEncode(data),
           headers: {
             'Content-Type': 'application/json',
             'x-token': await AuthService.getToken()
           });
+
+      log(resp.body);
 
       final ventas = ventaProFromJson(resp.body);
       ventaCache = ventas;
@@ -205,6 +208,7 @@ class SocioService with ChangeNotifier {
             });
 
         final tiendaParse = tiendaFromJson(resp.body);
+
 
         if (resp.statusCode == 200) {
           tienda = tiendaParse;

@@ -176,6 +176,7 @@ class SearchDestination extends SearchDelegate<SearchResult> {
             child: ListView(
               children: const [
                 LinearProgressIndicator(
+                  minHeight: 1,
                   color: Color.fromRGBO(41, 199, 184, 1),
                   backgroundColor: Colors.white,
                 ),
@@ -235,8 +236,12 @@ class SearchDestination extends SearchDelegate<SearchResult> {
                   style: GoogleFonts.quicksand(),
                 ),
                 onTap: () {
-                  close(context,
-                      SearchResult(cancelo: false, placeId: lugar.placeId, sugerencia: false));
+                  close(
+                      context,
+                      SearchResult(
+                          cancelo: false,
+                          placeId: lugar.placeId,
+                          sugerencia: false));
                 },
               );
             },

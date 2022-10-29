@@ -16,7 +16,7 @@ class DoneDeliveryView extends StatelessWidget {
           .copyWith(statusBarColor: const Color.fromRGBO(41, 199, 184, 1)),
       child: Scaffold(
         backgroundColor: const Color.fromRGBO(41, 199, 184, 1),
-        body: Container(
+        body: SizedBox(
           width: double.infinity,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
