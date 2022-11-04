@@ -1542,7 +1542,7 @@ class _PaymentSummaryState extends State<PaymentSummary> {
                                   backgroundColor:
                                       const Color.fromRGBO(0, 0, 0, 1),
                                   content: Text(
-                                    'Error desconocido',
+                                    'Establecimiento fuera de horario',
                                     style: GoogleFonts.quicksand(
                                       color: Colors.white,
                                     ),

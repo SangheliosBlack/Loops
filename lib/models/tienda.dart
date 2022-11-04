@@ -30,6 +30,7 @@ class Tienda {
       required this.imagenPerfil,
       required this.autoImpresion,
       required this.mac,
+      required this.sugerencia,
       required this.listaProductos});
 
   String fotografias;
@@ -54,6 +55,7 @@ class Tienda {
   String imagenPerfil;
   String mac;
   bool autoImpresion;
+  bool sugerencia;
 
   factory Tienda.fromJson(Map<String, dynamic> json) => Tienda(
         fotografias: json['fotografias'],
@@ -80,7 +82,7 @@ class Tienda {
         puntoVenta: json['punto_venta'] ?? '',
         tiempoEspera: json['tiempo_espera'],
         autoImpresion: json['auto_impresion'],
-        mac: json['mac'] ?? '',
+        mac: json['mac'] ?? '', sugerencia: json['sugerencia'] ?? false,
       );
 
   Map<String, dynamic> toJson() => {

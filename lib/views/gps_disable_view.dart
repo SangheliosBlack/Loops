@@ -10,6 +10,7 @@ import 'package:permission_handler/permission_handler.dart';
 class GpsDisableView extends StatefulWidget {
   const GpsDisableView({Key? key}) : super(key: key);
 
+
   @override
   _GpsDisableViewState createState() => _GpsDisableViewState();
 }

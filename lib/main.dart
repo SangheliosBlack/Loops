@@ -1,30 +1,30 @@
-import 'package:delivery/firebase_options.dart';
-import 'package:delivery/global/enviroment.dart';
-import 'package:delivery/layout/auth_layout.dart';
-import 'package:delivery/layout/dashboard_layout.dart';
-import 'package:delivery/layout/delivery_layout.dart';
-import 'package:delivery/layout/permission_layout.dart';
-import 'package:delivery/layout/socio_layout.dart';
-import 'package:delivery/layout/splash_layout.dart';
-import 'package:delivery/providers/login_form_provider.dart';
-import 'package:delivery/providers/register_form_provider.dart';
-import 'package:delivery/routes/router.dart';
-import 'package:delivery/service/auth_service.dart';
-import 'package:delivery/service/bluetooth_servide.dart';
-import 'package:delivery/service/local_storage.dart';
-import 'package:delivery/service/navigator_service.dart';
-import 'package:delivery/service/permission_status.dart';
-import 'package:delivery/service/puto_dial.dart';
-import 'package:delivery/service/socket_service.dart';
-import 'package:firebase_analytics/firebase_analytics.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:delivery/providers/register_form_provider.dart';
+import 'package:delivery/providers/login_form_provider.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:delivery/service/permission_status.dart';
+import 'package:delivery/service/navigator_service.dart';
+import 'package:delivery/service/bluetooth_servide.dart';
+import 'package:delivery/layout/permission_layout.dart';
+import 'package:delivery/layout/dashboard_layout.dart';
+import 'package:delivery/service/socket_service.dart';
+import 'package:delivery/layout/delivery_layout.dart';
+import 'package:delivery/service/local_storage.dart';
+import 'package:delivery/layout/splash_layout.dart';
+import 'package:delivery/service/auth_service.dart';
+import 'package:delivery/layout/socio_layout.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:delivery/layout/auth_layout.dart';
+import 'package:delivery/service/puto_dial.dart';
+import 'package:delivery/global/enviroment.dart';
+import 'package:delivery/firebase_options.dart';
+import 'package:delivery/routes/router.dart';
+import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter/material.dart';
 
 late AndroidNotificationChannel channel;
 late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
@@ -38,22 +38,12 @@ void main() async {
           : DefaultFirebaseOptions.currentPlatform);
 
   if (!kIsWeb) {
-    channel = const AndroidNotificationChannel(
-        'general_id', // id
-        'General', // title
-        'This channel is used for important notifications.', // description
-        importance: Importance.high,
-        playSound: true,
-        ledColor: Colors.blue);
+    channel = const AndroidNotificationChannel('general_id', 'General',
+        'This channel is used for important notifications.',
+        importance: Importance.high, playSound: true, ledColor: Colors.blue);
 
     flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
-    /// Create an Android Notification Channel.
-    ///
-    /// We use this channel in the `AndroidManifest.xml` file to override the
-
-    /// Update the iOS foreground notification presentation options tzsao allow
-    /// heads up notifications.
     await flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<
             AndroidFlutterLocalNotificationsPlugin>()
@@ -77,7 +67,6 @@ class AppState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    /*new StripeService()..init();*/
     return MultiProvider(providers: [
       ChangeNotifierProvider(lazy: false, create: (_) => SocketService()),
       ChangeNotifierProvider(lazy: false, create: (_) => BluetoothProvider()),

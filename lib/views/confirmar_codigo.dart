@@ -202,7 +202,7 @@ class _ConfirmarCodigoState extends State<ConfirmarCodigo> with CodeAutoFill {
                     : () {
                         if (controller.text.length == 4) {
                           checkCode(
-                              codigo: controller.text,
+                              codigo: controller.text.trim(),
                               numero: widget.numero,
                               authService: authService,
                               socket: socketService);

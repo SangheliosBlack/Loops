@@ -22,6 +22,7 @@ class Producto {
       required this.sku,
       required this.hot,
       required this.extra,
+      required this.sugerencia,
       required this.imagen,
       required this.opciones});
 
@@ -38,6 +39,7 @@ class Producto {
   num cantidad;
   String imagen;
   num extra;
+  bool sugerencia;
   String sku;
 
   factory Producto.fromJson(Map<String, dynamic> json) => Producto(
@@ -56,6 +58,7 @@ class Producto {
         opciones:
             List<Opcion>.from(json["opciones"].map((x) => Opcion.fromJson(x))),
         imagen: '',
+        sugerencia: json["sugerencia"] ?? false,
       );
 
   Map<String, dynamic> toJson() => {

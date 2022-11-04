@@ -389,7 +389,7 @@ class AuthService with ChangeNotifier {
           opciones: opciones,
           sku: producto.id + listado.toString(),
           imagen: producto.imagen,
-          hot: producto.hot);
+          hot: producto.hot, sugerencia: false);
 
       newProducto.cantidad = cantidad;
       usuario.cesta.productos.insert(0, newProducto);
@@ -673,7 +673,7 @@ class AuthService with ChangeNotifier {
       'usuario': usuario.uid,
       'customer': customer.id,
       'cesta': cestaToJson(cestaEnvio)
-    };
+    };  
 
     try {
       final resp = await http.post(

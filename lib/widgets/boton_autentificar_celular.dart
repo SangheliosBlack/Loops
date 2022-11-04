@@ -45,7 +45,7 @@ class _BotonAutentificarState extends State<BotonAutentificar> {
                   signCode = await SmsAutoFill().getAppSignature;
                 }
                 final estado = await TwilioService()
-                    .enviarSms(widget.controller.text, signCode, putoDial.dial);
+                    .enviarSms(widget.controller.text.trim(), signCode, putoDial.dial);
                 setState(() {
                   send = false;
                 });
