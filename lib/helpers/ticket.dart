@@ -1,7 +1,11 @@
+import 'dart:typed_data';
+
 import 'package:delivery/models/eleccion_model.dart';
 import 'package:delivery/models/venta_response.dart';
 import 'package:esc_pos_utils/esc_pos_utils.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:image/image.dart';
 
 Future<List<int>> testTicket(
     PaperSize paper, CapabilityProfile profile, PedidoProducto pedido) async {
@@ -17,6 +21,13 @@ Future<List<int>> testTicket(
   bytes += generator.feed(1);
 
   bytes += generator.setGlobalFont(PosFontType.fontA);
+
+  final ByteData data = await rootBundle.load('assets/images/impresion1.png');
+  final Uint8List buf = data.buffer.asUint8List();
+  final Image image = decodeImage(buf)!;
+  bytes += generator.image(image, align: PosAlign.center);
+
+  bytes += generator.feed(1);
 
   bytes += generator.text(
     pedido.tienda,
@@ -143,7 +154,7 @@ Future<List<int>> testTicket(
   );
 
   bytes += generator.text(
-    '${nombre[0]} gracias por tu pedido en Capitan Naza <3',
+    '${nombre[0]}, gracias por tu pedido en Capitan Naza <3',
     styles: const PosStyles(
       align: PosAlign.center,
       height: PosTextSize.size1,
@@ -155,6 +166,117 @@ Future<List<int>> testTicket(
   bytes += generator.qrcode(pedido.id, size: QRSize.Size8);
 
   bytes += generator.feed(0);
+
+  bytes += generator.beep();
+
+  bytes += generator.cut();
+  return bytes;
+}
+
+Future<List<int>> testTicket2(
+  PaperSize paper,
+  CapabilityProfile profile,
+) async {
+  final Generator generator = Generator(paper, profile, spaceBetweenRows: 10);
+
+  List<int> bytes = [];
+
+  bytes += generator.feed(3);
+
+  bytes += generator.setGlobalFont(PosFontType.fontA);
+
+  bytes += generator.text(
+    'Talla',
+    styles: const PosStyles(
+        align: PosAlign.center,
+        bold: false,
+        width: PosTextSize.size8,
+        height: PosTextSize.size8),
+    linesAfter: 0,
+  );
+
+  bytes += generator.row([
+    PosColumn(
+        text: 'XS',
+        width: 2,
+        styles: const PosStyles(
+          reverse: false,
+          bold: false,
+          align: PosAlign.center,
+        )),
+    PosColumn(
+        text: 'S',
+        width: 2,
+        styles: const PosStyles(reverse: false, align: PosAlign.center)),
+    PosColumn(
+        text: 'M',
+        width: 2,
+        styles: const PosStyles(reverse: true, align: PosAlign.center)),
+    PosColumn(
+        text: 'L',
+        width: 2,
+        styles: const PosStyles(reverse: false, align: PosAlign.center)),
+    PosColumn(
+        text: 'XL',
+        width: 2,
+        styles: const PosStyles(reverse: false, align: PosAlign.center)),
+    PosColumn(
+        text: 'NA',
+        width: 2,
+        styles: const PosStyles(reverse: false, align: PosAlign.center)),
+  ]);
+
+  bytes += generator.hr(ch: '-', linesAfter: 0);
+
+  bytes += generator.row([
+    PosColumn(
+      text: 'M',
+      width: 12,
+      styles: const PosStyles(
+        align: PosAlign.center,
+      ),
+    ),
+  ]);
+
+  bytes += generator.feed(1);
+
+  bytes += generator.text(
+    'Escanea y compra',
+    styles: const PosStyles(align: PosAlign.center, bold: false),
+    linesAfter: 0,
+  );
+  bytes += generator.text(
+    'con Nombre del negocio',
+    styles: const PosStyles(
+      align: PosAlign.center,
+    ),
+    linesAfter: 0,
+  );
+
+  bytes += generator.feed(1);
+
+  bytes += generator.barcode(Barcode.upcA([1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 4]),
+      height: 60);
+
+  bytes += generator.feed(1);
+
+  bytes += generator.text(
+    '599.000',
+    styles: const PosStyles(
+      align: PosAlign.center,
+    ),
+    linesAfter: 0,
+  );
+
+  bytes += generator.feed(3);
+
+  bytes += generator.text(
+    'Nombre del negocio',
+    styles: const PosStyles(
+      align: PosAlign.center,
+    ),
+    linesAfter: 0,
+  );
 
   bytes += generator.beep();
 

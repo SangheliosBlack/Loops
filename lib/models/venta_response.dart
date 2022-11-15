@@ -16,21 +16,21 @@ String ventaToJson(List<Venta> data) =>
 Venta ventoFromJson(String str) => Venta.fromJson(json.decode(str));
 
 class Venta {
-  Venta({
-    required this.pedidos,
-    required this.id,
-    required this.total,
-    required this.efectivo,
-    required this.envio,
-    required this.servicio,
-    required this.envioPromo,
-    required this.metodoPago,
-    required this.createdAt,
-    required this.updatedAt,
-    required this.v,
-    required this.direccion,
-    required this.usuario,
-  });
+  Venta(
+      {required this.pedidos,
+      required this.id,
+      required this.total,
+      required this.efectivo,
+      required this.envio,
+      required this.servicio,
+      required this.envioPromo,
+      required this.metodoPago,
+      required this.createdAt,
+      required this.updatedAt,
+      required this.v,
+      required this.direccion,
+      required this.usuario,
+      required this.codigoPromo});
 
   List<PedidoProducto> pedidos;
   String id;
@@ -45,6 +45,7 @@ class Venta {
   Direccion direccion;
   int v;
   String usuario;
+  String codigoPromo;
 
   factory Venta.fromJson(Map<String, dynamic> json) => Venta(
         pedidos: List<PedidoProducto>.from(json["pedidos"].map((x) {
@@ -64,6 +65,7 @@ class Venta {
         usuario: json["usuario"],
         envioPromo: json["envioPromo"],
         servicio: json["servicio"],
+        codigoPromo: json["codigo_promo"],
       );
 
   Map<String, dynamic> toJson() => {

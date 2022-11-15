@@ -37,7 +37,7 @@ class Statics {
     {'icono': Icons.point_of_sale, 'titulo': 'En linea 2', 'precio': '180.00'}
   ];
    static String apiUrl = 'https://server-delivery-production.herokuapp.com/api';
-  //static String apiUrl = 'http://192.168.100.120:3000/api';
+  //static String apiUrl = 'http://192.168.0.8:3000/api';
   static List<dynamic> listSetting = [
     {
       'icono': Icons.credit_card_outlined,

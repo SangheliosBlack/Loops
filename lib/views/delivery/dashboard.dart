@@ -180,38 +180,121 @@ class _DashBoardViewRepartidorState extends State<DashBoardViewRepartidor>
                     child: Column(
                       children: [
                         authProvider.usuario.onlineRepartidor
-                            ? Container()
+                            ? Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  GestureDetector(
+                                    onTap: () async {
+                                      mostrarCarga(context);
+                                      final resp =
+                                          await authProvider.repartidorOff();
+                                      if (!resp) {
+                                        final snackBar = SnackBar(
+                                          duration: const Duration(seconds: 2),
+                                          backgroundColor: Colors.red,
+                                          content: Text(
+                                            'Error desconocido.',
+                                            style: GoogleFonts.quicksand(),
+                                          ),
+                                        );
+
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(snackBar);
+                                      }
+                                      Navigator.pop(context);
+                                    },
+                                    behavior: HitTestBehavior.translucent,
+                                    child: Container(
+                                      margin: const EdgeInsets.only(bottom: 20),
+                                      width: 50,
+                                      height: 50,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: Colors.white,
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.grey.withOpacity(0.1),
+                                            spreadRadius: 5,
+                                            blurRadius: 7,
+                                            offset: const Offset(0,
+                                                3), // changes position of shadow
+                                          ),
+                                        ],
+                                      ),
+                                      child: Center(
+                                        child: Container(
+                                            padding: const EdgeInsets.all(5),
+                                            decoration: BoxDecoration(
+                                                shape: BoxShape.circle,
+                                                border: Border.all(
+                                                    width: 1,
+                                                    color: Colors.white)),
+                                            child: Icon(
+                                              Icons.logout,
+                                              color:
+                                                  Colors.black.withOpacity(.8),
+                                            )),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              )
                             : Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  Container(
-                                    width: 110,
-                                    height: 110,
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color:
-                                          const Color.fromRGBO(41, 199, 184, 1),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.grey.withOpacity(0.1),
-                                          spreadRadius: 5,
-                                          blurRadius: 7,
-                                          offset: const Offset(0,
-                                              3), // changes position of shadow
+                                  GestureDetector(
+                                    onTap: () async {
+                                      mostrarCarga(context);
+                                      final resp =
+                                          await authProvider.repartidorOn();
+                                      if (!resp) {
+                                        final snackBar = SnackBar(
+                                          duration: const Duration(seconds: 2),
+                                          backgroundColor: Colors.red,
+                                          content: Text(
+                                            'Error desconocido.',
+                                            style: GoogleFonts.quicksand(),
+                                          ),
+                                        );
+
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(snackBar);
+                                      }
+                                      Navigator.pop(context);
+                                    },
+                                    behavior: HitTestBehavior.translucent,
+                                    child: Container(
+                                      margin: const EdgeInsets.only(bottom: 30),
+                                      width: 110,
+                                      height: 110,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: const Color.fromRGBO(
+                                            41, 199, 184, 1),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.grey.withOpacity(0.1),
+                                            spreadRadius: 5,
+                                            blurRadius: 7,
+                                            offset: const Offset(0,
+                                                3), // changes position of shadow
+                                          ),
+                                        ],
+                                      ),
+                                      child: Center(
+                                        child: Container(
+                                          padding: const EdgeInsets.all(29),
+                                          decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              border: Border.all(
+                                                  width: 1,
+                                                  color: Colors.white)),
+                                          child: Text('INICIAR',
+                                              style: GoogleFonts.quicksand(
+                                                  color: Colors.white)),
                                         ),
-                                      ],
-                                    ),
-                                    child: Center(
-                                      child: Container(
-                                        padding: const EdgeInsets.all(29),
-                                        decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            border: Border.all(
-                                                width: 1, color: Colors.white)),
-                                        child: Text('INICIAR',
-                                            style: GoogleFonts.quicksand(
-                                                color: Colors.white)),
                                       ),
                                     ),
                                   ),

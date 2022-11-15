@@ -935,6 +935,60 @@ Future<void> starPrint(
 
   ScaffoldMessenger.of(context).showSnackBar(snackBar);
 }
+Future<void> starPrint2(
+    {required BluetoothProvider bluetoothProvider,
+    required BuildContext context}) async {
+  mostrarCarga(context);
+
+  const PaperSize paper = PaperSize.mm58;
+  final profile = await CapabilityProfile.load();
+
+  final PosPrintResult resul = await bluetoothProvider.printerBluetoothManager
+      .printTicket(await testTicket2(paper, profile));
+
+  var estado = '';
+
+  if (resul == PosPrintResult.printInProgress) {}
+
+  switch (resul) {
+    case PosPrintResult.printInProgress:
+      estado = 'Impresion en progreso';
+      break;
+    case PosPrintResult.printerNotSelected:
+      estado = 'Impresora no selecciondo';
+      break;
+    case PosPrintResult.scanInProgress:
+      estado = 'Escaneo en progreso';
+      break;
+    case PosPrintResult.success:
+      estado = 'Impresion realizada';
+      break;
+    case PosPrintResult.ticketEmpty:
+      estado = 'Impresora sin papel';
+      break;
+    case PosPrintResult.timeout:
+      estado = 'Tiempo de espera agotado';
+      break;
+    default:
+  }
+
+  Navigator.pop(context);
+
+  final snackBar = SnackBar(
+    duration: const Duration(seconds: 3),
+    backgroundColor: Colors.black,
+    content: Row(
+      children: [
+        Text(
+          estado,
+          style: GoogleFonts.quicksand(color: Colors.white),
+        ),
+      ],
+    ),
+  );
+
+  ScaffoldMessenger.of(context).showSnackBar(snackBar);
+}
 
 class _InnerTimeline extends StatelessWidget {
   const _InnerTimeline({

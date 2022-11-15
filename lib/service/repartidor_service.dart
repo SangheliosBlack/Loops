@@ -106,7 +106,6 @@ class RepartidorProvider with ChangeNotifier {
   }
 
   Future<List<PedidoProducto>> cargarPedidosMomento() async {
-    await Future.delayed(const Duration(milliseconds: 750));
     try {
       final resp = await http.post(
           Uri.parse('${Statics.apiUrl}/repartidor/enviosMomento'),

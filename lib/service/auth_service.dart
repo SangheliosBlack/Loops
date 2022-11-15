@@ -96,6 +96,56 @@ class AuthService with ChangeNotifier {
   }
   /*Imagen*/
 
+  Future<bool> repartidorOff() async {
+    await Future.delayed(const Duration(seconds: 1));
+
+    final data = {'uid': usuario.uid};
+
+    try {
+      final resp = await http.post(
+          Uri.parse('${Statics.apiUrl}/repartidor/conectar'),
+          body: jsonEncode(data),
+          headers: {
+            'Content-Type': 'application/json',
+            'x-token': await AuthService.getToken()
+          });
+      if (resp.statusCode == 200) {
+        usuario.onlineRepartidor = false;
+        notifyListeners();
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<bool> repartidorOn() async {
+    await Future.delayed(const Duration(seconds: 1));
+
+    final data = {'uid': usuario.uid};
+
+    try {
+      final resp = await http.post(
+          Uri.parse('${Statics.apiUrl}/repartidor/desconectar'),
+          body: jsonEncode(data),
+          headers: {
+            'Content-Type': 'application/json',
+            'x-token': await AuthService.getToken()
+          });
+      if (resp.statusCode == 200) {
+        usuario.onlineRepartidor = true;
+        notifyListeners();
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      return false;
+    }
+  }
+
   Future<bool> transitoUsuario() async {
     await Future.delayed(const Duration(seconds: 1));
 
@@ -319,7 +369,6 @@ class AuthService with ChangeNotifier {
       required num cantidad,
       required List<String> listado,
       required num envio}) async {
-    await Future.delayed(const Duration(milliseconds: 500));
     List<Opcion> opciones = producto.opciones
         .map((e) => Opcion(
             titulo: e.titulo,
@@ -359,6 +408,7 @@ class AuthService with ChangeNotifier {
               'x-token': await AuthService.getToken()
             });
 
+
         if (resp.statusCode == 200) {
           usuario.cesta.productos[index].cantidad =
               usuario.cesta.productos[index].cantidad + cantidad > 15
@@ -389,7 +439,8 @@ class AuthService with ChangeNotifier {
           opciones: opciones,
           sku: producto.id + listado.toString(),
           imagen: producto.imagen,
-          hot: producto.hot, sugerencia: false);
+          hot: producto.hot,
+          sugerencia: false);
 
       newProducto.cantidad = cantidad;
       usuario.cesta.productos.insert(0, newProducto);
@@ -673,7 +724,7 @@ class AuthService with ChangeNotifier {
       'usuario': usuario.uid,
       'customer': customer.id,
       'cesta': cestaToJson(cestaEnvio)
-    };  
+    };
 
     try {
       final resp = await http.post(
