@@ -4,10 +4,13 @@ import 'package:delivery/helpers/haversine.dart';
 import 'package:delivery/models/direccion.dart';
 import 'package:delivery/models/lista_opciones.dart';
 import 'package:delivery/models/productos.dart';
+import 'package:delivery/models/search_results.dart';
 import 'package:delivery/models/tienda.dart';
+import 'package:delivery/search/search_destination.dart';
 import 'package:delivery/service/auth_service.dart';
 import 'package:delivery/service/direcciones.service.dart';
 import 'package:delivery/service/llenar_pantallas.dart';
+import 'package:delivery/service/permission_status.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -39,7 +42,7 @@ class _VerProductoViewState extends State<VerProductoView> {
     final authService = Provider.of<AuthService>(context);
     final pantallasService = Provider.of<LlenarPantallasService>(context);
     final direccionesService = Provider.of<DireccionesService>(context);
-
+    final sugerencia = Provider.of<PermissionStatusProvider>(context);
     double width = MediaQuery.of(context).size.width;
     return WillPopScope(
       onWillPop: () async {
@@ -412,7 +415,43 @@ class _VerProductoViewState extends State<VerProductoView> {
 
                                     return GestureDetector(
                                       behavior: HitTestBehavior.translucent,
-                                      onTap: widget.tienda.online == false
+                                      onTap: direccionesService.direcciones.isEmpty ? () async {
+                                        {
+                                      if (sugerencia.listaSugerencias.isEmpty) {
+                                        calculandoAlerta(context);
+                                        try {
+                                          if (sugerencia
+                                              .listaSugerencias.isEmpty) {
+                                            await sugerencia.ubicacionActual();
+                                          }
+                                          final resultado = await showSearch(
+                                              context: context,
+                                              delegate: SearchDestination());
+                                          if (resultado!.cancelo == false) {
+                                            retornoBusqueda(resultado,
+                                                direccionesService, context);
+                                          }
+                                        } catch (e) {
+                                          debugPrint(
+                                              'Ningun lugar seleccionado');
+                                        }
+                                        Navigator.pop(context);
+                                      } else {
+                                        try {
+                                          final resultado = await showSearch(
+                                              context: context,
+                                              delegate: SearchDestination());
+                                          if (resultado!.cancelo == false) {
+                                            retornoBusqueda(resultado,
+                                                direccionesService, context);
+                                          }
+                                        } catch (e) {
+                                          debugPrint(
+                                              'Ningun lugar seleccionado');
+                                        }
+                                      }
+                                    }
+                                      } : widget.tienda.online == false
                                           ? () async {
                                               final snackBar = SnackBar(
                                                 duration:
@@ -500,18 +539,20 @@ class _VerProductoViewState extends State<VerProductoView> {
                                                   BorderRadius.circular(35),
                                               border: Border.all(
                                                   width: 1,
-                                                  color: Colors.black.withOpacity(
-                                                      authService.listadoTemp.fold<num>(
-                                                                  0,
-                                                                  (previousValue, element) =>
-                                                                      element
-                                                                          .listado
-                                                                          .length +
-                                                                      previousValue) >=
-                                                              widget.producto.opciones
-                                                                  .fold<num>(0, (previousValue, element) => element.minimo + previousValue)
-                                                          ? .8
-                                                          : .1))),
+                                                  color: Colors.black.withOpacity(authService.listadoTemp.fold<num>(
+                                                              0,
+                                                              (previousValue, element) =>
+                                                                  element.listado.length +
+                                                                  previousValue) >=
+                                                          widget.producto.opciones.fold<num>(
+                                                              0,
+                                                              (previousValue, element) =>
+                                                                  element.minimo +
+                                                                  previousValue)
+                                                      ? direccionesService.direcciones.isEmpty
+                                                          ? .1
+                                                          : .8
+                                                      : .1))),
                                           child: Center(
                                             child: Text(
                                               'Agregar',
@@ -527,8 +568,11 @@ class _VerProductoViewState extends State<VerProductoView> {
                                                               0,
                                                               (previousValue,
                                                                       element) =>
-                                                                  element.minimo + previousValue)
-                                                      ? .8
+                                                                  element.minimo +
+                                                                  previousValue)
+                                                      ? direccionesService.direcciones.isEmpty
+                                                          ? .1
+                                                          : .8
                                                       : .1),
                                                   fontSize: 20),
                                             ),
@@ -546,6 +590,25 @@ class _VerProductoViewState extends State<VerProductoView> {
         ),
       ),
     );
+  }
+
+  void retornoBusqueda(SearchResult result,
+      DireccionesService direccionesService, BuildContext context) async {
+    calculandoAlerta(context);
+    await Future.delayed(const Duration(milliseconds: 1500));
+
+    final String titulo = result.titulo;
+    final double latitud = result.latitud;
+    final double longitud = result.longitud;
+    final String id = result.placeId;
+
+    final nuevaDireccion = await direccionesService.agregarNuevaDireccion(
+        id: id, latitud: latitud, longitud: longitud, titulo: titulo);
+    if (nuevaDireccion) {
+      Navigator.pop(context);
+    } else {
+      /**IMPLEMENTAR ALGO ERROR*/
+    }
   }
 
   List<String> opcionesFinales({required List<ListadoOpcionesTemp> opciones}) {
