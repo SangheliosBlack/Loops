@@ -103,7 +103,7 @@ class AuthService with ChangeNotifier {
 
     try {
       final resp = await http.post(
-          Uri.parse('${Statics.apiUrl}/repartidor/conectar'),
+          Uri.parse('${Statics.apiUrl}/repartidor/desconectar'),
           body: jsonEncode(data),
           headers: {
             'Content-Type': 'application/json',
@@ -128,7 +128,7 @@ class AuthService with ChangeNotifier {
 
     try {
       final resp = await http.post(
-          Uri.parse('${Statics.apiUrl}/repartidor/desconectar'),
+          Uri.parse('${Statics.apiUrl}/repartidor/conectar'),
           body: jsonEncode(data),
           headers: {
             'Content-Type': 'application/json',
@@ -407,7 +407,6 @@ class AuthService with ChangeNotifier {
               'Content-Type': 'application/json',
               'x-token': await AuthService.getToken()
             });
-
 
         if (resp.statusCode == 200) {
           usuario.cesta.productos[index].cantidad =
@@ -737,12 +736,15 @@ class AuthService with ChangeNotifier {
 
       var respJson = ventoFromJson(resp.body);
 
+      print(respJson);
+
       if (resp.statusCode == 200) {
         usuario.cesta.productos = [];
         usuario.cesta.codigo = '';
         notifyListeners();
         return respJson;
       } else {
+        print('Object');
         return null;
       }
     } catch (e) {

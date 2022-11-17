@@ -4,6 +4,7 @@ import 'package:delivery/global/enviroment.dart';
 import 'package:delivery/helpers/mostrar_carga.dart';
 import 'package:delivery/helpers/widgets_to_markers.dart';
 import 'package:delivery/models/venta_response.dart';
+import 'package:delivery/providers/push_notifications_provider.dart';
 import 'package:delivery/service/auth_service.dart';
 import 'package:delivery/service/repartidor_service.dart';
 import 'package:delivery/service/socket_service.dart';
@@ -44,6 +45,12 @@ class _DashBoardViewRepartidorState extends State<DashBoardViewRepartidor>
     final socketService = Provider.of<SocketService>(context, listen: false);
     socketService.socket.on('repartidor-callback', (payload) {});
     _complementosMapa();
+
+    final pushProvider = PushNotificationProvider();
+    pushProvider.initNotifications();
+    pushProvider.mensajes.listen((event) {
+      _complementosMapa();
+      });
   }
 
   @override
