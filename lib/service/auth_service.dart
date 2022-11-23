@@ -736,7 +736,6 @@ class AuthService with ChangeNotifier {
 
       var respJson = ventoFromJson(resp.body);
 
-      print(respJson);
 
       if (resp.statusCode == 200) {
         usuario.cesta.productos = [];
@@ -744,7 +743,6 @@ class AuthService with ChangeNotifier {
         notifyListeners();
         return respJson;
       } else {
-        print('Object');
         return null;
       }
     } catch (e) {
