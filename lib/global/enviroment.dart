@@ -36,8 +36,8 @@ class Statics {
     {'icono': Icons.moped, 'titulo': 'En linea 1', 'precio': '150.00'},
     {'icono': Icons.point_of_sale, 'titulo': 'En linea 2', 'precio': '180.00'}
   ];
-   static String apiUrl = 'https://server-delivery-production.herokuapp.com/api';
-  //static String apiUrl = 'http://192.168.0.8:3000/api';
+  //  static String apiUrl = 'https://server-delivery-production.herokuapp.com/api';
+  static String apiUrl = 'http://192.168.0.32:3000/api';
   static List<dynamic> listSetting = [
     {
       'icono': Icons.credit_card_outlined,
@@ -80,7 +80,7 @@ class Statics {
       'icono': FontAwesomeIcons.fish,
     },
   ];
-  static String mapStyle = '''
+  static String mapStysle = '''
   [
     {
         "featureType": "water",

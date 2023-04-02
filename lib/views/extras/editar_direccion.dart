@@ -1,4 +1,3 @@
-import 'package:delivery/global/enviroment.dart';
 import 'package:delivery/helpers/confirmar_eliminacion.dart';
 import 'package:delivery/models/direccion.dart';
 import 'package:delivery/service/direcciones.service.dart';
@@ -138,7 +137,6 @@ class _EditarDireccionViewState extends State<EditarDireccionView> {
                     setState(() {
                       mapController = controller;
                     });
-                    controller.setMapStyle(Statics.mapStyle);
                   },
                   myLocationButtonEnabled: false,
                   zoomControlsEnabled: false,

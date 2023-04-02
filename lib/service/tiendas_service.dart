@@ -12,7 +12,7 @@ import 'package:flutter/cupertino.dart';
 
 import 'package:http/http.dart' as http;
 
-class TiendasService with ChangeNotifier {
+class TiendaService with ChangeNotifier {
   List<ListaProductos> _productosCategoria = [];
   List<ListaProductos> get productosCategoria => _productosCategoria;
 
@@ -142,20 +142,66 @@ class TiendasService with ChangeNotifier {
     }
   }
 
+  Future<bool> editarProducto(
+      {required String descripcion,
+      required String productoUid,
+      required String cantidad,
+      required String nombre,
+      required String precioCast,
+      required String listaUid}) async {
+    String precio = precioCast.replaceAll('\$', '');
+    precio = precio.replaceAll(' ', '');
+    precio = precio.replaceAll(',', '');
+
+    final data = {
+      'producto_uid': productoUid,
+      'talla': descripcion,
+      'cantidad': cantidad,
+      'nombre': nombre,
+      'precio': precio,
+      'lista_uid': listaUid
+    };
+
+    await Future.delayed(const Duration(milliseconds: 500));
+
+    try {
+      final resp = await http.post(
+          Uri.parse('${Statics.apiUrl}/productos/modificarProducto'),
+          body: jsonEncode(data),
+          headers: {
+            'Content-Type': 'application/json',
+            'x-token': await AuthService.getToken()
+          });
+
+      if (resp.statusCode == 400) {
+        return false;
+      } else {
+        return true;
+      }
+    } catch (e) {
+      return false;
+    }
+  }
+
   agregarNuevoProducto(
       {required String nombre,
       required String precio,
+      required String tienda,
       required String lista,
+      required String cantidad,
       required String descripcion}) async {
     String nuevoValor = precio.replaceAll('\$', '');
     nuevoValor = nuevoValor.replaceAll(' ', '');
     nuevoValor = nuevoValor.replaceAll(',', '');
     final data = {
       'listaProductos': lista,
+      'cantidad': cantidad,
       'nombre': nombre,
       'precio': double.parse(nuevoValor),
       'descripcion': descripcion,
+      'tienda': tienda
     };
+    await Future.delayed((const Duration(seconds: 1)));
     try {
       final resp = await http.post(
           Uri.parse('${Statics.apiUrl}/productos/nuevoProducto'),
@@ -168,6 +214,7 @@ class TiendasService with ChangeNotifier {
       final productoResp = productoFromJson(resp.body);
       return productoResp;
     } catch (e) {
+      print(e);
       return null;
     }
   }
@@ -198,6 +245,8 @@ class TiendasService with ChangeNotifier {
   eliminarTiendaCache({required String nombre}) {
     productosCategoria.removeWhere((element) => element.nombre == nombre);
   }
+
+  
 
   Future<List<ListaProductosCategoria>> obtenerProductos(
       {required String nombre, required String id}) async {

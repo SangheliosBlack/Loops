@@ -4,21 +4,58 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:delivery/global/enviroment.dart';
+import 'package:delivery/models/abono.dart';
+import 'package:delivery/models/productos.dart';
 import 'package:delivery/models/tienda.dart';
 import 'package:delivery/models/venta_model_pro.dart';
+import 'package:delivery/models/venta_response.dart';
 import 'package:delivery/service/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 enum LoadStatus { isInitialized, noYet }
 
+enum LoadStatusApartados { isInitialized, noYet }
+
 class SocioService with ChangeNotifier {
   LoadStatus loadStatus = LoadStatus.noYet;
+  LoadStatusApartados loadStatusApartados = LoadStatusApartados.noYet;
 
   late Tienda tienda;
 
+  //APARTADOS
+
+  List<PedidoProducto> apartados = [];
+
+  eliminarApartados() {
+    loadStatusApartados = LoadStatusApartados.noYet;
+    apartados = [];
+    notifyListeners();
+  }
+
+  obtenerApartados() async {
+    await Future.delayed(const Duration(seconds: 1));
+    try {
+      final resp = await http.get(
+          Uri.parse('${Statics.apiUrl}/tiendas/obtenerApartados'),
+          headers: {
+            'Content-Type': 'application/json',
+            'x-token': await AuthService.getToken()
+          });
+
+      apartados = ventaProFromJson(resp.body).venta;
+      loadStatusApartados = LoadStatusApartados.isInitialized;
+      notifyListeners();
+    } catch (e) {}
+  }
+
+  //APARTADOS
+
+  num entregado = 0;
+
   SocioService() {
     getTienda();
+    obtenerApartados();
   }
 
   conectarNegocio() {
@@ -28,6 +65,70 @@ class SocioService with ChangeNotifier {
 
   desconectarNegocio() {
     tienda.online = false;
+    notifyListeners();
+  }
+
+  agregarNuevoProducto({required Producto producto}) {
+    tienda.listaProductos.insert(0, producto);
+    notifyListeners();
+  }
+
+  editarMultiplesCantidades({required Venta venta}) {
+    for (var element in venta.pedidos[0].productos) {
+      int index = tienda.listaProductos
+          .indexWhere((element2) => element2.id == element.id);
+
+      if (index != -1) {
+        tienda.listaProductos[index].cantidad =
+            tienda.listaProductos[index].cantidad - element.cantidad;
+      }
+    }
+    notifyListeners();
+  }
+
+  Future<bool> eliminarProducto(
+      {required String idListado, required String idProducto}) async {
+    final data = {"lista_productos": idListado, "id_producto": idProducto};
+
+    try {
+      final resp = await http.post(
+          Uri.parse('${Statics.apiUrl}/productos/eliminarProducto'),
+          body: jsonEncode(data),
+          headers: {
+            'Content-Type': 'application/json',
+            'x-token': await AuthService.getToken()
+          });
+
+      final statusCode = resp.statusCode;
+
+      if (statusCode == 200) {
+        tienda.listaProductos
+            .removeWhere((element) => element.id == idProducto);
+        notifyListeners();
+
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      return false;
+    }
+  }
+
+  editarProductoInterno(
+      {required String id,
+      required String talla,
+      required String cantidad,
+      required String nombre,
+      required String precio}) {
+    final place =
+        tienda.listaProductos.indexWhere((element) => element.id == id);
+
+    tienda.listaProductos[place].descripcion = talla;
+    tienda.listaProductos[place].cantidad = num.parse(cantidad);
+    tienda.listaProductos[place].nombre = nombre;
+    tienda.listaProductos[place].precio = num.parse(precio);
+
     notifyListeners();
   }
 
@@ -77,11 +178,20 @@ class SocioService with ChangeNotifier {
     notifyListeners();
   }
 
-  obtenerPedidos({ String tienda = '',required String filter, required String token}) async {
-    final data = {'filtro': filter, 'token': token,'tienda':tienda};
+  obtenerPedidos(
+      {String tienda = '',
+      bool tiendaRopa = false,
+      required String filter,
+      required String token}) async {
+    final data = {
+      'filtro': filter,
+      'token': token,
+      'tienda': tienda,
+      'tienda_ropa': tiendaRopa
+    };
 
     try {
-      final resp = await http.post (
+      final resp = await http.post(
           Uri.parse('${Statics.apiUrl}/tiendas/pedidos'),
           body: jsonEncode(data),
           headers: {
@@ -95,7 +205,79 @@ class SocioService with ChangeNotifier {
       ventaCache = ventas;
       ventasCargadas = true;
       notifyListeners();
-    } catch (e) {}
+    } catch (e) {
+      print('errrrro');
+      print(e);
+    }
+  }
+
+  Future<bool> recalcularAbonos(
+      {required String cantidad,
+      required String ventaId,
+      required bool liquidado}) async {
+    await Future.delayed(const Duration(milliseconds: 700));
+
+    final data = {
+      'cantidad': cantidad,
+      'ventaId': ventaId,
+      'liquidado': liquidado
+    };
+
+    try {
+      final resp = await http.post(
+          Uri.parse('${Statics.apiUrl}/tiendas/agregarNuevoAbono'),
+          body: jsonEncode(data),
+          headers: {
+            'Content-Type': 'application/json',
+            'x-token': await AuthService.getToken()
+          });
+
+      if (resp.statusCode == 200) {
+        if (liquidado) {
+          apartados.removeWhere((element) => element.id == ventaId);
+        } else {
+          apartados[apartados.indexWhere((element) => element.id == ventaId)]
+              .abonos
+              .add((Abono(
+                  fecha: DateTime.now(),
+                  cantidad: num.parse(cantidad),
+                  titulo: 'Abono')));
+        }
+        notifyListeners();
+
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<Venta?> obtenerVentaQR({
+    required String qr,
+  }) async {
+    final data = {'qr': qr};
+
+    try {
+      final resp = await http.post(
+          Uri.parse('${Statics.apiUrl}/tiendas/busquedaQRVenta'),
+          body: jsonEncode(data),
+          headers: {
+            'Content-Type': 'application/json',
+            'x-token': await AuthService.getToken()
+          });
+
+      if (resp.statusCode == 200) {
+        log(resp.body);
+        final venta = ventoFromJson(resp.body);
+        return venta;
+      } else {
+        return null;
+      }
+    } catch (e) {
+      return null;
+    }
   }
 
   obtenerEnvios({required String filter}) async {
@@ -194,10 +376,20 @@ class SocioService with ChangeNotifier {
     }
   }
 
+  modificarEntregadoCliente({required String dinero}) {
+    entregado = num.parse(dinero);
+
+    notifyListeners();
+  }
+
+  modificarEntregadoCliente2({required String dinero}) {
+    entregado = 0;
+    notifyListeners();
+  }
+
   getTienda() async {
     try {
       final data = {"token": await AuthService.getPuntoVenta()};
-      await Future.delayed(const Duration(seconds: 1));
       try {
         final resp = await http.post(
             Uri.parse('${Statics.apiUrl}/tiendas/obtenerTienda'),
@@ -209,9 +401,10 @@ class SocioService with ChangeNotifier {
 
         final tiendaParse = tiendaFromJson(resp.body);
 
-
         if (resp.statusCode == 200) {
           tienda = tiendaParse;
+
+          tienda.listaProductos.sort((a, b) => a.nombre.compareTo(b.nombre));
 
           loadStatus = LoadStatus.isInitialized;
 

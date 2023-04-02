@@ -28,7 +28,7 @@ class SearchDestination extends SearchDelegate<SearchResult> {
           elevation: 0,
           backgroundColor: Colors.white),
       textTheme: superThemeData.textTheme
-          .copyWith(headline6: GoogleFonts.quicksand(color: Colors.black)),
+          .copyWith(titleLarge: GoogleFonts.quicksand(color: Colors.black)),
     );
   }
 

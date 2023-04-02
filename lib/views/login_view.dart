@@ -11,10 +11,10 @@ class LoginView extends StatefulWidget {
   const LoginView({Key? key}) : super(key: key);
 
   @override
-  _LoginViewState createState() => _LoginViewState();
+  LoginViewState createState() => LoginViewState();
 }
 
-class _LoginViewState extends State<LoginView> {
+class LoginViewState extends State<LoginView> {
   final passCtrl = TextEditingController();
 
   final emailCtrl = TextEditingController();
@@ -143,8 +143,7 @@ class _LoginViewState extends State<LoginView> {
                                     return '\u26A0 Campo invalido';
                                   } else {
                                     if (loginFormProvider.passwordError != '') {
-                                      return '\u26A0 ' +
-                                          loginFormProvider.passwordError;
+                                      return '\u26A0 ${loginFormProvider.passwordError}';
                                     } else {
                                       return null;
                                     }
@@ -363,8 +362,7 @@ class _LoginViewState extends State<LoginView> {
                               },
                               style: ElevatedButton.styleFrom(
                                   shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(25)),
-                                  primary: Theme.of(context).primaryColor),
+                                      borderRadius: BorderRadius.circular(25)), backgroundColor: Theme.of(context).primaryColor),
                               child: Text(
                                 'Ok',
                                 style: GoogleFonts.quicksand(
@@ -402,7 +400,7 @@ class _LoginViewState extends State<LoginView> {
             color: Theme.of(context).primaryColor,
           ),
         ),
-        Text('  ' + titulo,
+        Text('  $titulo',
             style: GoogleFonts.quicksand(
                 color: Colors.grey.withOpacity(1),
                 fontSize: 14,

@@ -10,7 +10,8 @@ String productoToJson(Producto data) => json.encode(data.toJson());
 
 class Producto {
   Producto(
-      {required this.id,
+      {required this.fechaVenta,
+      required this.id,
       required this.precio,
       required this.nombre,
       required this.descripcion,
@@ -24,9 +25,11 @@ class Producto {
       required this.extra,
       required this.sugerencia,
       required this.imagen,
+      required this.apartado,
       required this.opciones});
 
   String id;
+  DateTime fechaVenta;
   num precio;
   String nombre;
   String descripcion;
@@ -41,6 +44,7 @@ class Producto {
   num extra;
   bool sugerencia;
   String sku;
+  bool apartado;
 
   factory Producto.fromJson(Map<String, dynamic> json) => Producto(
         id: json["_id"],
@@ -59,6 +63,10 @@ class Producto {
             List<Opcion>.from(json["opciones"].map((x) => Opcion.fromJson(x))),
         imagen: '',
         sugerencia: json["sugerencia"] ?? false,
+        fechaVenta: json['fecha_venta'] != null
+            ? DateTime.parse(json["fecha_venta"])
+            : DateTime(0000, 00, 00, 00, 00),
+        apartado: json['apartado'] ?? false,
       );
 
   Map<String, dynamic> toJson() => {

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:delivery/models/productos.dart';
+import 'package:delivery/models/promocion.dart';
 
 Tienda tiendaFromJson(String str) => Tienda.fromJson(json.decode(str));
 
@@ -30,7 +31,9 @@ class Tienda {
       required this.imagenPerfil,
       required this.autoImpresion,
       required this.mac,
+      required this.tiendaRopa,
       required this.sugerencia,
+      required this. promociones,
       required this.listaProductos});
 
   String fotografias;
@@ -56,8 +59,11 @@ class Tienda {
   String mac;
   bool autoImpresion;
   bool sugerencia;
+  bool tiendaRopa;
+  List<Promocion> promociones;
 
   factory Tienda.fromJson(Map<String, dynamic> json) => Tienda(
+        tiendaRopa: json['tienda_ropa'] ?? false,
         fotografias: json['fotografias'],
         inventario: List<dynamic>.from(json["inventario"].map((x) => x)),
         equipo: List<dynamic>.from(json["equipo"].map((x) => x)),
@@ -72,7 +78,8 @@ class Tienda {
         uid: json["uid"] ?? json['_id'],
         horario: Horario.fromJson(json["horario"]),
         coordenadas: Coordenadas.fromJson(json["coordenadas"]),
-        listaProductos: json["listadoProductos"] != null
+        promociones: json['promociones'] !=  null? List<Promocion>.from(json['promociones'].map((x)=>Promocion.fromJson(x))) :[],
+        listaProductos: json["listaProductos"] != null
             ? List<Producto>.from(
                 json["listaProductos"].map((x) => Producto.fromJson(x)))
             : [],
@@ -82,7 +89,8 @@ class Tienda {
         puntoVenta: json['punto_venta'] ?? '',
         tiempoEspera: json['tiempo_espera'],
         autoImpresion: json['auto_impresion'],
-        mac: json['mac'] ?? '', sugerencia: json['sugerencia'] ?? false,
+        mac: json['mac'] ?? '',
+        sugerencia: json['sugerencia'] ?? false,
       );
 
   Map<String, dynamic> toJson() => {

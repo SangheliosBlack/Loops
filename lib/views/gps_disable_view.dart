@@ -12,10 +12,10 @@ class GpsDisableView extends StatefulWidget {
 
 
   @override
-  _GpsDisableViewState createState() => _GpsDisableViewState();
+   createState() => GpsDisableViewState();
 }
 
-class _GpsDisableViewState extends State<GpsDisableView> {
+class GpsDisableViewState extends State<GpsDisableView> {
   late Timer _timer;
   bool status = false;
 
@@ -127,10 +127,9 @@ class _GpsDisableViewState extends State<GpsDisableView> {
               ]),
               child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                      elevation: 0,
+                      elevation: 0, backgroundColor: Theme.of(context).primaryColor,
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15)),
-                      primary: Theme.of(context).primaryColor),
+                          borderRadius: BorderRadius.circular(15))),
                   onPressed: () async {
                     Geolocator.openLocationSettings();
                   },
@@ -152,10 +151,9 @@ class _GpsDisableViewState extends State<GpsDisableView> {
               ]),
               child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                      elevation: 0,
+                      elevation: 0, backgroundColor: Colors.white,
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15)),
-                      primary: Colors.white),
+                          borderRadius: BorderRadius.circular(15))),
                   onPressed: () {
                     SystemChannels.platform.invokeMethod('SystemNavigator.pop');
                   },

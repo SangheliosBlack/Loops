@@ -1,3 +1,4 @@
+import 'package:delivery/service/hide_show_menu.dart';
 import 'package:delivery/service/socio_service.dart';
 import 'package:delivery/service/tiendas_service.dart';
 import 'package:flutter/material.dart';
@@ -11,9 +12,9 @@ class SocioLayout extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        
-        ChangeNotifierProvider(lazy: false, create: (_) => TiendasService()),
+        ChangeNotifierProvider(lazy: false, create: (_) => TiendaService()),
         ChangeNotifierProvider(lazy: false, create: (_) => SocioService()),
+        ChangeNotifierProvider(lazy: false, create: (_) => GeneralActions()),
       ],
       child: Scaffold(
         body: Center(

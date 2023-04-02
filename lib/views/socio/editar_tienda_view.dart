@@ -1,5 +1,4 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:delivery/global/enviroment.dart';
 import 'package:delivery/models/tienda.dart';
 import 'package:delivery/providers/push_notifications_provider.dart';
 import 'package:delivery/views/socio/editar_menu.dart';
@@ -46,10 +45,6 @@ class _EditarTiendaViewState extends State<EditarTiendaView> {
 
   @override
   Widget build(BuildContext context) {
-    final cameraPosition = CameraPosition(
-        zoom: 16,
-        target: LatLng(widget.tienda.coordenadas.latitud,
-            widget.tienda.coordenadas.longitud));
     double width = MediaQuery.of(context).size.width;
     final pushProvider = PushNotificationProvider();
     return Scaffold(
@@ -253,42 +248,16 @@ class _EditarTiendaViewState extends State<EditarTiendaView> {
                                         ),
                                       ],
                                     ),
-                                    const SizedBox(height: 5),
-                                    ClipRRect(
-                                      borderRadius: BorderRadius.circular(15),
-                                      child: SizedBox(
-                                        width: 200,
-                                        height: 225,
-                                        child: GoogleMap(
-                                          compassEnabled: false,
-                                          mapToolbarEnabled: false,
-                                          zoomGesturesEnabled: false,
-                                          tiltGesturesEnabled: false,
-                                          scrollGesturesEnabled: false,
-                                          rotateGesturesEnabled: false,
-                                          buildingsEnabled: false,
-                                          indoorViewEnabled: false,
-                                          liteModeEnabled: false,
-                                          trafficEnabled: false,
-                                          markers: markers,
-                                          initialCameraPosition: cameraPosition,
-                                          myLocationEnabled: false,
-                                          onMapCreated:
-                                              (GoogleMapController controller) {
-                                            setState(() {
-                                              mapController = controller;
-                                            });
-                                            controller
-                                                .setMapStyle(Statics.mapStyle2);
-                                          },
-                                          myLocationButtonEnabled: false,
-                                          zoomControlsEnabled: false,
-                                          onCameraMove: (cameraPosition) {},
-                                        ),
-                                      ),
-                                    ),
                                   ],
                                 ),
+                              ),
+                              const SizedBox(height: 15),
+                              ItemConfiguracion(
+                                color: const Color.fromRGBO(253, 236, 171, 1),
+                                titulo: 'Disponibilidad',
+                                subTitulo: 'Disponible',
+                                funcion: () => null,
+                                icono: Icons.delivery_dining_outlined,
                               ),
                             ],
                           ),
@@ -316,72 +285,38 @@ class _EditarTiendaViewState extends State<EditarTiendaView> {
                                 icono: Icons.schedule_outlined,
                               ),
                               const SizedBox(height: 15),
-                              ItemConfiguracion(
-                                color: const Color.fromRGBO(255, 179, 166, 1),
-                                titulo: 'Aniversario',
-                                subTitulo: DateFormat.yMEd('es_ES')
-                                    .format(widget.tienda.aniversario),
-                                funcion: () => null,
-                                icono: Icons.cake_outlined,
+                              FutureBuilder(
+                                future:
+                                    pushProvider.firebaseMessaging.getToken(),
+                                builder: (BuildContext context,
+                                    AsyncSnapshot<String?> snapshot) {
+                                  if (snapshot.hasData) {
+                                    return ItemConfiguracion(
+                                      isRed: widget.tienda.puntoVenta.isEmpty
+                                          ? true
+                                          : false,
+                                      color: const Color.fromRGBO(
+                                          253, 236, 171, 1),
+                                      titulo: 'Punto Venta',
+                                      subTitulo:
+                                          widget.tienda.puntoVenta.isEmpty
+                                              ? 'No configurado'
+                                              : 'Configurado',
+                                      funcion: () =>
+                                          openDialog(string: snapshot.data!),
+                                      icono: Icons.storefront_outlined,
+                                    );
+                                  } else {
+                                    return const CircularProgressIndicator();
+                                  }
+                                },
                               ),
                               const SizedBox(height: 15),
-                              SizedBox(
-                                height: 105,
-                                child: ItemConfiguracion(
-                                  color: const Color.fromRGBO(252, 208, 159, 1),
-                                  titulo: 'Pagos',
-                                  subTitulo: '646013168600137175',
-                                  funcion: () => null,
-                                  icono: Icons.account_balance_outlined,
-                                ),
-                              ),
                             ],
                           ),
                         )
                       ],
                     ),
-                    const SizedBox(height: 15),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: ItemConfiguracion(
-                            color: const Color.fromRGBO(253, 236, 171, 1),
-                            titulo: 'Disponibilidad',
-                            subTitulo: 'Disponible',
-                            funcion: () => null,
-                            icono: Icons.delivery_dining_outlined,
-                          ),
-                        ),
-                        const SizedBox(
-                          width: 20,
-                        ),
-                        Expanded(
-                          child: FutureBuilder(
-                            future: pushProvider.firebaseMessaging.getToken(),
-                            builder: (BuildContext context,
-                                AsyncSnapshot<String?> snapshot) {
-                              if (snapshot.hasData) {
-                                return ItemConfiguracion(
-                                  isRed: widget.tienda.puntoVenta.isEmpty
-                                      ? true
-                                      : false,
-                                  color: const Color.fromRGBO(253, 236, 171, 1),
-                                  titulo: 'Punto Venta',
-                                  subTitulo: widget.tienda.puntoVenta.isEmpty
-                                      ? 'No configurado'
-                                      : 'Configurado',
-                                  funcion: () =>
-                                      openDialog(string: snapshot.data!),
-                                  icono: Icons.storefront_outlined,
-                                );
-                              } else {
-                                return const CircularProgressIndicator();
-                              }
-                            },
-                          ),
-                        ),
-                      ],
-                    )
                   ],
                 ),
               ),

@@ -17,10 +17,10 @@ class MetodosPagoView extends StatefulWidget {
   const MetodosPagoView({Key? key}) : super(key: key);
 
   @override
-  _MetodosPagoViewState createState() => _MetodosPagoViewState();
+  MetodosPagoViewState createState() => MetodosPagoViewState();
 }
 
-class _MetodosPagoViewState extends State<MetodosPagoView> {
+class MetodosPagoViewState extends State<MetodosPagoView> {
   @override
   Widget build(BuildContext context) {
     final tarjetasService = Provider.of<TarjetasService>(context);
@@ -198,7 +198,7 @@ class _MetodosPagoViewState extends State<MetodosPagoView> {
         physics: const NeverScrollableScrollPhysics(),
         scrollDirection: Axis.horizontal,
         itemBuilder: (BuildContext context, int index) =>
-            card(context, data![index]),
+            card(context, data[index]),
         separatorBuilder: (BuildContext context, int index) =>
             const SizedBox(width: 15),
         itemCount: data!.length);

@@ -9,20 +9,20 @@ class PermissionLaoyut extends StatefulWidget {
   const PermissionLaoyut({Key? key, required this.child}) : super(key: key);
 
   @override
-  _PermissionLaoyutState createState() => _PermissionLaoyutState();
+  PermissionLaoyutState createState() => PermissionLaoyutState();
 }
 
-class _PermissionLaoyutState extends State<PermissionLaoyut>
+class PermissionLaoyutState extends State<PermissionLaoyut>
     with WidgetsBindingObserver {
   @override
   void initState() {
-    WidgetsBinding.instance?.addObserver(this);
+    WidgetsBinding.instance.addObserver(this);
     super.initState();
   }
 
   @override
   void dispose() {
-    WidgetsBinding.instance?.removeObserver(this);
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 

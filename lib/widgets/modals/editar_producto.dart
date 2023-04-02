@@ -175,9 +175,8 @@ class _EditarProductoState extends State<EditarProducto> {
                             Row(
                               children: [
                                 Text(
-                                  double.parse(rating.toString())
-                                          .toStringAsFixed(0) +
-                                      "%",
+                                  "${double.parse(rating.toString())
+                                          .toStringAsFixed(0)}%",
                                   style: GoogleFonts.quicksand(
                                       fontSize: 25,
                                       fontWeight: FontWeight.bold,
@@ -238,9 +237,8 @@ class _EditarProductoState extends State<EditarProducto> {
                             Row(
                               children: [
                                 Text(
-                                  "\$" +
-                                      double.parse(rating.toString())
-                                          .toStringAsFixed(0),
+                                  "\$${double.parse(rating.toString())
+                                          .toStringAsFixed(0)}",
                                   style: GoogleFonts.quicksand(
                                       fontSize: 25,
                                       fontWeight: FontWeight.bold,

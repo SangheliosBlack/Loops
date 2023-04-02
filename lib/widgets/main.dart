@@ -4,6 +4,7 @@ import 'package:delivery/global/enviroment.dart';
 import 'package:delivery/global/styles.dart';
 import 'package:delivery/search/search_dashboard.dart';
 import 'package:delivery/service/llenar_pantallas.dart';
+import 'package:delivery/views/extras/ver_producto.dart';
 import 'package:delivery/views/tienda.dart';
 import 'package:delivery/views/ver_todo.dart';
 import 'package:delivery/widgets/dashboard/carta_negocio.dart';
@@ -19,6 +20,7 @@ class BaraBusqueda extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final pantallasService = Provider.of<LlenarPantallasService>(context);
     return Container(
       margin: const EdgeInsets.only(top: 25),
       child: GestureDetector(
@@ -28,12 +30,25 @@ class BaraBusqueda extends StatelessWidget {
             final resultado =
                 await showSearch(context: context, delegate: SearchBusqueda());
             if (!resultado!.cancelo) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) =>
-                        StoreIndividual(tienda: resultado.tienda!)),
-              );
+              if (resultado.tienda != null) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          StoreIndividual(tienda: resultado.tienda!)),
+                );
+              } else {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => VerProductoView(
+                          producto: resultado.producto!,
+                          tienda: pantallasService.tiendas.firstWhere(
+                              (element) =>
+                                  element.nombre ==
+                                  resultado.producto!.tienda))),
+                );
+              }
             }
           } catch (e) {
             debugPrint('Wrong');
@@ -104,12 +119,12 @@ class ListadoEstablecimientos extends StatelessWidget {
                 ),
                 OutlinedButton(
                   style: OutlinedButton.styleFrom(
+                      foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(
                           vertical: 0, horizontal: 15),
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(15)),
                       side: const BorderSide(width: 1, color: Colors.white),
-                      primary: Colors.white,
                       backgroundColor: Colors.white),
                   onPressed: () {
                     Navigator.push(
@@ -184,7 +199,6 @@ class _MapWidgetState extends State<MapWidget> {
       mapType: MapType.normal,
       initialCameraPosition: Statics.kGooglePlex,
       onMapCreated: (GoogleMapController controller) {
-        controller.setMapStyle(Statics.mapStyle);
         _controller.complete(controller);
       },
     );

@@ -1,3 +1,4 @@
+import 'package:delivery/pagina_web.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:delivery/providers/register_form_provider.dart';
@@ -30,6 +31,8 @@ late AndroidNotificationChannel channel;
 late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 
 void main() async {
+  
+
   WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp(
@@ -59,6 +62,8 @@ void main() async {
 
   await LocalStorage.configurePrefs();
   Flurorouter.configureRoutes();
+  SystemChrome.setPreferredOrientations(
+      [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
   runApp(const AppState());
 }
 
@@ -138,35 +143,37 @@ class _MyAppState extends State<MyApp> {
         final permissionProvider =
             Provider.of<PermissionStatusProvider>(context);
 
-        return Overlay(
-          initialEntries: [
-            OverlayEntry(builder: (context) {
-              return authProvider.authStatus == AuthStatus.checking
-                  ? const SplashLayout()
-                  : authProvider.authStatus == AuthStatus.authenticated
-                      ? permissionProvider.isGranted &&
-                                  permissionProvider.isEnabled ||
-                              kIsWeb
-                          ? authProvider.puntoVentaStatus ==
-                                  PuntoVenta.isAvailable
-                              ? SocioLayout(
-                                  child: child!,
-                                )
-                              : socketProvider.serverStatus ==
-                                      ServerStatus.Online
-                                  ? authProvider.usuario.repartidor
-                                      ? DeliveryLayout(
-                                          child: child!,
-                                        )
-                                      : DashboardLayout(
-                                          child: child!,
-                                        )
-                                  : const SplashLayout()
-                          : PermissionLaoyut(child: child!)
-                      : AuthLayout(child: child!);
-            })
-          ],
-        );
+        return kIsWeb
+            ? const PaginaWeb()
+            : Overlay(
+                initialEntries: [
+                  OverlayEntry(builder: (context) {
+                    return authProvider.authStatus == AuthStatus.checking
+                        ? const SplashLayout()
+                        : authProvider.authStatus == AuthStatus.authenticated
+                            ? permissionProvider.isGranted &&
+                                        permissionProvider.isEnabled ||
+                                    kIsWeb
+                                ? authProvider.puntoVentaStatus ==
+                                        PuntoVenta.isAvailable
+                                    ? SocioLayout(
+                                        child: child!,
+                                      )
+                                    : socketProvider.serverStatus ==
+                                            ServerStatus.Online
+                                        ? authProvider.usuario.repartidor
+                                            ? DeliveryLayout(
+                                                child: child!,
+                                              )
+                                            : DashboardLayout(
+                                                child: child!,
+                                              )
+                                        : const SplashLayout()
+                                : PermissionLaoyut(child: child!)
+                            : AuthLayout(child: child!);
+                  })
+                ],
+              );
       },
     );
   }

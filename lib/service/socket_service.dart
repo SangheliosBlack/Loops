@@ -26,7 +26,7 @@ class SocketService with ChangeNotifier {
 
     final token = await AuthService.getToken();
 
-    _socket = IO.io('https://server-delivery-production.herokuapp.com', {
+    _socket = IO.io('http://192.168.0.32:3000', {
       'transports': ['websocket'],
       'autoConnect': true,
       'forceNew': true,

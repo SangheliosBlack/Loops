@@ -71,6 +71,7 @@ class _DashboardViewState extends State<DashboardView> {
                   child: Row(
                     children: [
                       GestureDetector(
+                        behavior: HitTestBehavior.translucent,
                         onTap: () {
                           Navigator.push(
                             context,
@@ -78,17 +79,28 @@ class _DashboardViewState extends State<DashboardView> {
                                 builder: (context) => const MisPedidosView()),
                           );
                         },
-                        child: Container(
-                          width: 40,
-                          height: 40,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(100),
-                              color: const Color.fromRGBO(41, 199, 184, .03)),
-                          child: const Icon(
-                            Icons.moped_sharp,
-                            size: 20,
-                            color: Color.fromRGBO(41, 199, 184, 1),
-                          ),
+                        child: Row(
+                          children: [
+                            Text(
+                              'Mis ordenes',
+                              style:
+                                  GoogleFonts.quicksand(color: Colors.blueGrey),
+                            ),
+                            Container(
+                              margin: const EdgeInsets.only(left: 10),
+                              width: 40,
+                              height: 40,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(100),
+                                  color:
+                                      const Color.fromRGBO(41, 199, 184, .03)),
+                              child: const Icon(
+                                Icons.moped_sharp,
+                                size: 20,
+                                color: Color.fromRGBO(41, 199, 184, 1),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                       const SizedBox(

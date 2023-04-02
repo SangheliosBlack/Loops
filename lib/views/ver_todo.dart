@@ -22,7 +22,7 @@ class VerTodoView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
-    final tiendaService = Provider.of<TiendasService>(context);
+    final tiendaService = Provider.of<TiendaService>(context);
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -95,47 +95,59 @@ class VerTodoView extends StatelessWidget {
                                 },
                                 child: Row(
                                   children: [
-                                    ClipRRect(
-                                      borderRadius: BorderRadius.circular(100),
-                                      child: SizedBox(
-                                        width: 85,
-                                        height: 85,
-                                        child: CachedNetworkImage(
-                                            fit: BoxFit.cover,
-                                            imageUrl: tienda.imagenPerfil,
-                                            imageBuilder: (context,
-                                                    imageProvider) =>
-                                                Container(
-                                                  decoration: BoxDecoration(
-                                                    image: DecorationImage(
-                                                      image: imageProvider,
-                                                      fit: BoxFit.cover,
-                                                      colorFilter:
-                                                          ColorFilter.mode(
-                                                        Colors.black
-                                                            .withOpacity(.15),
-                                                        BlendMode.color,
+                                    Container(
+                                      padding: EdgeInsets.all(5),
+                                      decoration: BoxDecoration(
+                                          border: Border.all(
+                                              width: 1,
+                                              color: Color.fromRGBO(
+                                                  41, 199, 184, 1)),
+                                          borderRadius:
+                                              BorderRadius.circular(100)),
+                                      child: ClipRRect(
+                                        borderRadius:
+                                            BorderRadius.circular(100),
+                                        child: SizedBox(
+                                          width: 78,
+                                          height: 78,
+                                          child: CachedNetworkImage(
+                                              fit: BoxFit.cover,
+                                              imageUrl: tienda.imagenPerfil,
+                                              imageBuilder: (context,
+                                                      imageProvider) =>
+                                                  Container(
+                                                    decoration: BoxDecoration(
+                                                      image: DecorationImage(
+                                                        image: imageProvider,
+                                                        fit: BoxFit.cover,
+                                                        colorFilter:
+                                                            ColorFilter.mode(
+                                                          Colors.black
+                                                              .withOpacity(.15),
+                                                          BlendMode.color,
+                                                        ),
                                                       ),
                                                     ),
                                                   ),
-                                                ),
-                                            placeholder: (context, url) =>
-                                                Container(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            10),
-                                                    child:
-                                                        const CircularProgressIndicator(
-                                                      strokeWidth: 1,
-                                                      color: Colors.black,
-                                                    )),
-                                            errorWidget: (context, url, error) {
-                                              return const Icon(Icons.error);
-                                            }),
+                                              placeholder: (context, url) =>
+                                                  Container(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              10),
+                                                      child:
+                                                          const CircularProgressIndicator(
+                                                        strokeWidth: 1,
+                                                        color: Colors.black,
+                                                      )),
+                                              errorWidget:
+                                                  (context, url, error) {
+                                                return const Icon(Icons.error);
+                                              }),
+                                        ),
                                       ),
                                     ),
                                     const SizedBox(
-                                      width: 10,
+                                      width: 15,
                                     ),
                                     Expanded(
                                       child: Column(
@@ -213,8 +225,7 @@ class VerTodoView extends StatelessWidget {
                                             itemBuilder: (context, _) =>
                                                 const FaIcon(
                                               FontAwesomeIcons.solidStar,
-                                              color: Color.fromRGBO(
-                                                  41, 199, 184, 1),
+                                              color: Colors.black,
                                             ),
                                             itemSize: 11,
                                             unratedColor:

@@ -41,7 +41,7 @@ class _SocioDashBoardViewState extends State<SocioDashBoardView>
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     final _controller = WeSlideController();
-    final tiendasService = Provider.of<TiendasService>(context);
+    final tiendasService = Provider.of<TiendaService>(context);
     final authServiceService = Provider.of<AuthService>(context);
     super.build(context);
     final socioService = Provider.of<SocioService>(context);
@@ -134,14 +134,18 @@ class _SocioDashBoardViewState extends State<SocioDashBoardView>
                                     : Container(),
                                 GestureDetector(
                                   behavior: HitTestBehavior.translucent,
-                                  onTap: authServiceService.puntoVentaStatus ==
-                                          PuntoVenta.isAvailable
-                                      ? () {
-                                          showAlertDialog(context, true);
-                                        }
-                                      : () {
-                                          _controller.show();
-                                        },
+                                  onTap: authServiceService
+                                              .usuario.negocios.length >
+                                          1
+                                      ? authServiceService.puntoVentaStatus ==
+                                              PuntoVenta.isAvailable
+                                          ? () {
+                                              showAlertDialog(context, true);
+                                            }
+                                          : () {
+                                              _controller.show();
+                                            }
+                                      : null,
                                   child: Row(children: [
                                     Text(
                                       tienda!.nombre,
@@ -151,14 +155,17 @@ class _SocioDashBoardViewState extends State<SocioDashBoardView>
                                     const SizedBox(
                                       width: 5,
                                     ),
-                                    Icon(
-                                      Icons.expand_more,
-                                      color:
-                                          authServiceService.puntoVentaStatus ==
-                                                  PuntoVenta.isAvailable
-                                              ? Colors.white
-                                              : Colors.black,
-                                    ),
+                                    authServiceService.usuario.negocios.length >
+                                            1
+                                        ? Icon(
+                                            Icons.expand_more,
+                                            color: authServiceService
+                                                        .puntoVentaStatus ==
+                                                    PuntoVenta.isAvailable
+                                                ? Colors.white
+                                                : Colors.black,
+                                          )
+                                        : Container(),
                                   ]),
                                 ),
                               ],

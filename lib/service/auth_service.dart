@@ -5,11 +5,11 @@ import 'package:delivery/global/enviroment.dart';
 import 'package:delivery/helpers/haversine.dart';
 import 'package:delivery/models/cesta.dart';
 import 'package:delivery/models/codigo_response.dart';
-import 'package:delivery/models/customer.dart';
 import 'package:delivery/models/direccion.dart';
 import 'package:delivery/models/image_response.dart';
 import 'package:delivery/models/lista_opciones.dart';
 import 'package:delivery/models/productos.dart';
+import 'package:delivery/models/promocion.dart';
 import 'package:delivery/models/tienda.dart';
 import 'package:delivery/models/usuario.dart';
 import 'package:delivery/models/venta_response.dart';
@@ -60,6 +60,146 @@ class AuthService with ChangeNotifier {
       }
     }
     notifyListeners();
+  }
+
+  estadoApartado() {
+    usuario.cesta.apartado = usuario.cesta.apartado ? false : true;
+    notifyListeners();
+  }
+
+  estadoApartado2() {
+    usuario.cesta.apartado = false;
+  }
+
+  calcularPromociones(
+      {required List<Promocion> promociones,
+      required Producto producto,
+      bool eliminar = false}) async {
+    if (usuario.cesta.productos.isNotEmpty) {
+      final index =
+          promociones.indexWhere((element) => element.sku == producto.sku);
+
+      if (index != -1) {
+        if (producto.cantidad >= promociones[index].cantidad) {
+          final alcance = producto.cantidad ~/ promociones[index].cantidad;
+
+          var enCesta =
+              productoAgregado2(id: producto.id + 'promo', opciones: []);
+
+          print('//////////////////////////////////////////////////');
+          print(enCesta);
+          if (enCesta!.isNotEmpty) {
+            int index = usuario.cesta.productos
+                .indexWhere((element) => element.sku == enCesta);
+
+            final data = {
+              'id': usuario.cesta.productos[index].id,
+              'cantidad': usuario.cesta.productos[index].cantidad + alcance
+            };
+
+            try {
+              final resp = await http.post(
+                  Uri.parse(
+                      '${Statics.apiUrl}/usuario/modificarCantidadProductoCesta'),
+                  body: jsonEncode(data),
+                  headers: {
+                    'Content-Type': 'application/json',
+                    'x-token': await AuthService.getToken()
+                  });
+
+              if (resp.statusCode == 200) {
+                usuario.cesta.productos[index].cantidad = alcance;
+                calcularTotal();
+                usuario.cesta.productos
+                    .sort((a, b) => a.nombre.compareTo(b.nombre));
+                vaciarElementosTemp();
+                return true;
+              } else {
+                return false;
+              }
+            } catch (e) {
+              return false;
+            }
+          } else {
+            final Producto newProducto = Producto(
+                id: promociones[index].id,
+                precio: -promociones[index].descuento,
+                nombre: promociones[index].titulo,
+                descripcion: '',
+                descuentoP: 0,
+                descuentoC: 0,
+                disponible: true,
+                tienda: 'Black Shop',
+                cantidad: alcance,
+                extra: calcularOpcionesExtra(opciones: []),
+                opciones: [],
+                sku: producto.id + 'promo',
+                imagen: '',
+                hot: 0,
+                sugerencia: false,
+                fechaVenta: DateTime(0000, 00, 00, 00, 00),
+                apartado: false);
+
+            newProducto.cantidad = alcance;
+            usuario.cesta.productos.insert(0, newProducto);
+
+            try {
+              final data = {'producto': newProducto.toJson()};
+
+              final resp = await http.post(
+                  Uri.parse('${Statics.apiUrl}/usuario/agregarProductoCesta'),
+                  body: jsonEncode(data),
+                  headers: {
+                    'Content-Type': 'application/json',
+                    'x-token': await AuthService.getToken()
+                  });
+
+              if (resp.statusCode == 200) {
+                print('todop cvool');
+                calcularTotal();
+                usuario.cesta.productos
+                    .sort((a, b) => a.nombre.compareTo(b.nombre));
+                vaciarElementosTemp();
+                return true;
+              } else {
+                return false;
+              }
+            } catch (e) {
+              print('JAMON');
+              return false;
+            }
+          }
+        } else {
+          if (eliminar) {
+            final data = {"id": producto.id};
+
+            try {
+              final resp = await http.post(
+                  Uri.parse('${Statics.apiUrl}/usuario/eliminarProductoCesta'),
+                  body: jsonEncode(data),
+                  headers: {
+                    'Content-Type': 'application/json',
+                    'x-token': await AuthService.getToken()
+                  });
+
+              if (resp.statusCode == 200) {
+                usuario.cesta.productos.removeWhere(
+                    (element) => element.id == promociones[index].id);
+                calcularTotal();
+                usuario.cesta.productos
+                    .sort((a, b) => a.nombre.compareTo(b.nombre));
+                notifyListeners();
+                return true;
+              } else {
+                return false;
+              }
+            } catch (e) {
+              return false;
+            }
+          }
+        }
+      }
+    }
   }
 
   Future<bool> postProfileImage() async {
@@ -183,7 +323,7 @@ class AuthService with ChangeNotifier {
             'x-token': await AuthService.getToken()
           });
       if (resp.statusCode == 200) {
-        usuario.transito = true;
+        usuario.transito = false;
         notifyListeners();
         return true;
       } else {
@@ -365,7 +505,8 @@ class AuthService with ChangeNotifier {
   }
 
   Future<bool> agregarProductoCesta(
-      {required Producto producto,
+      {bool skuOnly = false,
+      required Producto producto,
       required num cantidad,
       required List<String> listado,
       required num envio}) async {
@@ -436,10 +577,12 @@ class AuthService with ChangeNotifier {
           cantidad: cantidad,
           extra: calcularOpcionesExtra(opciones: opciones),
           opciones: opciones,
-          sku: producto.id + listado.toString(),
+          sku: skuOnly ? producto.sku : producto.id + listado.toString(),
           imagen: producto.imagen,
           hot: producto.hot,
-          sugerencia: false);
+          sugerencia: false,
+          fechaVenta: DateTime(0000, 00, 00, 00, 00),
+          apartado: false);
 
       newProducto.cantidad = cantidad;
       usuario.cesta.productos.insert(0, newProducto);
@@ -472,6 +615,22 @@ class AuthService with ChangeNotifier {
       {required String id, required List<Opcion> opciones}) {
     List<Producto> listaRepetidos =
         usuario.cesta.productos.where((element) => element.id == id).toList();
+    if (listaRepetidos.isEmpty) {
+      return '';
+    } else {
+      for (var item in listaRepetidos) {
+        if (listEquals(item.opciones, opciones)) {
+          return item.sku;
+        }
+      }
+      return '';
+    }
+  }
+
+  String? productoAgregado2(
+      {required String id, required List<Opcion> opciones}) {
+    List<Producto> listaRepetidos =
+        usuario.cesta.productos.where((element) => element.sku == id).toList();
     if (listaRepetidos.isEmpty) {
       return '';
     } else {
@@ -554,6 +713,7 @@ class AuthService with ChangeNotifier {
           });
       if (resp.statusCode == 200) {
         usuario.cesta.productos[index].cantidad = cantidad;
+
         notifyListeners();
         return true;
       } else {
@@ -566,7 +726,7 @@ class AuthService with ChangeNotifier {
 
   Future<bool> eliminarProductoCesta({required int pos}) async {
     final data = {"id": usuario.cesta.productos[pos].id};
-
+    await Future.delayed(const Duration(seconds: 1));
     try {
       final resp = await http.post(
           Uri.parse('${Statics.apiUrl}/usuario/eliminarProductoCesta'),
@@ -703,10 +863,14 @@ class AuthService with ChangeNotifier {
   }
 
   Future<Venta?> crearPedido(
-      {required num envio,
+      {required bool tiendaRopa,
+      bool apartado = false,
+      bool liquidado = false,
+      String abono = '0',
+      required num envio,
       required Direccion direccion,
       String tarjeta = '',
-      required Customer customer}) async {
+      required String customer}) async {
     Cesta cestaEnvio = Cesta(
         productos: usuario.cesta.productos,
         total: -(usuario.cesta.codigo != '' ? envio : 0) +
@@ -716,13 +880,22 @@ class AuthService with ChangeNotifier {
         tarjeta: tarjeta,
         direccion: direccion,
         efectivo: usuario.cesta.efectivo,
-        codigo: usuario.cesta.codigo);
+        codigo: usuario.cesta.codigo,
+        apartado: usuario.cesta.apartado);
+    String precio = abono.replaceAll('\$', '');
+    precio = precio.replaceAll(' ', '');
+    precio = precio.replaceAll(',', '');
+    precio = precio.replaceAll(',', '');
     final data = {
+      'abonoReq': precio,
       'servicio': (10.2 * calcularTiendas()),
       'envio': envio,
       'usuario': usuario.uid,
-      'customer': customer.id,
-      'cesta': cestaToJson(cestaEnvio)
+      'customer': customer,
+      'cesta': cestaToJson(cestaEnvio),
+      'tienda_ropa': tiendaRopa,
+      'apartado': apartado,
+      'liquidado': liquidado
     };
 
     try {
@@ -736,11 +909,67 @@ class AuthService with ChangeNotifier {
 
       var respJson = ventoFromJson(resp.body);
 
+      if (resp.statusCode == 200) {
+        usuario.cesta.productos = [];
+        usuario.cesta.codigo = '';
+        if (!tiendaRopa) {
+          notifyListeners();
+        }
+        return respJson;
+      } else {
+        return null;
+      }
+    } catch (e) {
+      print(e);
+
+      return null;
+    }
+  }
+
+  Future<Venta?> crearPedido2(
+      {required bool tiendaRopa,
+      bool apartado = false,
+      bool liquidado = false,
+      required num envio,
+      required Direccion direccion,
+      String tarjeta = '',
+      required String customer}) async {
+    Cesta cestaEnvio = Cesta(
+        productos: usuario.cesta.productos,
+        total: -(usuario.cesta.codigo != '' ? envio : 0) +
+            calcularTotal() +
+            (10.2 * calcularTiendas()) +
+            envio,
+        tarjeta: tarjeta,
+        direccion: direccion,
+        efectivo: usuario.cesta.efectivo,
+        codigo: usuario.cesta.codigo,
+        apartado: usuario.cesta.apartado);
+    final data = {
+      'servicio': (10.2 * calcularTiendas()),
+      'envio': envio,
+      'usuario': usuario.uid,
+      'customer': customer,
+      'cesta': cestaToJson(cestaEnvio),
+      'tienda_ropa': tiendaRopa,
+      'apartado': apartado,
+      'liquidado': liquidado
+    };
+
+    try {
+      final resp = await http.post(
+          Uri.parse('${Statics.apiUrl}/tiendas/crearPedido'),
+          body: jsonEncode(data),
+          headers: {
+            'Content-Type': 'application/json',
+            'x-token': await AuthService.getToken()
+          });
+
+      var respJson = ventoFromJson(resp.body);
 
       if (resp.statusCode == 200) {
         usuario.cesta.productos = [];
         usuario.cesta.codigo = '';
-        notifyListeners();
         return respJson;
       } else {
         return null;

@@ -583,8 +583,7 @@ class _RegisterViewState extends State<RegisterView> {
                               },
                               style: ElevatedButton.styleFrom(
                                   shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(25)),
-                                  primary: Theme.of(context).primaryColor),
+                                      borderRadius: BorderRadius.circular(25)), backgroundColor: Theme.of(context).primaryColor),
                               child: Text(
                                 'Ok',
                                 style: GoogleFonts.quicksand(

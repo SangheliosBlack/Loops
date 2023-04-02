@@ -19,21 +19,21 @@ class DashboardLayout extends StatefulWidget {
   const DashboardLayout({Key? key, required this.child}) : super(key: key);
 
   @override
-  _DashboardLayoutState createState() => _DashboardLayoutState();
+  DashboardLayoutState createState() => DashboardLayoutState();
 }
 
-class _DashboardLayoutState extends State<DashboardLayout>
+class DashboardLayoutState extends State<DashboardLayout>
     with WidgetsBindingObserver {
   @override
   void initState() {
-    WidgetsBinding.instance?.addObserver(this);
+    WidgetsBinding.instance.addObserver(this);
 
     super.initState();
   }
 
   @override
   void dispose() {
-    WidgetsBinding.instance?.removeObserver(this);
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 
@@ -59,8 +59,8 @@ class _DashboardLayoutState extends State<DashboardLayout>
         ChangeNotifierProvider(
             lazy: false, create: (_) => DireccionesService()),
         ChangeNotifierProvider(
-            lazy: false, create: (_) => LlenarPantallasService()),
-        ChangeNotifierProvider(lazy: false, create: (_) => TiendasService()),
+            lazy: true, create: (_) => LlenarPantallasService()),
+        ChangeNotifierProvider(lazy: true, create: (_) => TiendaService()),
         ChangeNotifierProvider(lazy: false, create: (_) => GeneralActions()),
         ChangeNotifierProvider(lazy: false, create: (_) => PutoDial()),
         ChangeNotifierProvider(lazy: false, create: (_) => SocioService()),

@@ -17,7 +17,6 @@ class TrafficService {
     return _instance;
   }
 
-
   // ignore: close_sinks
   final StreamController<SearchResponse> _sugerenciasStreamController =
       StreamController<SearchResponse>.broadcast();
@@ -30,9 +29,10 @@ class TrafficService {
 
   Stream<Busqueda> get busquedaStream => _busquedaStreamController.stream;
 
-  
+  final StreamController<Busqueda> _prendasStreamController =
+      StreamController<Busqueda>.broadcast();
 
-  
+  Stream<Busqueda> get prendasStream => _prendasStreamController.stream;
 
   Future<SearchResponse> getResultadosPorQuery(String busqueda) async {
     final data = {'query': busqueda};
@@ -70,12 +70,27 @@ class TrafficService {
     return data;
   }
 
+  Future<Busqueda> obtenerPrendas(String busqueda) async {
+    final query = {'busqueda': busqueda};
+    final resp = await http.post(
+        Uri.parse('${Statics.apiUrl}/tiendas/busquedaPrenda'),
+        body: jsonEncode(query),
+        headers: {
+          'Content-Type': 'application/json',
+          'x-token': await AuthService.getToken()
+        });
+
+    final data = busquedaFromJson(resp.body);
+
+    return data;
+  }
+
   void killAll() {
     EasyDebounce.cancelAll();
   }
 
   void getBusquedaPorQuery(String busqueda) async {
-    EasyDebounce.debounce('fuck', Duration(milliseconds: 1600), () async {
+    EasyDebounce.debounce('fuck', Duration(milliseconds: 1000), () async {
       final resultados = await obtenerBusqueda(busqueda);
       _busquedaStreamController.add(resultados);
     });
@@ -85,6 +100,13 @@ class TrafficService {
     EasyDebounce.debounce('fuck', Duration(milliseconds: 1600), () async {
       final resultados = await getResultadosPorQuery(busqueda);
       _sugerenciasStreamController.add(resultados);
+    });
+  }
+
+  void getPrendaPorQuery(String busqueda) async {
+    EasyDebounce.debounce('fuck', Duration(milliseconds: 500), () async {
+      final resultados = await obtenerPrendas(busqueda);
+      _prendasStreamController.add(resultados);
     });
   }
 }

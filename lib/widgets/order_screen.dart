@@ -661,7 +661,7 @@ class PaymenthMethodsFinal extends StatelessWidget {
               child:
                   Text('Agregar', style: Styles.letterCustom(14, true, -0.1)),
               style: ElevatedButton.styleFrom(
-                  primary: Theme.of(context).primaryColor),
+                  backgroundColor: Theme.of(context).primaryColor),
             ),
           )
         ],
@@ -1518,10 +1518,10 @@ class _PaymentSummaryState extends State<PaymentSummary> {
                                                   busqueda != -1 ? busqueda : 0]
                                               .id
                                           : '',
-                                  customer: customerService.customer,
+                                  customer: customerService.customer.id,
                                   envio: authService.calcularEnvioAvanzado(
                                       tiendas: pantallaService.tiendas,
-                                      direcciones: direccionesService.direcciones));
+                                      direcciones: direccionesService.direcciones), tiendaRopa: false);
 
                               if (venta != null) {
                                 pedidosService.agregarCompra(venta: venta);

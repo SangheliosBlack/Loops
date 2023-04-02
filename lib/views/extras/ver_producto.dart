@@ -11,6 +11,7 @@ import 'package:delivery/service/auth_service.dart';
 import 'package:delivery/service/direcciones.service.dart';
 import 'package:delivery/service/llenar_pantallas.dart';
 import 'package:delivery/service/permission_status.dart';
+import 'package:delivery/views/tienda.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -133,9 +134,21 @@ class _VerProductoViewState extends State<VerProductoView> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const SizedBox(height: 10),
-                            Text(widget.producto.tienda,
-                                style: GoogleFonts.quicksand(
-                                    fontSize: 14, color: Colors.blue)),
+                            GestureDetector(
+                              onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => StoreIndividual(
+                                                tienda: widget.tienda,
+                                              )),
+                                    );
+                                  },
+                                  behavior: HitTestBehavior.translucent,
+                              child: Text(widget.producto.tienda,
+                                  style: GoogleFonts.quicksand(
+                                      fontSize: 14, color: Colors.blue)),
+                            ),
                             const SizedBox(height: 5),
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -627,9 +640,9 @@ class _VerProductoViewState extends State<VerProductoView> {
 
     for (var i = 0; i <= opciones.length - 1; i++) {
       if (i > 0) {
-        titulos = titulos + 'y ${opciones[i].titulo}';
+        titulos = '${titulos}y ${opciones[i].titulo}';
       } else {
-        titulos = titulos + '${opciones[i].titulo} ';
+        titulos = '$titulos${opciones[i].titulo} ';
       }
     }
 

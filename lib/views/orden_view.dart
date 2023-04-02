@@ -23,18 +23,18 @@ class _OrderViewState extends State<OrderView>
         physics: const BouncingScrollPhysics(),
         children: [
           const SectionOrder(
-            child: OrderItems(),
             titulo: 'Resumen de orden',
+            child: OrderItems(),
           ),
           const SectionOrder(
             isPainted: false,
-            child: DeliveryOptionsContainer(),
             titulo: 'Direccion envio',
+            child: DeliveryOptionsContainer(),
           ),
           SectionOrder(
             isPainted: false,
-            child: PaymentSummary(controller: controller),
             titulo: 'Pago',
+            child: PaymentSummary(controller: controller),
           ),
         ],
       ),

@@ -29,7 +29,7 @@ class StoreIndividual extends StatefulWidget {
 class _StoreIndividualState extends State<StoreIndividual> {
   @override
   Widget build(BuildContext context) {
-    final tiendaService = Provider.of<TiendasService>(context);
+    final tiendaService = Provider.of<TiendaService>(context);
     final authService = Provider.of<AuthService>(context);
     final direccionesService = Provider.of<DireccionesService>(context);
     double width = MediaQuery.of(context).size.width;
@@ -382,9 +382,7 @@ class _StoreIndividualState extends State<StoreIndividual> {
                                                   ),
                                                   const SizedBox(width: 5),
                                                   Text(
-                                                      widget.tienda.tiempoEspera
-                                                              .toString() +
-                                                          ' min',
+                                                      '${widget.tienda.tiempoEspera} min',
                                                       style:
                                                           GoogleFonts.quicksand(
                                                               fontSize: 13,
@@ -396,23 +394,21 @@ class _StoreIndividualState extends State<StoreIndividual> {
                                           ),
                                         )
                                       : Row(children: [
-                                        const Icon(
-                                          Icons.place_outlined,
-                                          color: Colors.white,
-                                          size: 15,
-                                        ),
-                                        const SizedBox(width: 5),
-                                        SizedBox(
-                                          width: width - 170,
-                                          child: Text(
-                                              widget.tienda.direccion,
-                                              overflow:
-                                                  TextOverflow.ellipsis,
-                                              style: GoogleFonts.quicksand(
-                                                  color: Colors.white,
-                                                  fontSize: 13)),
-                                        )
-                                      ])),
+                                          const Icon(
+                                            Icons.place_outlined,
+                                            color: Colors.white,
+                                            size: 15,
+                                          ),
+                                          const SizedBox(width: 5),
+                                          SizedBox(
+                                            width: width - 170,
+                                            child: Text(widget.tienda.direccion,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: GoogleFonts.quicksand(
+                                                    color: Colors.white,
+                                                    fontSize: 13)),
+                                          )
+                                        ])),
                               Positioned(
                                   left: 140,
                                   bottom: 120,
@@ -504,39 +500,34 @@ class _StoreIndividualState extends State<StoreIndividual> {
                                   );
                                 },
                               )
-                            : FadeInUp(
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(40),
-                                    color: Colors.white,
-                                  ),
-                                  child: ListView.builder(
-                                    primary: false,
-                                    physics:
-                                        const NeverScrollableScrollPhysics(),
-                                    padding: const EdgeInsets.only(
-                                        right: 20,
-                                        left: 20,
-                                        top: 25,
-                                        bottom: 45),
-                                    shrinkWrap: true,
-                                    itemBuilder:
-                                        (BuildContext context, int index) =>
-                                            ItemPorCategoria(
-                                      categoria: tiendaService
-                                          .productosCategoria[
-                                              tiendaService.tiendaCache(
-                                                  nombre: widget.tienda.nombre)]
-                                          .productos[index],
-                                      tienda: widget.tienda,
-                                    ),
-                                    itemCount: tiendaService
+                            : Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(40),
+                                  color: Colors.white,
+                                ),
+                                child: ListView.builder(
+                                  primary: false,
+                                  
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  padding: const EdgeInsets.only(
+                                      right: 20, left: 20, top: 25, bottom: 45),
+                                  shrinkWrap: true,
+                                  itemBuilder:
+                                      (BuildContext context, int index) =>
+                                          ItemPorCategoria(
+                                    categoria: tiendaService
                                         .productosCategoria[
                                             tiendaService.tiendaCache(
                                                 nombre: widget.tienda.nombre)]
-                                        .productos
-                                        .length,
+                                        .productos[index],
+                                    tienda: widget.tienda,
                                   ),
+                                  itemCount: tiendaService
+                                      .productosCategoria[
+                                          tiendaService.tiendaCache(
+                                              nombre: widget.tienda.nombre)]
+                                      .productos
+                                      .length,
                                 ),
                               )),
                   )

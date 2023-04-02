@@ -1,17 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:delivery/helpers/haversine.dart';
 import 'package:delivery/models/busqueda_response.dart';
 import 'package:delivery/models/busqueda_result.dart';
 import 'package:delivery/models/direccion.dart';
-import 'package:delivery/service/direcciones.service.dart';
 import 'package:delivery/service/traffic_service.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 
-import '../service/auth_service.dart';
+import 'package:delivery/widgets/producto_general.dart';
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class SearchBusqueda extends SearchDelegate<BusquedaResult> {
   @override
@@ -35,7 +30,7 @@ class SearchBusqueda extends SearchDelegate<BusquedaResult> {
           elevation: 0,
           backgroundColor: Colors.white),
       textTheme: superThemeData.textTheme
-          .copyWith(headline6: GoogleFonts.quicksand(color: Colors.black)),
+          .copyWith(titleLarge: GoogleFonts.quicksand(color: Colors.black)),
     );
   }
 
@@ -113,16 +108,16 @@ class SearchBusqueda extends SearchDelegate<BusquedaResult> {
           );
         }
         final lugares = snapshot.data!.tiendas;
-        if (lugares.isEmpty) {
+        final productos = snapshot.data!.productos;
+        if (lugares.isEmpty && productos.isEmpty) {
           return Container(
             color: Colors.white,
             child: ListView(
               children: [
                 ListTile(
                   title: Text(
-                    'No hay resultados con $query',
-                    style: GoogleFonts.quicksand(
-                        color: Colors.grey, fontWeight: FontWeight.w600),
+                    'No hay resultados con " $query. "',
+                    style: GoogleFonts.quicksand(color: Colors.grey),
                   ),
                 ),
               ],
@@ -131,154 +126,136 @@ class SearchBusqueda extends SearchDelegate<BusquedaResult> {
         }
         return Container(
           color: Colors.white,
-          child: ListView.separated(
-            padding: const EdgeInsets.symmetric(horizontal: 15),
-            itemCount: lugares.length,
-            separatorBuilder: (_, i) => Divider(
-              color: Colors.grey.withOpacity(.0),
-            ),
-            itemBuilder: (_, i) {
-              final tienda = lugares[i];
-              final authService = Provider.of<AuthService>(context);
-              final direccionesService =
-                  Provider.of<DireccionesService>(context);
-              return GestureDetector(
-                behavior: HitTestBehavior.translucent,
-                onTap: () {
-                  close(
-                      context, BusquedaResult(cancelo: false, tienda: tienda));
-                },
-                child: Row(
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(100),
+          child: Column(
+            children: [
+              SizedBox(
+                height: lugares.isEmpty ? 0 : 100,
+                child: ListView.separated(
+                  padding: const EdgeInsets.symmetric(horizontal: 5),
+                  itemCount: lugares.length,
+                  separatorBuilder: (_, i) => Divider(
+                    color: Colors.grey.withOpacity(.0),
+                  ),
+                  itemBuilder: (_, i) {
+                    final tienda = lugares[i];
+                    return GestureDetector(
+                      behavior: HitTestBehavior.translucent,
+                      onTap: () {
+                        close(context,
+                            BusquedaResult(cancelo: false, tienda: tienda));
+                      },
                       child: SizedBox(
-                        width: 85,
-                        height: 85,
-                        child: CachedNetworkImage(
-                            fit: BoxFit.cover,
-                            imageUrl: tienda.imagenPerfil,
-                            imageBuilder: (context, imageProvider) => Container(
-                                  decoration: BoxDecoration(
-                                    image: DecorationImage(
-                                      image: imageProvider,
-                                      fit: BoxFit.cover,
-                                      colorFilter: ColorFilter.mode(
-                                        Colors.black.withOpacity(.15),
-                                        BlendMode.color,
-                                      ),
+                          height: lugares.isEmpty ? 0 : 100,
+                          child: ListView.separated(
+                            padding: const EdgeInsets.symmetric(horizontal: 25),
+                            shrinkWrap: true,
+                            physics: const BouncingScrollPhysics(),
+                            scrollDirection: Axis.horizontal,
+                            itemBuilder: (BuildContext context, int index) {
+                              var tienda = snapshot.data!.tiendas[index];
+
+                              return Column(
+                                children: [
+                                  Container(
+                                      padding: const EdgeInsets.all(3),
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(40),
+                                          border: Border.all(
+                                              width: 2,
+                                              color: const Color.fromRGBO(
+                                                  41, 199, 184, 1))),
+                                      height: 75,
+                                      width: 75,
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(40),
+                                        child: CachedNetworkImage(
+                                            fit: BoxFit.cover,
+                                            imageUrl: tienda.imagenPerfil,
+                                            imageBuilder: (context,
+                                                    imageProvider) =>
+                                                Container(
+                                                  decoration: BoxDecoration(
+                                                    image: DecorationImage(
+                                                      image: imageProvider,
+                                                      fit: BoxFit.cover,
+                                                      colorFilter:
+                                                          ColorFilter.mode(
+                                                        Colors.black
+                                                            .withOpacity(.15),
+                                                        BlendMode.color,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                            placeholder: (context, url) =>
+                                                Container(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            100),
+                                                    child:
+                                                        const CircularProgressIndicator(
+                                                      strokeWidth: 1,
+                                                      color: Colors.black,
+                                                    )),
+                                            errorWidget: (context, url, error) {
+                                              return const Icon(Icons.error);
+                                            }),
+                                      )),
+                                  const SizedBox(height: 5),
+                                  SizedBox(
+                                    width: 75,
+                                    child: Text(
+                                      tienda.nombre,
+                                      overflow: TextOverflow.ellipsis,
+                                      textAlign: TextAlign.center,
+                                      style: GoogleFonts.quicksand(),
                                     ),
-                                  ),
-                                ),
-                            placeholder: (context, url) => Container(
-                                padding: const EdgeInsets.all(10),
-                                child: const CircularProgressIndicator(
-                                  strokeWidth: 1,
-                                  color: Colors.black,
-                                )),
-                            errorWidget: (context, url, error) {
-                              return const Icon(Icons.error);
-                            }),
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    Expanded(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Container(
-                                  margin: const EdgeInsets.only(right: 5),
-                                  width: 5,
-                                  height: 5,
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(100),
-                                      color: tienda.online
-                                          ? Colors.green
-                                          : Colors.red)),
-                              Text(
-                                tienda.online ? 'Abierto' : 'Cerrado',
-                                style: GoogleFonts.quicksand(
-                                    fontSize: 11,
-                                    color: tienda.online
-                                        ? Colors.green
-                                        : Colors.red),
-                              )
-                            ],
-                          ),
-                          Text(
-                            'Restaurante',
-                            style: GoogleFonts.quicksand(
-                                color: Colors.black, fontSize: 12),
-                          ),
-                          const SizedBox(height: 0),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  tienda.nombre,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: GoogleFonts.playfairDisplay(
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.black.withOpacity(.7),
-                                      fontSize: 25),
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 2),
-                          RatingBar.builder(
-                            initialRating: 5,
-                            minRating: 1,
-                            direction: Axis.horizontal,
-                            allowHalfRating: true,
-                            itemCount: 5,
-                            itemPadding:
-                                const EdgeInsets.symmetric(horizontal: 4.0),
-                            itemBuilder: (context, _) => const FaIcon(
-                              FontAwesomeIcons.solidStar,
-                              color: Color.fromRGBO(41, 199, 184, 1),
+                                  )
+                                ],
+                              );
+                            },
+                            itemCount: snapshot.data!.tiendas.length,
+                            separatorBuilder: (_, __) => const SizedBox(
+                              width: 15,
                             ),
-                            itemSize: 11,
-                            unratedColor: Colors.grey.withOpacity(.4),
-                            onRatingUpdate: (rating) {},
-                          ),
-                          const SizedBox(height: 8),
-                          Row(
-                            children: [
-                              const Icon(
-                                Icons.place_outlined,
-                                color: Colors.black,
-                                size: 15,
-                              ),
-                              const SizedBox(width: 3),
-                              Expanded(
-                                  child:
-                                      direccionesService.direcciones.isNotEmpty
-                                          ? Text(
-                                              '${(calculateDistance(lat1: tienda.coordenadas.latitud, lon1: tienda.coordenadas.longitud, lat2: direccionesService.direcciones[authService.usuario.cesta.direccion.titulo != '' ? direccionesService.direcciones.indexWhere((element) => authService.usuario.cesta.direccion.titulo == element.titulo) : obtenerFavorito(direccionesService.direcciones) != -1 ? obtenerFavorito(direccionesService.direcciones) : 0].coordenadas.lat, lon2: direccionesService.direcciones[authService.usuario.cesta.direccion.titulo != '' ? direccionesService.direcciones.indexWhere((element) => authService.usuario.cesta.direccion.titulo == element.titulo) : obtenerFavorito(direccionesService.direcciones) != -1 ? obtenerFavorito(direccionesService.direcciones) : 0].coordenadas.lng).toStringAsFixed(2))} km | ${tienda.direccion} ',
-                                              overflow: TextOverflow.ellipsis,
-                                              style: GoogleFonts.quicksand(
-                                                  color: Colors.black,
-                                                  fontSize: 13),
-                                            )
-                                          : Container())
-                            ],
-                          )
-                        ],
-                      ),
-                    )
-                  ],
+                          )),
+                    );
+                  },
                 ),
-              );
-            },
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              Expanded(
+                child: ListView.separated(
+                  shrinkWrap: true,
+                  padding: const EdgeInsets.all(20),
+                  physics: const BouncingScrollPhysics(),
+                  itemCount: snapshot.data!.productos.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return GestureDetector(
+                      behavior: HitTestBehavior.translucent,
+                      onTap: () {
+                        close(
+                            context,
+                            BusquedaResult(
+                                cancelo: false,
+                                producto: snapshot.data!.productos[index]));
+                      },
+                      child: ProductoGeneral(
+                        noHit: false,
+                        producto: snapshot.data!.productos[index],
+                      ),
+                    );
+                  },
+                  separatorBuilder: (BuildContext context, int index) =>
+                      const SizedBox(
+                    height: 10,
+                  ),
+                ),
+              )
+            ],
           ),
         );
       },

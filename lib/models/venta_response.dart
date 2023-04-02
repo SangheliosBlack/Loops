@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:delivery/models/abono.dart';
 import 'package:delivery/models/cesta.dart';
 import 'package:delivery/models/direccion.dart';
 import 'package:delivery/models/productos.dart';
@@ -30,6 +31,8 @@ class Venta {
       required this.v,
       required this.direccion,
       required this.usuario,
+      required this.apartado,
+      required this.liquidado,
       required this.codigoPromo});
 
   List<PedidoProducto> pedidos;
@@ -46,11 +49,12 @@ class Venta {
   int v;
   String usuario;
   String codigoPromo;
+  bool apartado;
+  bool liquidado;
 
   factory Venta.fromJson(Map<String, dynamic> json) => Venta(
-        pedidos: List<PedidoProducto>.from(json["pedidos"].map((x) {
-          return PedidoProducto.fromJson(x);
-        })),
+        pedidos: List<PedidoProducto>.from(
+            json["pedidos"].map((x) => PedidoProducto.fromJson(x))),
         id: json["_id"],
         total: json["total"],
         efectivo: json["efectivo"],
@@ -66,6 +70,8 @@ class Venta {
         envioPromo: json["envioPromo"],
         servicio: json["servicio"],
         codigoPromo: json["codigo_promo"],
+        apartado: json['apartado'] ?? false,
+        liquidado: json['liquidado'] ?? false,
       );
 
   Map<String, dynamic> toJson() => {
@@ -727,6 +733,9 @@ class PaymentMethodOptionsCard {
       };
 }
 
+PedidoProducto pedidoProductoIndividualFromJson(String str) =>
+    PedidoProducto.fromJson(json.decode(str));
+
 List<PedidoProducto> pedidoProductoFromJson(String str) =>
     List<PedidoProducto>.from(
         json.decode(str).map((x) => PedidoProducto.fromJson(x)));
@@ -760,6 +769,11 @@ class PedidoProducto {
       required this.direccionNegocio,
       required this.direccionCliente,
       required this.ruta,
+      required this.liquidado,
+      required this.apartado,
+      required this.abonos,
+      required this.totalSafe,
+      required this.conceptoTitulo,
       required this.tiempoEspera});
 
   List<Producto> productos;
@@ -783,6 +797,9 @@ class PedidoProducto {
   String idVenta;
   Direccion direccionNegocio;
   Direccion direccionCliente;
+  String conceptoTitulo;
+  List<Abono> abonos;
+  num totalSafe;
 
   bool repartidorDomicilio;
   bool repartidorCalificado;
@@ -794,9 +811,25 @@ class PedidoProducto {
   DateTime updatedAt;
   int tiempoEspera;
 
+  bool apartado;
+  bool liquidado;
+
   factory PedidoProducto.fromJson(Map<String, dynamic> json) {
     return PedidoProducto(
-      ruta: Ruta.fromJson(json['ruta']),
+      totalSafe: json['total_safe'] ?? 0,
+      abonos: List<Abono>.from(json["abonos"].map((x) => Abono.fromJson(x))),
+      liquidado: json['liquidado'] ?? false,
+      apartado: json['apartado'] ?? false,
+      ruta: json['ruta'] != null
+          ? Ruta.fromJson(json['ruta'])
+          : Ruta(
+              id: '',
+              bounds: Bounds(
+                  northeast: Northeast(lat: 0, lng: 0),
+                  southwest: Northeast(lat: 0, lng: 0)),
+              overviewPolyline: OverviewPolyline(points: ''),
+              distance: Distance(text: '', value: 0),
+              duration: Distance(text: '', value: 0)),
       direccionCliente: Direccion.fromJson(json['direccion_cliente']),
       direccionNegocio: Direccion.fromJson(json['direccion_negocio']),
       envio: json['envio'],
@@ -858,7 +891,8 @@ class PedidoProducto {
                       predeterminado: false,
                       titulo: ''),
                   efectivo: false,
-                  codigo: ''),
+                  codigo: '',
+                  apartado: false),
               onlineRepartidor: false),
       imagen: json["imagen"],
       confirmado: json["confirmado"],
@@ -868,6 +902,7 @@ class PedidoProducto {
       updatedAt: DateTime.parse(json["updatedAt"]),
       tiempoEspera: json['tiempo_espera'],
       entregadoRepartidor: json['entregado_repartidor'],
+      conceptoTitulo: json['concepto_titulo'] ?? '',
     );
   }
 

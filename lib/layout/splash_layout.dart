@@ -29,12 +29,13 @@ class _SplashLayoutState extends State<SplashLayout> {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 50),
-                      child:
-                          const Image(image: AssetImage('assets/images/loops2.png'))),
-                  const CircularProgressIndicator(
+                children: const [
+                  // Container(
+                  //     padding: const EdgeInsets.symmetric(horizontal: 50),
+                  //     child: const Image(
+                  //         image:
+                  //             AssetImage('assets/images/logo_black_shop.jpg'))),
+                   CircularProgressIndicator(
                     strokeWidth: 1,
                     color: Colors.black,
                   ),

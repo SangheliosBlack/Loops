@@ -13,6 +13,7 @@ class Cesta {
       required this.tarjeta,
       required this.direccion,
       required this.efectivo,
+      required this.apartado,
       required this.codigo});
 
   List<Producto> productos;
@@ -20,6 +21,7 @@ class Cesta {
   String tarjeta;
   Direccion direccion;
   bool efectivo;
+  bool apartado;
   String codigo;
 
   factory Cesta.fromJson(Map<String, dynamic> json) => Cesta(
@@ -29,9 +31,11 @@ class Cesta {
       tarjeta: json["tarjeta"],
       direccion: Direccion.fromJson(json["direccion"]),
       efectivo: json["efectivo"],
+      apartado: json['apartado'] ?? false,
       codigo: json['codigo']);
 
   Map<String, dynamic> toJson() => {
+        'apartado': apartado,
         'total': total,
         'tarjeta': tarjeta,
         'direccion': direccion,

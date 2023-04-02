@@ -181,7 +181,7 @@ class _ConfirmarCodigoState extends State<ConfirmarCodigo> with CodeAutoFill {
                           isDone = true;
                         });
                       },
-                      fade: false,
+                      
                       decoration: const BoxDecoration(color: Colors.white),
                       duration: const Duration(minutes: 10),
                       textStyle: GoogleFonts.quicksand(

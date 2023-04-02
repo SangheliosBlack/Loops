@@ -4,7 +4,6 @@ import 'package:delivery/global/styles.dart';
 import 'package:delivery/models/lista_separada.dart';
 import 'package:delivery/service/llenar_pantallas.dart';
 import 'package:delivery/views/categoria_view.dart';
-import 'package:delivery/views/ver_todo.dart';
 import 'package:delivery/widgets/producto_general.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -416,6 +415,7 @@ class ListaProductos extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Container(
+                  margin: EdgeInsets.only(bottom: 7),
                   padding:
                       const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
                   decoration: Styles.containerCustom(),
@@ -431,31 +431,31 @@ class ListaProductos extends StatelessWidget {
                     ],
                   ),
                 ),
-                OutlinedButton(
-                  style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 0, horizontal: 10),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15)),
-                      side: const BorderSide(width: 1, color: Colors.white),
-                      primary: Colors.white,
-                      backgroundColor: Colors.white),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const VerTodoView(
-                                titulo: 'Productos',
-                              )),
-                    );
-                  },
-                  child: Text(
-                    'Ver todo',
-                    style: GoogleFonts.quicksand(
-                      color: Colors.grey,
-                    ),
-                  ),
-                ),
+                // OutlinedButton(
+                //   style: OutlinedButton.styleFrom(
+                //       padding: const EdgeInsets.symmetric(
+                //           vertical: 0, horizontal: 10),
+                //       shape: RoundedRectangleBorder(
+                //           borderRadius: BorderRadius.circular(15)),
+                //       side: const BorderSide(width: 1, color: Colors.white),
+                //       primary: Colors.white,
+                //       backgroundColor: Colors.white),
+                //   onPressed: () {
+                //     Navigator.push(
+                //       context,
+                //       MaterialPageRoute(
+                //           builder: (context) => const VerTodoView(
+                //                 titulo: 'Productos',
+                //               )),
+                //     );
+                //   },
+                //   child: Text(
+                //     'Ver todo',
+                //     style: GoogleFonts.quicksand(
+                //       color: Colors.grey,
+                //     ),
+                //   ),
+                // ),
               ],
             )),
         Container(

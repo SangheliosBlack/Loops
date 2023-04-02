@@ -11,15 +11,17 @@ import 'package:provider/provider.dart';
 
 class ProductoGeneral extends StatelessWidget {
   final Producto producto;
+  final bool noHit;
 
-  const ProductoGeneral({Key? key, required this.producto}) : super(key: key);
+  const ProductoGeneral({Key? key, required this.producto, this.noHit = true})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final pantallasService = Provider.of<LlenarPantallasService>(context);
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
-      onTap: () {
+      onTap: noHit? () {
         Navigator.push(
             context,
             MaterialPageRoute(
@@ -28,7 +30,7 @@ class ProductoGeneral extends StatelessWidget {
                   tienda: pantallasService.tiendas.firstWhere(
                       (element) => element.nombre == producto.tienda)),
             ));
-      },
+      } :null,
       child: Stack(
         children: [
           Container(
@@ -154,13 +156,7 @@ class ProductoGeneral extends StatelessWidget {
                                 ),
                                 const SizedBox(width: 5),
                                 Text(
-                                    pantallasService.tiendas
-                                            .firstWhere((element) =>
-                                                element.nombre ==
-                                                producto.tienda)
-                                            .tiempoEspera
-                                            .toString() +
-                                        ' min',
+                                    '${pantallasService.tiendas.firstWhere((element) => element.nombre == producto.tienda).tiempoEspera} min',
                                     style: GoogleFonts.quicksand(
                                         fontSize: 14,
                                         color: Colors.black.withOpacity(.8))),
