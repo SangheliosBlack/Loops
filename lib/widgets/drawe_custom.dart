@@ -13,10 +13,10 @@ class DrawerCustom extends StatefulWidget {
   const DrawerCustom({Key? key}) : super(key: key);
 
   @override
-  _DrawerCustomState createState() => _DrawerCustomState();
+  DrawerCustomState createState() => DrawerCustomState();
 }
 
-class _DrawerCustomState extends State<DrawerCustom> {
+class DrawerCustomState extends State<DrawerCustom> {
   @override
   Widget build(BuildContext context) {
     final authService = Provider.of<AuthService>(context);
@@ -42,15 +42,20 @@ class _DrawerCustomState extends State<DrawerCustom> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(1000),
-                    child: SizedBox(
-                      width: 200,
-                      height: 200,
-                      child: Container(
-                        padding: const EdgeInsets.all(7),
-                        child: const Image(
-                            image: AssetImage('assets/images/loops2.png')),
+                  Container(
+                    padding: const EdgeInsets.all(5),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(1000),
+                        border: Border.all(
+                            width: 1,
+                            color: Theme.of(context).colorScheme.primary)),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(1000),
+                      child: const SizedBox(
+                        width: 200,
+                        height: 200,
+                        child: Image(
+                            image: AssetImage('assets/images/loops.jpg')),
                       ),
                     ),
                   ),
@@ -162,7 +167,7 @@ class _DrawerCustomState extends State<DrawerCustom> {
                 child: Icon(
                   icono,
                   size: 22,
-                  color: Colors.black,
+                  color: Theme.of(context).colorScheme.primary.withOpacity(1),
                 ),
               ),
               const SizedBox(width: 10),

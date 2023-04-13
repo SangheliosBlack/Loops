@@ -21,16 +21,18 @@ class ProductoGeneral extends StatelessWidget {
     final pantallasService = Provider.of<LlenarPantallasService>(context);
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
-      onTap: noHit? () {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => VerProductoView(
-                  producto: producto,
-                  tienda: pantallasService.tiendas.firstWhere(
-                      (element) => element.nombre == producto.tienda)),
-            ));
-      } :null,
+      onTap: noHit
+          ? () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => VerProductoView(
+                        producto: producto,
+                        tienda: pantallasService.tiendas.firstWhere(
+                            (element) => element.nombre == producto.tienda)),
+                  ));
+            }
+          : null,
       child: Stack(
         children: [
           Container(
@@ -176,7 +178,10 @@ class ProductoGeneral extends StatelessWidget {
                                   const EdgeInsets.symmetric(horizontal: 4.0),
                               itemBuilder: (context, _) => FaIcon(
                                 FontAwesomeIcons.solidStar,
-                                color: Colors.black.withOpacity(.8),
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .primary
+                                    .withOpacity(1),
                               ),
                               itemSize: 11,
                               unratedColor: Colors.grey.withOpacity(.2),
@@ -222,7 +227,10 @@ class ProductoGeneral extends StatelessWidget {
                       '\$',
                       style: GoogleFonts.playfairDisplay(
                           fontSize: 18,
-                          color: Colors.black,
+                          color: Theme.of(context)
+                              .colorScheme
+                              .primary
+                              .withOpacity(1),
                           fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(width: 3),

@@ -142,9 +142,9 @@ class PedidoWidgetFold extends StatelessWidget {
                             ),
                             Text(formattedDate,
                                 style: GoogleFonts.quicksand(
-                                    fontSize: 13,
-                                    color:
-                                        const Color.fromRGBO(41, 199, 184, 1))),
+                                  fontSize: 13,
+                                  color: Theme.of(context).colorScheme.primary,
+                                )),
                           ],
                         ),
                         Text(
@@ -183,7 +183,7 @@ class PedidoWidgetFold extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                '\$ ' + venta.total.toStringAsFixed(2),
+                                '\$ ${venta.total.toStringAsFixed(2)}',
                                 style: GoogleFonts.quicksand(
                                   fontSize: 25,
                                   color: Colors.black.withOpacity(.8),
@@ -314,6 +314,4 @@ class PedidoWidgetFold extends StatelessWidget {
       ),
     );
   }
-
-  
 }

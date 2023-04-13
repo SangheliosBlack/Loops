@@ -5,7 +5,6 @@ import 'package:delivery/helpers/calculando_alerta.dart';
 import 'package:delivery/helpers/mostrar_carga.dart';
 import 'package:delivery/models/abono.dart';
 import 'package:delivery/models/productos.dart';
-import 'package:delivery/models/venta_model_pro.dart';
 import 'package:delivery/models/venta_response.dart';
 import 'package:delivery/providers/push_notifications_provider.dart';
 import 'package:delivery/search/search_prenda.dart';
@@ -15,9 +14,7 @@ import 'package:delivery/service/hide_show_menu.dart';
 import 'package:delivery/service/local_storage.dart';
 import 'package:delivery/service/socio_service.dart';
 import 'package:delivery/service/socket_service.dart';
-import 'package:delivery/service/tiendas_service.dart';
 import 'package:delivery/views/extras/nuevo_producto_view.dart';
-import 'package:delivery/views/extras/pedido_view.dart';
 import 'package:delivery/views/punto_venta/calendario.dart';
 import 'package:delivery/views/punto_venta/configuracion.dart';
 import 'package:delivery/views/punto_venta/pedido_detalles.dart';
@@ -29,7 +26,6 @@ import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart'
     // ignore: library_prefixes
     as BarcodeScanner;
 import 'package:flutter_blue/flutter_blue.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -67,11 +63,8 @@ class _PuntoVentaMainViewState extends State<PuntoVentaMainView> {
 
     socketService.socket.on('conectar-negocio', (data) => print(data));
 
-    final pushProvider = PushNotificationProvider();
     final socioService = Provider.of<SocioService>(context, listen: false);
-    final bluetoothProvider =
-        Provider.of<BluetoothProvider>(context, listen: false);
-
+    
     socioService.obtenerPedidos(
         filter: '',
         token: LocalStorage.prefs.getString('token2') ?? '',
@@ -283,8 +276,10 @@ class _PuntoVentaMainViewState extends State<PuntoVentaMainView> {
                                                       vertical: 10,
                                                       horizontal: 20),
                                               decoration: BoxDecoration(
-                                                  color: const Color.fromRGBO(
-                                                      41, 199, 184, 1),
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .primary
+                                                      .withOpacity(1),
                                                   borderRadius:
                                                       BorderRadius.circular(
                                                           25)),
@@ -1513,7 +1508,6 @@ class _InventarioViewState extends State<InventarioView>
   // ignore: must_call_super
   Widget build(BuildContext context) {
     final socioService = Provider.of<SocioService>(context);
-    final tiendaService = Provider.of<TiendaService>(context);
     return Column(
       children: [
         Container(
@@ -1571,9 +1565,6 @@ class _InventarioViewState extends State<InventarioView>
             shrinkWrap: true,
             itemBuilder: (_, int i) {
               var producto = socioService.tienda.listaProductos[i];
-              String formattedDate = DateFormat.yMd('es-MX')
-                  .add_jm()
-                  .format(producto.fechaVenta.toLocal());
               return GestureDetector(
                 behavior: HitTestBehavior.translucent,
                 onTap: () => seleccion(producto: producto),
@@ -1952,7 +1943,10 @@ class PedidoVentaWidget extends StatelessWidget {
                             horizontal: 11, vertical: 5),
                         decoration: BoxDecoration(
                             color: pedido.confirmado && !pedido.entregadoCliente
-                                ? const Color.fromRGBO(41, 199, 184, 1)
+                                ? Theme.of(context)
+                                    .colorScheme
+                                    .primary
+                                    .withOpacity(1)
                                 : !pedido.entregadoRepartidor
                                     ? Colors.black.withOpacity(.8)
                                     : const Color.fromRGBO(234, 234, 236, .4),

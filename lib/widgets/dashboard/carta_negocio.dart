@@ -93,9 +93,7 @@ class CartaNegocio extends StatelessWidget {
                           Text(
                             tienda.online ? 'Abierto' : 'Cerrado',
                             style: GoogleFonts.quicksand(
-                                fontSize: 11,
-                                color:
-                                    tienda.online ? Colors.green : Colors.red),
+                                fontSize: 11, color: Colors.black),
                           )
                         ],
                       ),
@@ -122,7 +120,10 @@ class CartaNegocio extends StatelessWidget {
                       itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
                       itemBuilder: (context, _) => FaIcon(
                         FontAwesomeIcons.solidStar,
-                        color: Colors.black.withOpacity(.8),
+                        color: Theme.of(context)
+                            .colorScheme
+                            .primary
+                            .withOpacity(1),
                       ),
                       itemSize: 13,
                       unratedColor: Colors.grey.withOpacity(.2),
@@ -159,7 +160,11 @@ class CartaNegocio extends StatelessWidget {
                                   const EdgeInsets.symmetric(horizontal: 10),
                               child: Text(
                                 '|',
-                                style: GoogleFonts.quicksand(),
+                                style: GoogleFonts.quicksand(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .primary
+                                        .withOpacity(1)),
                               ),
                             ),
                             Row(
@@ -171,7 +176,7 @@ class CartaNegocio extends StatelessWidget {
                                   size: 13,
                                 ),
                                 const SizedBox(width: 5),
-                                Text(tienda.tiempoEspera.toString() + ' min',
+                                Text('${tienda.tiempoEspera} min',
                                     style: GoogleFonts.quicksand(
                                         fontSize: 14,
                                         color: Colors.black.withOpacity(.8))),

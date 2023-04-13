@@ -1,4 +1,5 @@
 import 'package:delivery/models/venta_response.dart';
+import 'package:delivery/service/auth_service.dart';
 import 'package:delivery/service/socio_service.dart';
 import 'package:delivery/views/delivery/viaje_detalles.dart';
 import 'package:delivery/views/punto_venta/calendario.dart';
@@ -19,12 +20,14 @@ class _MisViajesViewState extends State<MisViajesView> {
   void initState() {
     super.initState();
     final socioService = Provider.of<SocioService>(context, listen: false);
-    socioService.obtenerEnvios(filter: '');
+    final authService = Provider.of<AuthService>(context, listen: false);
+    socioService.obtenerEnvios(filter: '', repartidor: authService.usuario.uid);
   }
 
   String filter = '';
   @override
   Widget build(BuildContext context) {
+    final authService = Provider.of<AuthService>(context);
     final socioService = Provider.of<SocioService>(context);
     return Scaffold(
         backgroundColor: Colors.white,
@@ -48,14 +51,21 @@ class _MisViajesViewState extends State<MisViajesView> {
                           setState(() {
                             filter = '';
                             socioService.eliminarData();
-                            socioService.obtenerEnvios(filter: filter);
+                            socioService.obtenerEnvios(
+                                filter: filter,
+                                repartidor: authService.usuario.uid);
                           });
                         },
                         child: Container(
                           width: 50,
                           height: 35,
                           decoration: BoxDecoration(
-                              color: filter == '' ? Colors.black : Colors.white,
+                              color: filter == ''
+                                  ? Theme.of(context)
+                                      .colorScheme
+                                      .primary
+                                      .withOpacity(1)
+                                  : Colors.white,
                               borderRadius: const BorderRadius.only(
                                   topLeft: Radius.circular(15),
                                   bottomLeft: Radius.circular(15))),
@@ -74,13 +84,20 @@ class _MisViajesViewState extends State<MisViajesView> {
                         behavior: HitTestBehavior.translucent,
                         onTap: () {
                           _navigateAndDisplaySelection(
-                              context: context, socioService: socioService);
+                              context: context,
+                              socioService: socioService,
+                              authService: authService);
                         },
                         child: Container(
                           width: 50,
                           height: 35,
                           decoration: BoxDecoration(
-                              color: filter != '' ? Colors.black : Colors.white,
+                              color: filter != ''
+                                  ? Theme.of(context)
+                                      .colorScheme
+                                      .primary
+                                      .withOpacity(1)
+                                  : Colors.white,
                               borderRadius: const BorderRadius.only(
                                   topRight: Radius.circular(15),
                                   bottomRight: Radius.circular(15))),
@@ -109,7 +126,8 @@ class _MisViajesViewState extends State<MisViajesView> {
         body: RefreshIndicator(
           onRefresh: () async {
             socioService.eliminarData();
-            socioService.obtenerEnvios(filter: filter);
+            socioService.obtenerEnvios(
+                filter: filter, repartidor: authService.usuario.uid);
           },
           child: Container(
             margin: const EdgeInsets.only(top: 15),
@@ -169,12 +187,14 @@ class _MisViajesViewState extends State<MisViajesView> {
                             return Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisAlignment: MainAxisAlignment.start,
-                              children: const [
+                              children: [
                                 LinearProgressIndicator(
                                   minHeight: 1,
-                                  color: Colors.white,
-                                  backgroundColor:
-                                      Color.fromRGBO(41, 199, 184, 1),
+                                  color: Colors.transparent,
+                                  backgroundColor: Theme.of(context)
+                                      .colorScheme
+                                      .primary
+                                      .withOpacity(1),
                                 ),
                               ],
                             );
@@ -225,7 +245,8 @@ class _MisViajesViewState extends State<MisViajesView> {
 
   Future<void> _navigateAndDisplaySelection(
       {required BuildContext context,
-      required SocioService socioService}) async {
+      required SocioService socioService,
+      required AuthService authService}) async {
     final result = await Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const CalendarioWidget()),
@@ -239,7 +260,8 @@ class _MisViajesViewState extends State<MisViajesView> {
       filter = result;
     });
     socioService.eliminarData();
-    socioService.obtenerEnvios(filter: filter);
+    socioService.obtenerEnvios(
+        filter: filter, repartidor: authService.usuario.uid);
   }
 }
 
@@ -299,8 +321,11 @@ class ViajeWidget extends StatelessWidget {
                       Hero(
                         tag: pedidoProducto.id,
                         child: pedidoProducto.entregadoCliente
-                            ? const Icon(Icons.verified,
-                                color: Color.fromRGBO(41, 199, 184, 1))
+                            ? Icon(Icons.verified,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .primary
+                                    .withOpacity(1))
                             : const Icon(Icons.verified,
                                 color: Colors.blueGrey),
                       ),

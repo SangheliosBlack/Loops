@@ -547,8 +547,8 @@ class ItemGeneral2 extends StatelessWidget {
                                     ]),
                                 child: Text(
                                     producto.descuentoC > 0
-                                        ? '\$ ' + producto.descuentoC.toString()
-                                        : '% ' + producto.descuentoP.toString(),
+                                        ? '\$ ${producto.descuentoC}'
+                                        : '% ${producto.descuentoP}',
                                     style: Styles.letterCustom(15, true, -0.1)),
                               ),
                             ],

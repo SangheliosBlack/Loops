@@ -893,7 +893,7 @@ class PedidoProducto {
                   efectivo: false,
                   codigo: '',
                   apartado: false),
-              onlineRepartidor: false),
+              onlineRepartidor: false, hibrido: false),
       imagen: json["imagen"],
       confirmado: json["confirmado"],
       efectivo: json['efectivo'],

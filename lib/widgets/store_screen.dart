@@ -374,14 +374,14 @@ class ListadoCategorias extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 25),
         decoration: BoxDecoration(
-            color: const Color.fromRGBO(249, 250, 252, 1),
+            color: const Color.fromRGBO(243, 246, 246, 1),
             borderRadius: BorderRadius.circular(15)),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text(
               titulo,
-              style: GoogleFonts.quicksand(color: Colors.black.withOpacity(.8)),
+              style: GoogleFonts.quicksand(color: Colors.black),
             )
           ],
         ),
@@ -415,7 +415,7 @@ class ListaProductos extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Container(
-                  margin: EdgeInsets.only(bottom: 7),
+                  margin: const EdgeInsets.only(bottom: 7),
                   padding:
                       const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
                   decoration: Styles.containerCustom(),
@@ -471,8 +471,10 @@ class ListaProductos extends StatelessWidget {
                     effect: ExpandingDotsEffect(
                       dotHeight: 10,
                       dotWidth: 10,
-                      activeDotColor: Colors.black.withOpacity(.8),
-                      dotColor: Colors.black.withOpacity(.2),
+                      activeDotColor:
+                          Theme.of(context).colorScheme.primary.withOpacity(1),
+                      dotColor:
+                          Theme.of(context).colorScheme.primary.withOpacity(.2),
                     ),
                   )
                 : Container()),

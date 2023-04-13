@@ -15,10 +15,10 @@ class RegisterView extends StatefulWidget {
       : super(key: key);
 
   @override
-  _RegisterViewState createState() => _RegisterViewState();
+  RegisterViewState createState() => RegisterViewState();
 }
 
-class _RegisterViewState extends State<RegisterView> {
+class RegisterViewState extends State<RegisterView> {
   final passCtrl = TextEditingController();
 
   final passConfCtrl = TextEditingController();
@@ -67,10 +67,14 @@ class _RegisterViewState extends State<RegisterView> {
                       Theme(
                         data: ThemeData(
                             colorScheme: ThemeData().colorScheme.copyWith(
-                                secondary:
-                                    const Color.fromRGBO(62, 204, 191, 1),
-                                primary:
-                                    const Color.fromRGBO(62, 204, 191, 1))),
+                                secondary: Theme.of(context)
+                                    .colorScheme
+                                    .primary
+                                    .withOpacity(1),
+                                primary: Theme.of(context)
+                                    .colorScheme
+                                    .primary
+                                    .withOpacity(1))),
                         child: Form(
                           child: Column(
                             children: [
@@ -130,9 +134,12 @@ class _RegisterViewState extends State<RegisterView> {
                                         borderSide: const BorderSide(
                                             color: Colors.grey),
                                       ),
-                                      prefixIcon: const Icon(
+                                      prefixIcon: Icon(
                                         Icons.mail_outline,
-                                        color: Color.fromRGBO(62, 204, 191, 1),
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary
+                                            .withOpacity(1),
                                         size: 20,
                                       ),
                                       floatingLabelBehavior:
@@ -217,9 +224,12 @@ class _RegisterViewState extends State<RegisterView> {
                                       floatingLabelAlignment:
                                           FloatingLabelAlignment.start,
                                       hintText: 'Minimo 6 caracteres',
-                                      prefixIcon: const Icon(
+                                      prefixIcon: Icon(
                                         Icons.lock_outline,
-                                        color: Color.fromRGBO(62, 204, 191, 1),
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary
+                                            .withOpacity(1),
                                         size: 20,
                                       ),
                                       labelStyle: GoogleFonts.quicksand(
@@ -292,9 +302,12 @@ class _RegisterViewState extends State<RegisterView> {
                                         borderSide: const BorderSide(
                                             color: Colors.grey),
                                       ),
-                                      prefixIcon: const Icon(
+                                      prefixIcon: Icon(
                                         Icons.check,
-                                        color: Color.fromRGBO(62, 204, 191, 1),
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary
+                                            .withOpacity(1),
                                         size: 20,
                                       ),
                                       labelStyle: GoogleFonts.quicksand(
@@ -359,9 +372,12 @@ class _RegisterViewState extends State<RegisterView> {
                                         borderSide: const BorderSide(
                                             color: Colors.grey),
                                       ),
-                                      prefixIcon: const Icon(
+                                      prefixIcon: Icon(
                                         Icons.face,
-                                        color: Color.fromRGBO(62, 204, 191, 1),
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary
+                                            .withOpacity(1),
                                         size: 20,
                                       ),
                                       floatingLabelBehavior:
@@ -390,7 +406,8 @@ class _RegisterViewState extends State<RegisterView> {
                                 },
                                 child: Container(
                                   alignment: Alignment.center,
-                                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10),
                                   margin: const EdgeInsets.only(bottom: 15),
                                   child: RichText(
                                     text: TextSpan(
@@ -583,7 +600,9 @@ class _RegisterViewState extends State<RegisterView> {
                               },
                               style: ElevatedButton.styleFrom(
                                   shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(25)), backgroundColor: Theme.of(context).primaryColor),
+                                      borderRadius: BorderRadius.circular(25)),
+                                  backgroundColor:
+                                      Theme.of(context).primaryColor),
                               child: Text(
                                 'Ok',
                                 style: GoogleFonts.quicksand(
@@ -620,7 +639,7 @@ class _RegisterViewState extends State<RegisterView> {
             color: Theme.of(context).primaryColor,
           ),
         ),
-        Text('  ' + titulo,
+        Text('  $titulo',
             style: GoogleFonts.quicksand(
                 fontSize: 14, fontWeight: FontWeight.w600))
       ],

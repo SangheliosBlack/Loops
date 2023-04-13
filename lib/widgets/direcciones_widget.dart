@@ -108,9 +108,12 @@ class DireccionBuildWidget extends StatelessWidget {
                                 width: 1, color: Colors.grey.withOpacity(.2)),
                             borderRadius: BorderRadius.circular(100),
                           ),
-                          child: const Icon(
+                          child: Icon(
                             Icons.place_outlined,
-                            color: Colors.black,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .primary
+                                .withOpacity(1),
                             size: 22,
                           )),
                       const SizedBox(width: 15),

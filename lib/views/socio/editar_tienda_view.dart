@@ -231,9 +231,11 @@ class _EditarTiendaViewState extends State<EditarTiendaView> {
                                               const EdgeInsets.only(right: 5),
                                           width: 5,
                                           height: 5,
-                                          decoration: const BoxDecoration(
-                                              color: Color.fromRGBO(
-                                                  62, 204, 191, 1),
+                                          decoration: BoxDecoration(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .primary
+                                                  .withOpacity(1),
                                               shape: BoxShape.circle),
                                         ),
                                         Expanded(
@@ -427,7 +429,10 @@ class ItemConfiguracion extends StatelessWidget {
                   decoration: BoxDecoration(
                       color: isRed
                           ? Colors.red
-                          : const Color.fromRGBO(62, 204, 191, 1),
+                          : Theme.of(context)
+                              .colorScheme
+                              .primary
+                              .withOpacity(1),
                       shape: BoxShape.circle),
                 ),
                 Text(

@@ -77,6 +77,9 @@ dependencies:
   flutter_polyline_points: ^1.0.0
 
   flutter_barcode_scanner: ^2.0.0
+  url_launcher: ^6.1.10
+  whatsapp_unilink: ^2.1.0
+  text_scroll: ^0.2.0
 
 
 dev_dependencies:
@@ -98,7 +101,14 @@ dev_dependencies:
 flutter_icons:
   android: true
   ios: true
-  image_path: "assets/images/logo_black_shop.jpg"
+  image_path: "assets/images/loops_letters.png"
+  adaptive_icon_foreground: "assets/images/letras.png"
+  adaptive_icon_background: "#6356e5"
+  web:
+    generate: true
+    image_path:  "assets/images/loops_letters.png"
+    background_color: "#6356e5"
+    theme_color: "#6356e5"
 
 
 flutter:

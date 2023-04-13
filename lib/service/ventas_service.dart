@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:delivery/global/enviroment.dart';
+import 'package:delivery/models/codigos_pendientes.dart';
 import 'package:delivery/models/venta_response.dart';
 import 'package:delivery/service/auth_service.dart';
 import 'package:flutter/material.dart';
@@ -42,5 +43,24 @@ class PedidosService with ChangeNotifier {
   recargarPedidos() {
     listaOrdenesLocal = [];
     notifyListeners();
+  }
+
+  
+
+  List<CodigosPendientes> obtenerPedidosIncompletosCodigos() {
+    List<CodigosPendientes> listado = [];
+
+    for (var element in listaOrdenesLocal) {
+      for (var element2 in element.pedidos) {
+        if (element2.entregadoCliente == false) {
+          var nuevo = CodigosPendientes(
+              codigo: element2.codigoCliente, tienda: element2.tienda, venta: element2.idVenta);
+
+          listado.add(nuevo);
+        }
+      }
+    }
+
+    return listado;
   }
 }

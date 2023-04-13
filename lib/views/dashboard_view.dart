@@ -8,7 +8,9 @@ import 'package:delivery/service/hide_show_menu.dart';
 import 'package:delivery/service/llenar_pantallas.dart';
 import 'package:delivery/service/permission_status.dart';
 import 'package:delivery/service/socket_service.dart';
+import 'package:delivery/service/ventas_service.dart';
 import 'package:delivery/views/drawer/mis_pedidos_drawer_view.dart';
+import 'package:delivery/views/extras/pedido_view.dart';
 import 'package:delivery/views/orden_view.dart';
 import 'package:delivery/views/socio/socio_dashboard_view.dart';
 import 'package:delivery/widgets/direcciones_widget.dart';
@@ -91,13 +93,16 @@ class _DashboardViewState extends State<DashboardView> {
                               width: 40,
                               height: 40,
                               decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(100),
-                                  color:
-                                      const Color.fromRGBO(41, 199, 184, .03)),
-                              child: const Icon(
+                                borderRadius: BorderRadius.circular(100),
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .primary
+                                    .withOpacity(.1),
+                              ),
+                              child: Icon(
                                 Icons.moped_sharp,
                                 size: 20,
-                                color: Color.fromRGBO(41, 199, 184, 1),
+                                color: Theme.of(context).colorScheme.primary,
                               ),
                             ),
                           ],
@@ -270,6 +275,7 @@ class _DashboardViewState extends State<DashboardView> {
               backgroundColor: Colors.white,
               elevation: .00),
           bottomNavigationBar: const MenuInferior(),
+          extendBody: true,
           backgroundColor: Colors.white,
           body: Column(
             children: [
@@ -385,6 +391,7 @@ class _DashBoardMainViewState extends State<DashBoardMainView>
     with AutomaticKeepAliveClientMixin {
   @override
   Widget build(BuildContext context) {
+    final pedidosService = Provider.of<PedidosService>(context);
     super.build(context);
     return RefreshIndicator(
       displacement: 100,
@@ -394,30 +401,138 @@ class _DashBoardMainViewState extends State<DashBoardMainView>
         widget.llenarPantallasService.pantallaPrincipalCategorias();
         widget.llenarPantallasService.pantallaPrincipalProductos();
         widget.llenarPantallasService.pantallaPrincipalTiendas();
+        pedidosService.recargarPedidos();
       },
-      child: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
-        child: AnimatedSize(
-          alignment: Alignment.topCenter,
-          duration: const Duration(milliseconds: 500),
-          child: widget.llenarPantallasService.tiendas.isNotEmpty &&
-                  widget.llenarPantallasService.categorias.isNotEmpty &&
-                  widget.llenarPantallasService.productos.isNotEmpty
-              ? Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                      BaraBusqueda(width: widget.width),
-                      const ListadoCategorias(),
-                      const SizedBox(height: 10),
-                      ListadoEstablecimientos(
-                          height: widget.height, width: widget.width),
-                      const ListaProductos(),
-                    ])
-              : const LinearProgressIndicator(
-                  minHeight: 1,
-                  backgroundColor: Color.fromRGBO(41, 200, 182, 1),
-                  color: Colors.white),
-        ),
+      child: Column(
+        children: [
+          pedidosService.obtenerPedidosIncompletosCodigos().isNotEmpty
+              ? Container(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  width: double.infinity,
+                  decoration: const BoxDecoration(color: Colors.black),
+                  child: SizedBox(
+                    height: 30,
+                    width: double.infinity,
+                    child: ListView.separated(
+                      physics: const BouncingScrollPhysics(),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 25,
+                      ),
+                      scrollDirection: Axis.horizontal,
+                      itemBuilder: (_, int index) {
+                        return GestureDetector(
+                          behavior: HitTestBehavior.translucent,
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => PedidoView(
+                                      venta: pedidosService.listaOrdenesLocal[
+                                          pedidosService.listaOrdenesLocal
+                                              .indexWhere((element) =>
+                                                  element.id ==
+                                                  pedidosService
+                                                      .obtenerPedidosIncompletosCodigos()[
+                                                          index]
+                                                      .venta)])),
+                            );
+                          },
+                          child: Row(
+                            children: [
+                              Text(
+                                pedidosService
+                                    .obtenerPedidosIncompletosCodigos()[index]
+                                    .tienda,
+                                style:
+                                    GoogleFonts.quicksand(color: Colors.white),
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              SizedBox(
+                                width: 141,
+                                child: ListView.separated(
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  scrollDirection: Axis.horizontal,
+                                  itemBuilder: (_, int index2) {
+                                    return Container(
+                                      width: 30,
+                                      height: 30,
+                                      decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius:
+                                              BorderRadius.circular(05)),
+                                      child: Center(
+                                        child: Text(
+                                          pedidosService
+                                              .obtenerPedidosIncompletosCodigos()[
+                                                  index]
+                                              .codigo[index2],
+                                          style: GoogleFonts.quicksand(
+                                              color: Colors.black),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  itemCount: pedidosService
+                                      .obtenerPedidosIncompletosCodigos()[index]
+                                      .codigo
+                                      .length,
+                                  separatorBuilder: (_, __) => Container(
+                                    width: 7,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                      itemCount: pedidosService
+                          .obtenerPedidosIncompletosCodigos()
+                          .length,
+                      separatorBuilder: (_, __) => Container(
+                        width: 1,
+                        height: 20,
+                        color: Colors.white,
+                        margin: const EdgeInsets.symmetric(horizontal: 30),
+                      ),
+                    ),
+                  ),
+                )
+              : Container(),
+          Expanded(
+            child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              child: AnimatedSize(
+                alignment: Alignment.topCenter,
+                duration: const Duration(milliseconds: 500),
+                child: widget.llenarPantallasService.tiendas.isNotEmpty &&
+                        widget.llenarPantallasService.categorias.isNotEmpty &&
+                        widget.llenarPantallasService.productos.isNotEmpty
+                    ? Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                            BaraBusqueda(width: widget.width),
+                            const ListadoCategorias(),
+                            const SizedBox(height: 10),
+                            ListadoEstablecimientos(
+                                height: widget.height, width: widget.width),
+                            const ListaProductos(),
+                            const SizedBox(
+                              height: 100,
+                            )
+                          ])
+                    : LinearProgressIndicator(
+                        minHeight: 1,
+                        backgroundColor: Theme.of(context)
+                            .colorScheme
+                            .primary
+                            .withOpacity(1),
+                        color: Colors.white),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

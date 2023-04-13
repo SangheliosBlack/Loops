@@ -65,8 +65,9 @@ class CategoriaView extends StatelessWidget {
                                                   BorderRadius.circular(40),
                                               border: Border.all(
                                                   width: 2,
-                                                  color: const Color.fromRGBO(
-                                                      41, 199, 184, 1))),
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .primary)),
                                           height: 75,
                                           width: 75,
                                           child: ClipRRect(
@@ -153,11 +154,14 @@ class CategoriaView extends StatelessWidget {
                   : Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
+                      children: [
                         LinearProgressIndicator(
                           minHeight: 1,
-                          backgroundColor: Color.fromRGBO(234, 248, 248, 0),
-                          color: Color.fromRGBO(62, 204, 191, 1),
+                          backgroundColor: Theme.of(context)
+                              .colorScheme
+                              .primary
+                              .withOpacity(.1),
+                          color: Theme.of(context).colorScheme.primary,
                         )
                       ],
                     ));

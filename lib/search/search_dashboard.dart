@@ -97,11 +97,19 @@ class SearchBusqueda extends SearchDelegate<BusquedaResult> {
           return Container(
             color: Colors.white,
             child: ListView(
-              children: const [
-                LinearProgressIndicator(
-                  minHeight: 1,
-                  color: Color.fromRGBO(41, 199, 184, 1),
-                  backgroundColor: Colors.white,
+              children: [
+                Column(
+                  children: [
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    CircularProgressIndicator(
+                      strokeWidth: 3,
+                      backgroundColor: Colors.transparent,
+                      color:
+                          Theme.of(context).colorScheme.primary.withOpacity(1),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -163,8 +171,10 @@ class SearchBusqueda extends SearchDelegate<BusquedaResult> {
                                               BorderRadius.circular(40),
                                           border: Border.all(
                                               width: 2,
-                                              color: const Color.fromRGBO(
-                                                  41, 199, 184, 1))),
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .primary
+                                                  .withOpacity(1))),
                                       height: 75,
                                       width: 75,
                                       child: ClipRRect(

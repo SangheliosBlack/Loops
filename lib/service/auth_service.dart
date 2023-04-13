@@ -6,6 +6,8 @@ import 'package:delivery/helpers/haversine.dart';
 import 'package:delivery/models/cesta.dart';
 import 'package:delivery/models/codigo_response.dart';
 import 'package:delivery/models/direccion.dart';
+import 'package:delivery/models/direccion.dart' as coordenas;
+import 'package:delivery/models/envio_valor.dart';
 import 'package:delivery/models/image_response.dart';
 import 'package:delivery/models/lista_opciones.dart';
 import 'package:delivery/models/productos.dart';
@@ -84,10 +86,8 @@ class AuthService with ChangeNotifier {
           final alcance = producto.cantidad ~/ promociones[index].cantidad;
 
           var enCesta =
-              productoAgregado2(id: producto.id + 'promo', opciones: []);
+              productoAgregado2(id: '${producto.id}promo', opciones: []);
 
-          print('//////////////////////////////////////////////////');
-          print(enCesta);
           if (enCesta!.isNotEmpty) {
             int index = usuario.cesta.productos
                 .indexWhere((element) => element.sku == enCesta);
@@ -133,7 +133,7 @@ class AuthService with ChangeNotifier {
                 cantidad: alcance,
                 extra: calcularOpcionesExtra(opciones: []),
                 opciones: [],
-                sku: producto.id + 'promo',
+                sku: '${producto.id}promo',
                 imagen: '',
                 hot: 0,
                 sugerencia: false,
@@ -155,7 +155,6 @@ class AuthService with ChangeNotifier {
                   });
 
               if (resp.statusCode == 200) {
-                print('todop cvool');
                 calcularTotal();
                 usuario.cesta.productos
                     .sort((a, b) => a.nombre.compareTo(b.nombre));
@@ -165,7 +164,6 @@ class AuthService with ChangeNotifier {
                 return false;
               }
             } catch (e) {
-              print('JAMON');
               return false;
             }
           }
@@ -425,6 +423,46 @@ class AuthService with ChangeNotifier {
     } catch (e) {
       return false;
     }
+  }
+
+  Future iniciarFakeSession() async {
+    usuario = Usuario(
+        codigo: '',
+        online: true,
+        direcciones: [],
+        correo: 'test@tes.com',
+        nombreUsuario: 'Test User',
+        nombre: 'Test name',
+        socio: false,
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
+        uid: '',
+        negocios: [],
+        numeroCelular: '4321098765',
+        customerID: '',
+        nombreCodigo: 'dasd',
+        idCodigo: '',
+        dialCode: '',
+        repartidor: false,
+        ultimaTarea: DateTime.now(),
+        onlineRepartidor: false,
+        transito: false,
+        cesta: Cesta(
+            productos: [],
+            total: 0,
+            tarjeta: '',
+            direccion: Direccion(
+                id: '',
+                predeterminado: false,
+                titulo: '',
+                coordenadas: coordenas.Coordenadas(lat: 0, lng: 0, id: '')),
+            efectivo: false,
+            apartado: false,
+            codigo: 'dasd'),
+        hibrido: false);
+
+    authStatus = AuthStatus.authenticated;
+    notifyListeners();
   }
 
   Future<bool> isLoggedIn() async {
@@ -697,7 +735,6 @@ class AuthService with ChangeNotifier {
 
   Future<bool> actulizarCantidad(
       {required int cantidad, required int index}) async {
-    await Future.delayed(const Duration(seconds: 1));
     final data = {
       'id': usuario.cesta.productos[index].id,
       'cantidad': cantidad
@@ -726,7 +763,6 @@ class AuthService with ChangeNotifier {
 
   Future<bool> eliminarProductoCesta({required int pos}) async {
     final data = {"id": usuario.cesta.productos[pos].id};
-    await Future.delayed(const Duration(seconds: 1));
     try {
       final resp = await http.post(
           Uri.parse('${Statics.apiUrl}/usuario/eliminarProductoCesta'),
@@ -749,8 +785,6 @@ class AuthService with ChangeNotifier {
   }
 
   Future<bool> eliminarCesta() async {
-    await Future.delayed(const Duration(seconds: 1));
-
     try {
       final resp = await http.post(
           Uri.parse('${Statics.apiUrl}/usuario/eliminarCestaProductos'),
@@ -864,6 +898,7 @@ class AuthService with ChangeNotifier {
 
   Future<Venta?> crearPedido(
       {required bool tiendaRopa,
+      required List<EnvioValor> listadoEnviosValores,
       bool apartado = false,
       bool liquidado = false,
       String abono = '0',
@@ -875,7 +910,7 @@ class AuthService with ChangeNotifier {
         productos: usuario.cesta.productos,
         total: -(usuario.cesta.codigo != '' ? envio : 0) +
             calcularTotal() +
-            (10.2 * calcularTiendas()) +
+            (5.6 * calcularTiendas()) +
             envio,
         tarjeta: tarjeta,
         direccion: direccion,
@@ -888,14 +923,15 @@ class AuthService with ChangeNotifier {
     precio = precio.replaceAll(',', '');
     final data = {
       'abonoReq': precio,
-      'servicio': (10.2 * calcularTiendas()),
+      'servicio': (5.6 * calcularTiendas()),
       'envio': envio,
       'usuario': usuario.uid,
       'customer': customer,
       'cesta': cestaToJson(cestaEnvio),
       'tienda_ropa': tiendaRopa,
       'apartado': apartado,
-      'liquidado': liquidado
+      'liquidado': liquidado,
+      'envioValores': jsonEncode(listadoEnviosValores)
     };
 
     try {
@@ -920,7 +956,6 @@ class AuthService with ChangeNotifier {
         return null;
       }
     } catch (e) {
-      print(e);
 
       return null;
     }
@@ -938,7 +973,7 @@ class AuthService with ChangeNotifier {
         productos: usuario.cesta.productos,
         total: -(usuario.cesta.codigo != '' ? envio : 0) +
             calcularTotal() +
-            (10.2 * calcularTiendas()) +
+            (5.6 * calcularTiendas()) +
             envio,
         tarjeta: tarjeta,
         direccion: direccion,
@@ -946,7 +981,7 @@ class AuthService with ChangeNotifier {
         codigo: usuario.cesta.codigo,
         apartado: usuario.cesta.apartado);
     final data = {
-      'servicio': (10.2 * calcularTiendas()),
+      'servicio': (5.6 * calcularTiendas()),
       'envio': envio,
       'usuario': usuario.uid,
       'customer': customer,
@@ -996,6 +1031,53 @@ class AuthService with ChangeNotifier {
     return busqueda;
   }
 
+  List<EnvioValor> calcularEnviosIndividuales(
+      {required List<Tienda> tiendas,
+      required,
+      required List<Direccion> direcciones}) {
+    List<Tienda> listado = [];
+    List<String> listado2 = [];
+
+    List<EnvioValor> valores = [];
+
+    for (var element1 in usuario.cesta.productos) {
+      if (!listado2.contains(element1.tienda)) {
+        listado.add(
+            tiendas.firstWhere((element) => element.nombre == element1.tienda));
+      }
+    }
+
+    for (var element in listado) {
+      var distancia = calculateDistance(
+          lat1: element.coordenadas.latitud,
+          lon1: element.coordenadas.longitud,
+          lat2: direcciones[usuario.cesta.direccion.titulo != ''
+                  ? direcciones.indexWhere((element) =>
+                      usuario.cesta.direccion.titulo == element.titulo)
+                  : obtenerFavorito(direcciones) != -1
+                      ? obtenerFavorito(direcciones)
+                      : 0]
+              .coordenadas
+              .lat,
+          lon2: direcciones[usuario.cesta.direccion.titulo != ''
+                  ? direcciones.indexWhere((element) =>
+                      usuario.cesta.direccion.titulo == element.titulo)
+                  : obtenerFavorito(direcciones) != -1
+                      ? obtenerFavorito(direcciones)
+                      : 0]
+              .coordenadas
+              .lng);
+
+      var pre = EnvioValor(
+          cantidad: (distancia <= 3 ? 29.7 : ((distancia - 3) * 12.3) + 29.7),
+          tienda: element.nombre);
+
+      valores.add(pre);
+    }
+
+    return valores;
+  }
+
   num calcularEnvioAvanzado(
       {required List<Tienda> tiendas,
       required,
@@ -1033,7 +1115,7 @@ class AuthService with ChangeNotifier {
               .lng));
     }
     var reduceTotal =
-        distancias.map((e) => (e <= 3 ? 19.8 : ((e - 3) * 7.2) + 19.8));
+        distancias.map((e) => (e <= 3 ? 29.7 : ((e - 3) * 12.3) + 29.7));
 
     return reduceTotal.reduce((value, element) => value + element);
   }
@@ -1052,6 +1134,54 @@ class AuthService with ChangeNotifier {
   eliminarCupon() {
     usuario.cesta.codigo = '';
     notifyListeners();
+  }
+
+  Future<bool> hibridoOff() async {
+    final data = {"_id": usuario.uid};
+
+    try {
+      final resp = await http.post(
+          Uri.parse('${Statics.apiUrl}/repartidor/hibridoOff'),
+          body: jsonEncode(data),
+          headers: {
+            'Content-Type': 'application/json',
+            'x-token': await AuthService.getToken()
+          });
+
+      if (resp.statusCode == 200) {
+        usuario.hibrido = false;
+        notifyListeners();
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<bool> hibridoOn() async {
+    final data = {"_id": usuario.uid};
+
+    try {
+      final resp = await http.post(
+          Uri.parse('${Statics.apiUrl}/repartidor/hibridoOn'),
+          body: jsonEncode(data),
+          headers: {
+            'Content-Type': 'application/json',
+            'x-token': await AuthService.getToken()
+          });
+
+      if (resp.statusCode == 200) {
+        usuario.hibrido = true;
+        notifyListeners();
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      return false;
+    }
   }
 
   Future<CodigoResponse> aplicarCupon({required String codigo}) async {

@@ -214,7 +214,6 @@ class TiendaService with ChangeNotifier {
       final productoResp = productoFromJson(resp.body);
       return productoResp;
     } catch (e) {
-      print(e);
       return null;
     }
   }

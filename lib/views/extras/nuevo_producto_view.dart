@@ -4,7 +4,6 @@ import 'package:delivery/service/bluetooth_servide.dart';
 import 'package:delivery/service/hide_show_menu.dart';
 import 'package:delivery/service/socio_service.dart';
 import 'package:delivery/service/tiendas_service.dart';
-import 'package:delivery/widgets/modals/editar_producto.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -28,10 +27,10 @@ class AgregarProductoView extends StatefulWidget {
   final String uid;
 
   @override
-  _AgregarProductoViewState createState() => _AgregarProductoViewState();
+  AgregarProductoViewState createState() => AgregarProductoViewState();
 }
 
-class _AgregarProductoViewState extends State<AgregarProductoView> {
+class AgregarProductoViewState extends State<AgregarProductoView> {
   bool send = false;
 
   bool uno = false;
@@ -117,7 +116,7 @@ class _AgregarProductoViewState extends State<AgregarProductoView> {
                             style:
                                 GoogleFonts.quicksand(color: Colors.blueGrey),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 10,
                           ),
                           const Icon(
@@ -164,7 +163,7 @@ class _AgregarProductoViewState extends State<AgregarProductoView> {
         margin: EdgeInsets.only(top: widget.editar ? 0 : 30),
         child: Column(
           children: [
-            SizedBox(
+            const SizedBox(
               height: 15,
             ),
             Expanded(
@@ -528,7 +527,6 @@ class _AgregarProductoViewState extends State<AgregarProductoView> {
                                 productoUid: widget.uid,
                                 cantidad: cuatroCtrl.text.trim());
 
-                            print(resp);
 
                             if (resp) {
                               String precio =
@@ -637,14 +635,14 @@ class _AgregarProductoViewState extends State<AgregarProductoView> {
                             }
                           }
                     : null,
-                child: Text(
-                  widget.editar ? 'Editar' : 'Agregar',
-                  style: GoogleFonts.quicksand(color: Colors.white),
-                ),
                 style: ElevatedButton.styleFrom(
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(25)),
                     backgroundColor: Theme.of(context).primaryColor),
+                child: Text(
+                  widget.editar ? 'Editar' : 'Agregar',
+                  style: GoogleFonts.quicksand(color: Colors.white),
+                ),
               ),
             ),
             const SizedBox(

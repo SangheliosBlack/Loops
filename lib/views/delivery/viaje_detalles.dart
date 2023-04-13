@@ -16,73 +16,84 @@ class ViajesDetallesView extends StatelessWidget {
         DateFormat.yMEd('es-MX').add_jm().format(envio.createdAt.toLocal());
     final nombre = envio.usuario.nombre.split(' ');
     return Scaffold(
+      appBar: AppBar(
+        leading: Container(),
+        leadingWidth: 0,
+        toolbarHeight: 250,
+        title: Stack(
+          children: [
+            Container(
+              height: 300,
+              width: width,
+              color: Theme.of(context).colorScheme.primary.withOpacity(1),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Hero(
+                    tag: envio.id,
+                    child: envio.entregadoCliente
+                        ? const Icon(
+                            Icons.verified,
+                            color: Colors.white,
+                            size: 60,
+                          )
+                        : const Icon(
+                            Icons.pending,
+                            color: Colors.white,
+                            size: 60,
+                          ),
+                  ),
+                  const SizedBox(
+                    height: 15,
+                  ),
+                  Text(
+                    envio.entregadoCliente ? 'Completado' : 'Incompleto',
+                    style: GoogleFonts.quicksand(
+                        fontSize: 25, color: Colors.white),
+                  ),
+                  Text(
+                    formattedDate,
+                    style: GoogleFonts.quicksand(
+                        fontSize: 15, color: Colors.white),
+                  ),
+                  const SizedBox(
+                    height: 15,
+                  ),
+                  Text(
+                    'Orden No. # ${index + 1} - $formattedDate',
+                    style: GoogleFonts.quicksand(
+                        fontSize: 14, color: Colors.white.withOpacity(.4)),
+                  )
+                ],
+              ),
+            ),
+            Positioned(
+                top: 55,
+                left: 10,
+                child: GestureDetector(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    behavior: HitTestBehavior.translucent,
+                    child: Container(
+                        decoration: const BoxDecoration(
+                            color: Colors.white, shape: BoxShape.circle),
+                        padding: const EdgeInsets.all(10),
+                        child: Icon(
+                          Icons.close,
+                          color: Theme.of(context)
+                              .colorScheme
+                              .primary
+                              .withOpacity(1),
+                        ))))
+          ],
+        ),
+      ),
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
         child: Column(children: [
-          Stack(
-            children: [
-              Container(
-                height: 300,
-                width: width,
-                color: const Color.fromRGBO(237, 241, 244, 1),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Hero(
-                      tag: envio.id,
-                      child: envio.entregadoCliente
-                          ? const Icon(
-                              Icons.verified,
-                              color: Color.fromRGBO(41, 199, 184, 1),
-                              size: 60,
-                            )
-                          : const Icon(
-                              Icons.pending,
-                              color: Colors.blueGrey,
-                              size: 60,
-                            ),
-                    ),
-                    const SizedBox(
-                      height: 15,
-                    ),
-                    Text(
-                      envio.entregadoCliente ? 'Completado' : 'Incompleto',
-                      style: GoogleFonts.quicksand(
-                          fontSize: 25, color: Colors.black),
-                    ),
-                    Text(
-                      formattedDate,
-                      style: GoogleFonts.quicksand(
-                          fontSize: 15, color: Colors.black.withOpacity(.3)),
-                    ),
-                    const SizedBox(
-                      height: 15,
-                    ),
-                    Text(
-                      'Orden No. # ${index + 1} - $formattedDate',
-                      style: GoogleFonts.quicksand(
-                          fontSize: 14, color: Colors.black),
-                    )
-                  ],
-                ),
-              ),
-              Positioned(
-                  top: 55,
-                  left: 25,
-                  child: GestureDetector(
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
-                      behavior: HitTestBehavior.translucent,
-                      child: Container(
-                          decoration: const BoxDecoration(
-                              color: Colors.white, shape: BoxShape.circle),
-                          padding: const EdgeInsets.all(10),
-                          child: const Icon(Icons.close))))
-            ],
-          ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 25),
             child: Column(
@@ -114,11 +125,9 @@ class ViajesDetallesView extends StatelessWidget {
                           width: 10,
                         ),
                         Text(
-                            nombre[0] +
-                                ' ' +
-                                (nombre.length - 2 > 0
+                            '${nombre[0]} ${nombre.length - 2 > 0
                                     ? nombre[nombre.length - 2][0]
-                                    : ''),
+                                    : ''}',
                             style: GoogleFonts.quicksand(
                                 color: Colors.black, fontSize: 20)),
                       ],
@@ -180,14 +189,16 @@ class ViajesDetallesView extends StatelessWidget {
                                     children: [
                                       Container(
                                         padding: const EdgeInsets.all(15),
-                                        decoration: const BoxDecoration(
+                                        decoration: BoxDecoration(
                                           shape: BoxShape.circle,
-                                          color:
-                                              Color.fromRGBO(237, 241, 244, 1),
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary
+                                              .withOpacity(1),
                                         ),
                                         child: const Icon(
                                           Icons.home,
-                                          color: Colors.blueGrey,
+                                          color: Colors.white,
                                         ),
                                       ),
                                       const SizedBox(
@@ -236,14 +247,16 @@ class ViajesDetallesView extends StatelessWidget {
                                     children: [
                                       Container(
                                         padding: const EdgeInsets.all(15),
-                                        decoration: const BoxDecoration(
+                                        decoration: BoxDecoration(
                                           shape: BoxShape.circle,
-                                          color:
-                                              Color.fromRGBO(237, 241, 244, 1),
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary
+                                              .withOpacity(1),
                                         ),
                                         child: const Icon(
                                           Icons.location_on,
-                                          color: Colors.blueGrey,
+                                          color: Colors.white,
                                         ),
                                       ),
                                       const SizedBox(
@@ -315,7 +328,10 @@ class ViajesDetallesView extends StatelessWidget {
                             'x${envio.productos[index].cantidad}',
                             style: GoogleFonts.quicksand(
                                 fontSize: 14,
-                                color: const Color.fromRGBO(41, 199, 184, 1),
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .primary
+                                    .withOpacity(1),
                                 fontWeight: FontWeight.bold),
                           ),
                           const SizedBox(
@@ -356,7 +372,10 @@ class ViajesDetallesView extends StatelessWidget {
                     Text(
                       '\$ 25.66',
                       style: GoogleFonts.quicksand(
-                          color: const Color.fromRGBO(41, 199, 184, 1),
+                          color: Theme.of(context)
+                              .colorScheme
+                              .primary
+                              .withOpacity(1),
                           fontSize: 55),
                     ),
                     const SizedBox(

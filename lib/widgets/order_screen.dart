@@ -405,7 +405,7 @@ class OrderItems extends StatelessWidget {
                               mostrarCarga(context);
                               await authService.eliminarProductoCesta(
                                   pos: index);
-                              Navigator.pop(context);
+                              if (context.mounted) Navigator.pop(context);
                               final snackBar = SnackBar(
                                 duration: const Duration(seconds: 2),
                                 backgroundColor:
@@ -418,14 +418,16 @@ class OrderItems extends StatelessWidget {
                                 ),
                               );
 
-                              ScaffoldMessenger.of(context)
+                               if(context.mounted){
+                                ScaffoldMessenger.of(context)
                                   .showSnackBar(snackBar);
+                               }
                             } else {
                               mostrarCarga(context);
                               await authService.actulizarCantidad(
                                   cantidad: (producto.cantidad - 1).toInt(),
                                   index: index);
-                              Navigator.pop(context);
+                              if(context.mounted) Navigator.pop(context);
                             }
                           },
                           child: Container(
@@ -463,7 +465,7 @@ class OrderItems extends StatelessWidget {
                                   await authService.actulizarCantidad(
                                       cantidad: (producto.cantidad + 1).toInt(),
                                       index: index);
-                                  Navigator.pop(context);
+                                   if(context.mounted)Navigator.pop(context);
                                 }
                               : () {
                                   final snackBar = SnackBar(
@@ -483,13 +485,19 @@ class OrderItems extends StatelessWidget {
                                 },
                           child: Container(
                               padding: const EdgeInsets.all(12),
-                              decoration: const BoxDecoration(
+                              decoration: BoxDecoration(
                                   shape: BoxShape.circle,
-                                  color: Color.fromRGBO(234, 248, 248, 1)),
-                              child: const Icon(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .primary
+                                      .withOpacity(.1)),
+                              child: Icon(
                                 Icons.add,
                                 size: 16,
-                                color: Color.fromRGBO(62, 204, 191, 1),
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .primary
+                                    .withOpacity(1),
                               )),
                         ),
                       ],
@@ -514,7 +522,7 @@ class OrderItems extends StatelessWidget {
             if (valor.isEmpty) {
               valor = element.tipo;
             } else {
-              valor = valor + '  |  ' + element.tipo;
+              valor = '$valor  |  ${element.tipo}';
             }
           }
         }
@@ -553,7 +561,7 @@ class DeliveryOptionsContainer extends StatelessWidget {
                 } catch (e) {
                   debugPrint('Ningun lugar seleccionado');
                 }
-                Navigator.pop(context);
+                if(context.mounted) Navigator.pop(context);
               } else {
                 try {
                   final resultado = await showSearch(
@@ -658,10 +666,10 @@ class PaymenthMethodsFinal extends StatelessWidget {
               onPressed: () {
                 //PENDIENTE
               },
-              child:
-                  Text('Agregar', style: Styles.letterCustom(14, true, -0.1)),
               style: ElevatedButton.styleFrom(
                   backgroundColor: Theme.of(context).primaryColor),
+              child:
+                  Text('Agregar', style: Styles.letterCustom(14, true, -0.1)),
             ),
           )
         ],
@@ -1281,7 +1289,50 @@ class _PaymentSummaryState extends State<PaymentSummary> {
             duration: const Duration(milliseconds: 400),
             child: authService.calcularTiendas() > 1
                 ? GestureDetector(
-                    onTap: () {},
+                    onTap: () {
+                      showModalBottomSheet(
+                          context: context,
+                          builder: (context) {
+                            return SizedBox(
+                              height: 200,
+                              child: Container(
+                                padding: const EdgeInsets.all(25),
+                                child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: <Widget>[
+                                      Text(
+                                        'Multi envio',
+                                        style: GoogleFonts.quicksand(
+                                            color: Colors.black, fontSize: 25),
+                                      ),
+                                      const SizedBox(
+                                        height: 15,
+                                      ),
+                                      Text(
+                                        'Multi envio aplicado a tu pedido, las tarifas conservan el mismo valor y se solicitan n numero de pedidos, en una misma compra.',
+                                        style: GoogleFonts.quicksand(
+                                            color: Colors.grey),
+                                      ),
+                                      const SizedBox(
+                                        height: 20,
+                                      ),
+                                      GestureDetector(
+                                          behavior: HitTestBehavior.translucent,
+                                          onTap: () {
+                                            Navigator.pop(context);
+                                          },
+                                          child: Text(
+                                            'Ok',
+                                            style: GoogleFonts.quicksand(
+                                                color: Colors.blue),
+                                          ))
+                                    ]),
+                              ),
+                            );
+                          });
+                    },
                     child: Container(
                       margin: const EdgeInsets.only(bottom: 10),
                       child: RichText(
@@ -1376,7 +1427,7 @@ class _PaymentSummaryState extends State<PaymentSummary> {
                         )
                       : Container(),
                   Text(
-                    '\$ ${authService.calcularTotal() > 0 ? ((10.2 * authService.calcularTiendas()).toStringAsFixed(2)) : '0.00'}',
+                    '\$ ${authService.calcularTotal() > 0 ? ((5.6 * authService.calcularTiendas()).toStringAsFixed(2)) : '0.00'}',
                     style: GoogleFonts.quicksand(fontSize: 18),
                   ),
                 ],
@@ -1432,7 +1483,7 @@ class _PaymentSummaryState extends State<PaymentSummary> {
                 style: GoogleFonts.quicksand(),
               ),
               Text(
-                '\$ ${authService.calcularTotal() == 0 ? "0.00" : (-(authService.usuario.cesta.codigo != '' ? authService.calcularEnvioAvanzado(tiendas: pantallaService.tiendas, direcciones: direccionesService.direcciones) : 0) + authService.calcularTotal() + (10.2 * authService.calcularTiendas()) + authService.calcularEnvioAvanzado(tiendas: pantallaService.tiendas, direcciones: direccionesService.direcciones)).toStringAsFixed(2)}',
+                '\$ ${authService.calcularTotal() == 0 ? "0.00" : (-(authService.usuario.cesta.codigo != '' ? authService.calcularEnvioAvanzado(tiendas: pantallaService.tiendas, direcciones: direccionesService.direcciones) : 0) + authService.calcularTotal() + (5.6 * authService.calcularTiendas()) + authService.calcularEnvioAvanzado(tiendas: pantallaService.tiendas, direcciones: direccionesService.direcciones)).toStringAsFixed(2)}',
                 style: GoogleFonts.quicksand(fontSize: 18),
               )
             ],
@@ -1521,21 +1572,25 @@ class _PaymentSummaryState extends State<PaymentSummary> {
                                   customer: customerService.customer.id,
                                   envio: authService.calcularEnvioAvanzado(
                                       tiendas: pantallaService.tiendas,
-                                      direcciones: direccionesService.direcciones), tiendaRopa: false);
+                                      direcciones: direccionesService.direcciones),
+                                  tiendaRopa: false,
+                                  listadoEnviosValores: authService.calcularEnviosIndividuales(tiendas: pantallaService.tiendas, direcciones: direccionesService.direcciones));
 
                               if (venta != null) {
                                 pedidosService.agregarCompra(venta: venta);
                                 // socketService.socket
                                 //     .emit('enviar-pedido', venta);
                                 scrollListView2(controller: widget.controller);
-                                Navigator.pop(context);
-                                Navigator.push(
+                                if(context.mounted) Navigator.pop(context);
+                                if(context.mounted){
+                                } Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) => DoneView(
                                             venta: venta,
                                           )),
                                 );
+                                  
                               } else {
                                 final snackBar = SnackBar(
                                   duration: const Duration(seconds: 2),
@@ -1572,12 +1627,21 @@ class _PaymentSummaryState extends State<PaymentSummary> {
                         padding: const EdgeInsets.all(20),
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(30),
-                            border: Border.all(width: 1, color: Colors.black)),
+                            border: Border.all(
+                                width: 1,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .primary
+                                    .withOpacity(1))),
                         child: Center(
                           child: Text(
                             'Ordenar',
                             style: GoogleFonts.quicksand(
-                                color: Colors.black, fontSize: 20),
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .primary
+                                    .withOpacity(1),
+                                fontSize: 20),
                           ),
                         )),
                   ),

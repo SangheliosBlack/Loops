@@ -8,6 +8,27 @@ class TerminosCondicionesView extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        appBar: AppBar(
+          elevation: 1,
+          toolbarHeight: 120,
+          iconTheme: const IconThemeData(color: Colors.black),
+          backgroundColor: Colors.white,
+          title: Column(
+            children: [
+              Text(
+                'Politica de privacidad',
+                style: GoogleFonts.quicksand(
+                    fontSize: 25, color: Colors.black.withOpacity(.8)),
+              ),
+              const SizedBox(height: 15),
+              Text(
+                'Actualizado el 2022-02-11',
+                style: GoogleFonts.quicksand(
+                    fontSize: 17, color: Colors.black.withOpacity(.8)),
+              ),
+            ],
+          ),
+        ),
         backgroundColor: Colors.white,
         body: Container(
           padding: const EdgeInsets.symmetric(horizontal: 35),
@@ -17,21 +38,6 @@ class TerminosCondicionesView extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const SizedBox(
-                  height: 40,
-                  width: double.infinity,
-                ),
-                Text(
-                  'Politica de privacidad',
-                  style: GoogleFonts.quicksand(
-                      fontSize: 25, color: Colors.black.withOpacity(.8)),
-                ),
-                const SizedBox(height: 15),
-                Text(
-                  'Actualizado el 2022-02-11',
-                  style: GoogleFonts.quicksand(
-                      fontSize: 17, color: Colors.black.withOpacity(.8)),
-                ),
                 const SizedBox(height: 50),
                 RichText(
                   text: TextSpan(
@@ -141,7 +147,7 @@ class TerminosCondicionesView extends StatelessWidget {
                                       color: Colors.blue)),
                               const TextSpan(
                                   text:
-                                      ' , Calle Andador 439, Paseos de La Montaña, Lagos de Moreno, Jalisco que es responsable de su información en virtud de esta Política de privacidad.'),
+                                      ' , DIRECCION FISICA PENDIENTE Lagos de Moreno, Jalisco que es responsable de su información en virtud de esta Política de privacidad.'),
                             ],
                           ),
                         ),
@@ -1178,7 +1184,8 @@ class TerminosCondicionesView extends StatelessWidget {
                     style: GoogleFonts.quicksand(
                         color: Colors.black.withOpacity(.8)),
                     children: <TextSpan>[
-                      const TextSpan(text: 'Si es un trabajador o solicitante de'),
+                      const TextSpan(
+                          text: 'Si es un trabajador o solicitante de'),
                       TextSpan(
                           text: ' Loops, ',
                           style: GoogleFonts.quicksand(
@@ -1720,7 +1727,7 @@ class TerminosCondicionesView extends StatelessWidget {
                             children: const <TextSpan>[
                               TextSpan(
                                   text:
-                                      'A través de correo electrónico: julio.villagrana.sanghelios2@gmail.com'),
+                                      'A través de correo electrónico: loops@loops.com'),
                             ],
                           ),
                         ),
@@ -1766,7 +1773,7 @@ class TerminosCondicionesView extends StatelessWidget {
                             children: const <TextSpan>[
                               TextSpan(
                                   text:
-                                      'A través de este enlace: https://www.tresga.mx/'),
+                                      'A través de este enlace: https://www.loopsdelivery.com.mx/'),
                             ],
                           ),
                         ),

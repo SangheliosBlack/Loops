@@ -59,12 +59,12 @@ class BaraBusqueda extends StatelessWidget {
           margin: const EdgeInsets.symmetric(horizontal: 25),
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
-              color: const Color.fromRGBO(249, 250, 252, 1),
+              color: Theme.of(context).colorScheme.primary.withOpacity(1),
               borderRadius: BorderRadius.circular(15)),
           width: double.infinity,
           child: const Icon(
             Icons.search_outlined,
-            color: Color.fromRGBO(98, 100, 105, 1),
+            color: Colors.white,
           ),
         ),
       ),
@@ -138,7 +138,7 @@ class ListadoEstablecimientos extends StatelessWidget {
                   child: Text(
                     'Ver todo',
                     style: GoogleFonts.quicksand(
-                      color: Colors.grey,
+                      color: Colors.black,
                     ),
                   ),
                 )
@@ -185,10 +185,10 @@ class MapWidget extends StatefulWidget {
   const MapWidget({Key? key}) : super(key: key);
 
   @override
-  _MapWidgetState createState() => _MapWidgetState();
+  MapWidgetState createState() => MapWidgetState();
 }
 
-class _MapWidgetState extends State<MapWidget> {
+class MapWidgetState extends State<MapWidget> {
   final Completer<GoogleMapController> _controller = Completer();
 
   @override
@@ -213,13 +213,13 @@ class CartItemsNumber extends StatelessWidget {
     return Container(
         width: 25,
         height: 25,
+        decoration: BoxDecoration(
+            shape: BoxShape.circle, color: Theme.of(context).primaryColor),
         child: Center(
             child: Text(
           '6',
           style: GoogleFonts.quicksand(
               color: Colors.white, fontWeight: FontWeight.w600),
-        )),
-        decoration: BoxDecoration(
-            shape: BoxShape.circle, color: Theme.of(context).primaryColor));
+        )));
   }
 }

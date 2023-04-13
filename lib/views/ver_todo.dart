@@ -96,12 +96,14 @@ class VerTodoView extends StatelessWidget {
                                 child: Row(
                                   children: [
                                     Container(
-                                      padding: EdgeInsets.all(5),
+                                      padding: const EdgeInsets.all(2),
                                       decoration: BoxDecoration(
                                           border: Border.all(
-                                              width: 1,
-                                              color: Color.fromRGBO(
-                                                  41, 199, 184, 1)),
+                                              width: 2,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .primary
+                                                  .withOpacity(1)),
                                           borderRadius:
                                               BorderRadius.circular(100)),
                                       child: ClipRRect(
@@ -176,9 +178,7 @@ class VerTodoView extends StatelessWidget {
                                                     : 'Cerrado',
                                                 style: GoogleFonts.quicksand(
                                                     fontSize: 11,
-                                                    color: tienda.online
-                                                        ? Colors.green
-                                                        : Colors.red),
+                                                    color: Colors.black),
                                               )
                                             ],
                                           ),
@@ -222,10 +222,12 @@ class VerTodoView extends StatelessWidget {
                                             itemPadding:
                                                 const EdgeInsets.symmetric(
                                                     horizontal: 4.0),
-                                            itemBuilder: (context, _) =>
-                                                const FaIcon(
+                                            itemBuilder: (context, _) => FaIcon(
                                               FontAwesomeIcons.solidStar,
-                                              color: Colors.black,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .primary
+                                                  .withOpacity(1),
                                             ),
                                             itemSize: 11,
                                             unratedColor:

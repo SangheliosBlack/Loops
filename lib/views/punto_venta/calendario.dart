@@ -15,7 +15,7 @@ class _CalendarioWidgetState extends State<CalendarioWidget> {
   @override
   Widget build(BuildContext context) {
     /// called whenever a selection changed on the date picker widget.
-    void _onSelectionChanged(DateRangePickerSelectionChangedArgs args) {
+    void onSelectionChanged(DateRangePickerSelectionChangedArgs args) {
       /// The argument value will return the changed date as [DateTime] when the
       /// widget [SfDateRangeSelectionMode] set as single.
       ///
@@ -34,7 +34,7 @@ class _CalendarioWidgetState extends State<CalendarioWidget> {
           _range = '${DateFormat('dd/MM/yyyy').format(args.value.startDate)} -'
               // ignore: lines_longer_than_80_chars
               ' ${DateFormat('dd/MM/yyyy').format(args.value.endDate ?? args.value.startDate)}';
-        } 
+        }
       });
     }
 
@@ -83,15 +83,22 @@ class _CalendarioWidgetState extends State<CalendarioWidget> {
                       trailingDatesTextStyle:
                           GoogleFonts.quicksand(color: Colors.grey),
                       todayTextStyle: GoogleFonts.quicksand(
-                          color: const Color.fromRGBO(41, 199, 184, 1)),
+                          color: Theme.of(context)
+                              .colorScheme
+                              .primary
+                              .withOpacity(1)),
                       textStyle: GoogleFonts.quicksand(
                           color: Colors.black.withOpacity(.8))),
                   rangeTextStyle: GoogleFonts.quicksand(color: Colors.blueGrey),
                   headerStyle: DateRangePickerHeaderStyle(
                       textAlign: TextAlign.center,
                       textStyle: GoogleFonts.quicksand(
-                          color: const Color.fromRGBO(41, 199, 184, 1))),
-                  rangeSelectionColor: const Color.fromRGBO(41, 199, 184, .05),
+                          color: Theme.of(context)
+                              .colorScheme
+                              .primary
+                              .withOpacity(1))),
+                  rangeSelectionColor:
+                      Theme.of(context).colorScheme.secondary.withOpacity(.1),
                   headerHeight: 60,
                   yearCellStyle: DateRangePickerYearCellStyle(
                       disabledDatesTextStyle: GoogleFonts.quicksand(
@@ -109,12 +116,15 @@ class _CalendarioWidgetState extends State<CalendarioWidget> {
                         color: Colors.black.withOpacity(.8),
                         fontSize: 20,
                       )),
-                  selectionColor: const Color.fromRGBO(41, 199, 184, 1),
-                  todayHighlightColor: const Color.fromRGBO(41, 199, 184, 1),
-                  endRangeSelectionColor: const Color.fromRGBO(41, 199, 184, 1),
+                  selectionColor:
+                      Theme.of(context).colorScheme.primary.withOpacity(1),
+                  todayHighlightColor:
+                      Theme.of(context).colorScheme.primary.withOpacity(1),
+                  endRangeSelectionColor:
+                      Theme.of(context).colorScheme.primary.withOpacity(1),
                   startRangeSelectionColor:
-                      const Color.fromRGBO(41, 199, 184, 1),
-                  onSelectionChanged: _onSelectionChanged,
+                      Theme.of(context).colorScheme.primary.withOpacity(1),
+                  onSelectionChanged: onSelectionChanged,
                   selectionMode: DateRangePickerSelectionMode.range,
                   backgroundColor: Colors.white,
                   maxDate: DateTime.now(),
@@ -154,7 +164,10 @@ class _CalendarioWidgetState extends State<CalendarioWidget> {
                       decoration: BoxDecoration(
                           color: _range == ''
                               ? Colors.grey.withOpacity(.1)
-                              : const Color.fromRGBO(41, 199, 184, 1),
+                              : Theme.of(context)
+                                  .colorScheme
+                                  .primary
+                                  .withOpacity(1),
                           borderRadius: BorderRadius.circular(20)),
                       duration: const Duration(microseconds: 500),
                       child: Text('Continuar',

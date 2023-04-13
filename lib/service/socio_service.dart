@@ -206,8 +206,6 @@ class SocioService with ChangeNotifier {
       ventasCargadas = true;
       notifyListeners();
     } catch (e) {
-      print('errrrro');
-      print(e);
     }
   }
 
@@ -280,8 +278,8 @@ class SocioService with ChangeNotifier {
     }
   }
 
-  obtenerEnvios({required String filter}) async {
-    final data = {'filtro': filter};
+  obtenerEnvios({required String filter,required String repartidor}) async {
+    final data = {'filtro': filter,'repartidor':repartidor};
 
     try {
       final resp = await http.post(

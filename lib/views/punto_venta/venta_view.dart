@@ -299,7 +299,7 @@ class _VentaPantallaState extends State<VentaPantalla>
                                         authService.usuario.cesta
                                                     .productos[index].precio <
                                                 0
-                                            ? SizedBox(
+                                            ? const SizedBox(
                                                 width: 35,
                                               )
                                             : Container()
@@ -604,11 +604,11 @@ class _VentaPantallaState extends State<VentaPantalla>
                                         direccion: Direccion(
                                             id: '',
                                             coordenadas:
-                                                Coordenadas(lat: 0, lng: 0),
+                                                Coordenadas(lat: 0, lng: 0, id: 'd'),
                                             predeterminado: false,
                                             titulo: ''),
                                         customer: '',
-                                        tiendaRopa: true);
+                                        tiendaRopa: true, listadoEnviosValores: []);
 
                                     socioService.editarMultiplesCantidades(
                                         venta: data!);

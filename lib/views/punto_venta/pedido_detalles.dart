@@ -97,7 +97,7 @@ class _DetallesPedidoState extends State<DetallesPedido> {
 
     double width = MediaQuery.of(context).size.width;
 
-    bool _onEditing = false;
+    bool onEditing = false;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -451,26 +451,37 @@ class _DetallesPedidoState extends State<DetallesPedido> {
                           },
                           indicatorBuilder: (_, index) {
                             if (listado[index].complete) {
-                              return const DotIndicator(
-                                color: Color.fromRGBO(41, 199, 184, 1),
-                                child: Icon(
+                              return DotIndicator(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .primary
+                                    .withOpacity(1),
+                                child: const Icon(
                                   Icons.check,
                                   color: Colors.white,
                                   size: 12.0,
                                 ),
                               );
                             } else {
-                              return const OutlinedDotIndicator(
-                                borderWidth: 1,
-                                color: Color.fromRGBO(41, 199, 184, .1),
-                              );
+                              return OutlinedDotIndicator(
+                                  borderWidth: 1,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .primary
+                                      .withOpacity(.1));
                             }
                           },
                           connectorBuilder: (_, index, ___) =>
                               SolidLineConnector(
                                   color: listado[index].complete
-                                      ? const Color.fromRGBO(41, 199, 184, 1)
-                                      : const Color.fromRGBO(41, 199, 184, .1)),
+                                      ? Theme.of(context)
+                                          .colorScheme
+                                          .primary
+                                          .withOpacity(1)
+                                      : Theme.of(context)
+                                          .colorScheme
+                                          .primary
+                                          .withOpacity(.1)),
                         ),
                       ),
                     ),
@@ -874,9 +885,9 @@ class _DetallesPedidoState extends State<DetallesPedido> {
                                                     },
                                                     onEditing: (bool value) {
                                                       setState(() {
-                                                        _onEditing = value;
+                                                        onEditing = value;
                                                       });
-                                                      if (!_onEditing) {
+                                                      if (!onEditing) {
                                                         FocusScope.of(context)
                                                             .unfocus();
                                                       }
@@ -971,9 +982,7 @@ class _DetallesPedidoState extends State<DetallesPedido> {
   }
 
   num calcularAbonos({required List<Abono> abonos}) {
-    print(abonos);
     var valores = abonos.fold<num>(0, (previousValue, element) {
-      print(element.cantidad);
       return previousValue + element.cantidad;
     });
     return valores;
@@ -1112,8 +1121,6 @@ Future<void> starPrint(
   const PaperSize paper = PaperSize.mm58;
   final profile = await CapabilityProfile.load();
 
-  print('---------------------------------------------');
-  print(abono);
 
   final PosPrintResult resul = await bluetoothProvider.printerBluetoothManager
       .printTicket(await testTicket(
@@ -1255,7 +1262,7 @@ class _InnerTimeline extends StatelessWidget {
               ? Indicator.outlined(
                   borderWidth: 1.0,
                   color: sub[index - 1].estado
-                      ? const Color.fromRGBO(41, 199, 184, 1)
+                      ? Theme.of(context).colorScheme.primary.withOpacity(1)
                       : Colors.grey,
                 )
               : null,

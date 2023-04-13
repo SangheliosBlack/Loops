@@ -31,8 +31,6 @@ late AndroidNotificationChannel channel;
 late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 
 void main() async {
-  
-
   WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp(
@@ -121,7 +119,7 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       navigatorObservers: <NavigatorObserver>[observer],
       debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
+      title: 'Loops',
       navigatorKey: navigationService.navigatorKey,
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
@@ -131,8 +129,8 @@ class _MyAppState extends State<MyApp> {
       supportedLocales: const [Locale('es')],
       theme: ThemeData(
           colorScheme: ColorScheme.fromSwatch().copyWith(
-            secondary: Colors.white,
-          ),
+              primary: const Color.fromRGBO(99, 86, 229, 1),
+              secondary: const Color.fromRGBO(58, 42, 222, 1)),
           primarySwatch: colorCustom,
           primaryColor: const Color.fromRGBO(40, 40, 40, 1)),
       initialRoute: Flurorouter.rootRoute,

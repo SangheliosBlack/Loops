@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class Statics {
@@ -18,26 +17,8 @@ class Statics {
     900: const Color.fromRGBO(255, 255, 255, 1),
   };
 
-  static List<dynamic> listAvatars = [
-    {'icono': 58136},
-    {'icono': 57627},
-    {'icono': 58890},
-    {'icono': 57481},
-    {'icono': 58280},
-    {'icono': 58152},
-    {'icono': 58141},
-  ];
-
-  static String jsonListado =
-      '[{"largo":8,"titulo":"Accesorios","path":"accessories"},{"largo":29,"titulo":"Rostro","path":"face"},{"largo":9,"titulo":"Barba","path":"facial"},{"largo":34,"titulo":"Peinado","path":"head"}]';
-
-  static List<dynamic> listPlains = [
-    {'icono': Icons.store, 'titulo': 'En linea', 'precio': '100.00'},
-    {'icono': Icons.moped, 'titulo': 'En linea 1', 'precio': '150.00'},
-    {'icono': Icons.point_of_sale, 'titulo': 'En linea 2', 'precio': '180.00'}
-  ];
   //  static String apiUrl = 'https://server-delivery-production.herokuapp.com/api';
-  static String apiUrl = 'http://192.168.0.32:3000/api';
+  static String apiUrl = 'http://192.168.0.3:3000/api';
   static List<dynamic> listSetting = [
     {
       'icono': Icons.credit_card_outlined,
@@ -64,22 +45,7 @@ class Statics {
       ),
       zoom: 15);
 
-  static List<dynamic> listaCategorias = [
-    {'titulo': 'Pizza', 'icono': FontAwesomeIcons.pizzaSlice},
-    {'titulo': 'Hamburguesas', 'icono': FontAwesomeIcons.burger},
-    {
-      'titulo': 'Saludable',
-      'icono': FontAwesomeIcons.seedling,
-    },
-    {
-      'titulo': 'Bebidas',
-      'icono': FontAwesomeIcons.beerMugEmpty,
-    },
-    {
-      'titulo': 'Mariscos',
-      'icono': FontAwesomeIcons.fish,
-    },
-  ];
+  
   static String mapStysle = '''
   [
     {

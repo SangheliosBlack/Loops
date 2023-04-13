@@ -9,10 +9,10 @@ class CircleMap extends StatefulWidget {
       : super(key: key);
 
   @override
-  _CircleMapState createState() => _CircleMapState();
+  CircleMapState createState() => CircleMapState();
 }
 
-class _CircleMapState extends State<CircleMap> {
+class CircleMapState extends State<CircleMap> {
   @override
   Widget build(BuildContext context) {
     final cameraPosition = CameraPosition(

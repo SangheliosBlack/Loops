@@ -127,9 +127,11 @@ class PedidoView extends StatelessWidget {
                                   ),
                                   Text(formattedDate,
                                       style: GoogleFonts.quicksand(
-                                          fontSize: 13,
-                                          color: const Color.fromRGBO(
-                                              41, 199, 184, 1))),
+                                        fontSize: 13,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary,
+                                      )),
                                 ],
                               ),
                               Text(
@@ -169,7 +171,7 @@ class PedidoView extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      '\$ ' + venta.total.toStringAsFixed(2),
+                                      '\$ ${venta.total.toStringAsFixed(2)}',
                                       style: GoogleFonts.quicksand(
                                         fontSize: 25,
                                         color: Colors.black.withOpacity(.8),
@@ -297,16 +299,6 @@ class PedidoView extends StatelessWidget {
                       ],
                     ),
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Proceso',
-                        style: GoogleFonts.quicksand(
-                            color: Colors.black.withOpacity(.8), fontSize: 35),
-                      ),
-                    ],
-                  ),
                   const SizedBox(
                     height: 20,
                   ),
@@ -318,8 +310,11 @@ class PedidoView extends StatelessWidget {
                     itemCount: venta.pedidos.length,
                     separatorBuilder: (BuildContext context, int index) =>
                         const SizedBox(
-                      height: 15,
+                      height: 80,
                     ),
+                  ),
+                  const SizedBox(
+                    height: 50,
                   ),
                   Padding(
                     padding:
@@ -407,8 +402,9 @@ class PedidoView extends StatelessWidget {
                             Text(
                               '\$ ${venta.total.toStringAsFixed(2)}',
                               style: GoogleFonts.quicksand(
-                                  fontSize: 30,
-                                  color: const Color.fromRGBO(41, 199, 184, 1)),
+                                fontSize: 30,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
                             )
                           ],
                         ),
@@ -426,8 +422,10 @@ class PedidoView extends StatelessWidget {
 }
 
 class EstadoWidget extends StatelessWidget {
+  final bool done;
   final PedidoProducto pedido;
-  const EstadoWidget({Key? key, required this.pedido}) : super(key: key);
+  const EstadoWidget({Key? key, required this.pedido, this.done = true})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -437,6 +435,54 @@ class EstadoWidget extends StatelessWidget {
     var listado = calcularListado(pedido: pedido);
     return Column(
       children: [
+        done
+            ? Column(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(15),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: Theme.of(context)
+                            .colorScheme
+                            .primary
+                            .withOpacity(1)),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(2),
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(100),
+                              border:
+                                  Border.all(width: 2, color: Colors.white)),
+                          margin: const EdgeInsets.only(right: 15),
+                          width: 50,
+                          height: 50,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(200),
+                            child: Image(
+                              image: CachedNetworkImageProvider(pedido.imagen),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Text(
+                            pedido.tienda,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.quicksand(
+                                color: Colors.white, fontSize: 28),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 15,
+                  ),
+                ],
+              )
+            : Container(),
         Container(
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
@@ -478,9 +524,9 @@ class EstadoWidget extends StatelessWidget {
               },
               indicatorBuilder: (_, index) {
                 if (listado[index].complete) {
-                  return const DotIndicator(
-                    color: Color.fromRGBO(41, 199, 184, 1),
-                    child: Icon(
+                  return DotIndicator(
+                    color: Theme.of(context).colorScheme.primary,
+                    child: const Icon(
                       Icons.check,
                       color: Colors.white,
                       size: 12.0,
@@ -495,7 +541,7 @@ class EstadoWidget extends StatelessWidget {
               },
               connectorBuilder: (_, index, ___) => SolidLineConnector(
                   color: listado[index].complete
-                      ? const Color.fromRGBO(41, 199, 184, 1)
+                      ? Theme.of(context).colorScheme.primary
                       : const Color.fromRGBO(41, 199, 184, .1)),
             ),
           ),
@@ -707,11 +753,11 @@ class EstadoWidget extends StatelessWidget {
                         width: width / 4,
                         height: (width / 4) - 20,
                         textStyle: GoogleFonts.quicksand(
-                            color: const Color.fromRGBO(41, 199, 184, 1),
-                            fontSize: 25),
+                            color: Colors.white, fontSize: 25),
                         decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(15),
-                            color: const Color.fromRGBO(41, 199, 184, .1))),
+                          borderRadius: BorderRadius.circular(15),
+                          color: Theme.of(context).colorScheme.primary,
+                        )),
                   )
                 ],
               ),
@@ -800,14 +846,40 @@ class EstadoWidget extends StatelessWidget {
         Row(
           children: [
             Container(
-              padding: const EdgeInsets.only(top: 5, bottom: 5),
+              padding:
+                  const EdgeInsets.only(top: 5, bottom: 5, left: 15, right: 15),
               child: Text(
                 '* Cargos extra',
                 style: GoogleFonts.quicksand(color: Colors.blue),
               ),
             ),
           ],
-        )
+        ),
+        done
+            ? Container(
+                padding: const EdgeInsets.symmetric(horizontal: 15),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Subtotal',
+                      style: GoogleFonts.quicksand(
+                          color: Colors.black, fontSize: 15),
+                    ),
+                    Container(
+                      padding:
+                          const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15),
+                          border: Border.all(width: 1, color: Colors.blue)),
+                      child: Text('\$ ${pedido.total.toStringAsFixed(2)}',
+                          style: GoogleFonts.quicksand(
+                              color: Colors.black, fontSize: 15)),
+                    ),
+                  ],
+                ),
+              )
+            : Container()
       ],
     );
   }
@@ -1040,7 +1112,7 @@ class _InnerTimeline2 extends StatelessWidget {
               ? Indicator.outlined(
                   borderWidth: 1.0,
                   color: sub[index - 1].estado
-                      ? const Color.fromRGBO(41, 199, 184, 1)
+                      ? Theme.of(context).colorScheme.primary
                       : Colors.grey,
                 )
               : null,
@@ -1064,10 +1136,8 @@ class _InnerTimeline2 extends StatelessWidget {
                 children: [
                   Text(
                     sub[index - 1].time.compareTo(other) > 0
-                        ? formattedDate +
-                            '   ' +
-                            sub[index - 1].titulo.toString()
-                        : '--:--   ' + sub[index - 1].titulo.toString(),
+                        ? '$formattedDate   ${sub[index - 1].titulo}'
+                        : '--:--   ${sub[index - 1].titulo}',
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,
                     style: GoogleFonts.quicksand(color: Colors.grey),

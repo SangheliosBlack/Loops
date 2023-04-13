@@ -113,9 +113,12 @@ class SearchDestination extends SearchDelegate<SearchResult> {
                                         color: Colors.grey.withOpacity(.2)),
                                     borderRadius: BorderRadius.circular(100),
                                   ),
-                                  child: const Icon(
+                                  child: Icon(
                                     Icons.place_outlined,
-                                    color: Colors.black,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .primary
+                                        .withOpacity(1),
                                     size: 22,
                                   )),
                               const SizedBox(width: 15),
@@ -174,11 +177,19 @@ class SearchDestination extends SearchDelegate<SearchResult> {
           return Container(
             color: Colors.white,
             child: ListView(
-              children: const [
-                LinearProgressIndicator(
-                  minHeight: 1,
-                  color: Color.fromRGBO(41, 199, 184, 1),
-                  backgroundColor: Colors.white,
+              children: [
+                Column(
+                  children: [
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    CircularProgressIndicator(
+                      strokeWidth: 3,
+                      color:
+                          Theme.of(context).colorScheme.primary.withOpacity(1),
+                      backgroundColor: Colors.white,
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -222,9 +233,10 @@ class SearchDestination extends SearchDelegate<SearchResult> {
                           width: 1, color: Colors.grey.withOpacity(.2)),
                       borderRadius: BorderRadius.circular(100),
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.place_outlined,
-                      color: Colors.black,
+                      color:
+                          Theme.of(context).colorScheme.primary.withOpacity(1),
                       size: 22,
                     )),
                 title: Text(

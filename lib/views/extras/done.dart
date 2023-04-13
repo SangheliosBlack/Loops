@@ -43,8 +43,14 @@ class DoneView extends StatelessWidget {
                             effect: ExpandingDotsEffect(
                               dotHeight: 10,
                               dotWidth: 10,
-                              activeDotColor: Colors.black.withOpacity(.8),
-                              dotColor: Colors.black.withOpacity(.2),
+                              activeDotColor: Theme.of(context)
+                                  .colorScheme
+                                  .primary
+                                  .withOpacity(1),
+                              dotColor: Theme.of(context)
+                                  .colorScheme
+                                  .primary
+                                  .withOpacity(.2),
                             ),
                           ),
                         )
@@ -164,8 +170,10 @@ class DoneView extends StatelessWidget {
                                         Text(formattedDate,
                                             style: GoogleFonts.quicksand(
                                                 fontSize: 13,
-                                                color: const Color.fromRGBO(
-                                                    41, 199, 184, 1))),
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .primary
+                                                    .withOpacity(1))),
                                       ],
                                     ),
                                     Text(
@@ -206,8 +214,7 @@ class DoneView extends StatelessWidget {
                                             CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            '\$ ' +
-                                                venta.total.toStringAsFixed(2),
+                                            '\$ ${venta.total.toStringAsFixed(2)}',
                                             style: GoogleFonts.quicksand(
                                               fontSize: 25,
                                               color:
@@ -346,33 +353,22 @@ class DoneView extends StatelessWidget {
                             ],
                           ),
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Proceso',
-                              style: GoogleFonts.quicksand(
-                                  color: Colors.black.withOpacity(.8),
-                                  fontSize: 35),
-                            ),
-                          ],
-                        ),
                         const SizedBox(
                           height: 20,
                         ),
                         ListView.separated(
                           physics: const NeverScrollableScrollPhysics(),
                           shrinkWrap: true,
-                          itemBuilder: (_, int index) =>
-                              EstadoWidget(pedido: venta.pedidos[index]),
+                          itemBuilder: (_, int index) => EstadoWidget(
+                              pedido: venta.pedidos[index], done: true),
                           itemCount: venta.pedidos.length,
                           separatorBuilder: (BuildContext context, int index) =>
                               const SizedBox(
-                            height: 15,
+                            height: 80,
                           ),
                         ),
                         const SizedBox(
-                          height: 20,
+                          height: 50,
                         ),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -462,8 +458,10 @@ class DoneView extends StatelessWidget {
                                     '\$ ${venta.total.toStringAsFixed(2)}',
                                     style: GoogleFonts.quicksand(
                                         fontSize: 30,
-                                        color: const Color.fromRGBO(
-                                            41, 199, 184, 1)),
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary
+                                            .withOpacity(1)),
                                   )
                                 ],
                               ),
@@ -481,7 +479,10 @@ class DoneView extends StatelessWidget {
                             height: 65,
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(30),
-                                color: const Color.fromRGBO(41, 199, 184, 1)),
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .primary
+                                    .withOpacity(1)),
                             child: Center(
                               child: Text(
                                 'Continuar',
@@ -505,6 +506,4 @@ class DoneView extends StatelessWidget {
       ),
     );
   }
-
-  
 }

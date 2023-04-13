@@ -37,7 +37,7 @@ class ProductoGeneralSocio extends StatelessWidget {
                   style: GoogleFonts.quicksand(fontSize: 16)),
             ],
           ),
-          Text('\$ ' + producto.precio.toStringAsFixed(2),
+          Text('\$ ${producto.precio.toStringAsFixed(2)}',
               style: GoogleFonts.quicksand(
                 fontSize: 16,
                 color: const Color.fromRGBO(47, 47, 47, .9),

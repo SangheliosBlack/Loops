@@ -39,8 +39,9 @@ class _SocioDashBoardViewState extends State<SocioDashBoardView>
 
   @override
   Widget build(BuildContext context) {
+    double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
-    final _controller = WeSlideController();
+    final controller = WeSlideController();
     final tiendasService = Provider.of<TiendaService>(context);
     final authServiceService = Provider.of<AuthService>(context);
     super.build(context);
@@ -75,7 +76,7 @@ class _SocioDashBoardViewState extends State<SocioDashBoardView>
                         appBarHeight: 60.0,
                         footerHeight: 60.0,
                         panelWidth: width,
-                        controller: _controller,
+                        controller: controller,
                         appBar: AppBar(
                           toolbarHeight: 150,
                           automaticallyImplyLeading: false,
@@ -143,7 +144,7 @@ class _SocioDashBoardViewState extends State<SocioDashBoardView>
                                               showAlertDialog(context, true);
                                             }
                                           : () {
-                                              _controller.show();
+                                              controller.show();
                                             }
                                       : null,
                                   child: Row(children: [
@@ -179,15 +180,18 @@ class _SocioDashBoardViewState extends State<SocioDashBoardView>
                           children: [
                             snapshot.connectionState == ConnectionState.waiting
                                 ? Column(
-                                    children: const [
-                                      SizedBox(
+                                    children: [
+                                      const SizedBox(
                                         height: 10,
                                       ),
                                       LinearProgressIndicator(
                                         minHeight: 1,
                                         backgroundColor:
-                                            Color.fromRGBO(234, 248, 248, 0),
-                                        color: Color.fromRGBO(62, 204, 191, 1),
+                                            const Color.fromRGBO(234, 248, 248, 0),
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary
+                                            .withOpacity(1),
                                       ),
                                     ],
                                   )
@@ -245,12 +249,12 @@ class _SocioDashBoardViewState extends State<SocioDashBoardView>
                                                                     horizontal:
                                                                         20),
                                                                 decoration: BoxDecoration(
-                                                                    color: const Color
-                                                                            .fromRGBO(
-                                                                        41,
-                                                                        199,
-                                                                        184,
-                                                                        1),
+                                                                    color: Theme.of(
+                                                                            context)
+                                                                        .colorScheme
+                                                                        .primary
+                                                                        .withOpacity(
+                                                                            1),
                                                                     borderRadius:
                                                                         BorderRadius.circular(
                                                                             25)),
@@ -529,48 +533,43 @@ class _SocioDashBoardViewState extends State<SocioDashBoardView>
                                                               ),
                                                             ),
                                                           )
-                                                        : Column(
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .start,
-                                                            children: [
-                                                              RefreshIndicator(
-                                                                onRefresh:
-                                                                    () async {
-                                                                  socioService
-                                                                      .eliminarData();
-                                                                  socioService.obtenerPedidos(
-                                                                      tienda:
-                                                                          tiendaUrl,
-                                                                      filter:
-                                                                          filter,
-                                                                      token: LocalStorage
-                                                                              .prefs
-                                                                              .getString('token2') ??
-                                                                          '');
-                                                                },
-                                                                child:
-                                                                    SingleChildScrollView(
-                                                                  physics:
-                                                                      const AlwaysScrollableScrollPhysics(),
-                                                                  child: ListView
-                                                                      .separated(
-                                                                          physics:
-                                                                              const NeverScrollableScrollPhysics(),
-                                                                          padding: const EdgeInsets.symmetric(
-                                                                              horizontal:
-                                                                                  25,
-                                                                              vertical:
-                                                                                  5),
-                                                                          itemCount: socioService
-                                                                              .ventaCache
-                                                                              .venta
-                                                                              .length,
-                                                                          shrinkWrap:
-                                                                              true,
-                                                                          separatorBuilder: (BuildContext context,
-                                                                              int
-                                                                                  index) {
+                                                        : Container(
+                                                            padding: const EdgeInsets
+                                                                .symmetric(
+                                                                    horizontal:
+                                                                        25),
+                                                            margin:
+                                                                const EdgeInsets.only(
+                                                                    bottom: 95),
+                                                            height:
+                                                                height - 290,
+                                                            child: Column(
+                                                              children: [
+                                                                Expanded(
+                                                                  child:
+                                                                      RefreshIndicator(
+                                                                    onRefresh:
+                                                                        () async {
+                                                                      socioService
+                                                                          .eliminarData();
+                                                                      socioService.obtenerPedidos(
+                                                                          tienda:
+                                                                              tiendaUrl,
+                                                                          filter:
+                                                                              filter,
+                                                                          token:
+                                                                              LocalStorage.prefs.getString('token2') ?? '');
+                                                                    },
+                                                                    child:
+                                                                        SingleChildScrollView(
+                                                                      physics:
+                                                                          const AlwaysScrollableScrollPhysics(),
+                                                                      child: ListView.separated(
+                                                                          physics: const NeverScrollableScrollPhysics(),
+                                                                          padding: const EdgeInsets.only(top: 5, bottom: 20),
+                                                                          itemCount: socioService.ventaCache.venta.length,
+                                                                          shrinkWrap: true,
+                                                                          separatorBuilder: (BuildContext context, int index) {
                                                                             return Container(
                                                                               margin: const EdgeInsets.symmetric(vertical: 4),
                                                                               child: Divider(
@@ -578,17 +577,120 @@ class _SocioDashBoardViewState extends State<SocioDashBoardView>
                                                                               ),
                                                                             );
                                                                           },
-                                                                          itemBuilder:
-                                                                              (BuildContext context, int index) {
+                                                                          itemBuilder: (BuildContext context, int index) {
                                                                             return PedidoVentaWidget(
                                                                               pedido: socioService.ventaCache.venta[index],
                                                                               showActions: false,
                                                                               confirmar: false,
                                                                             );
                                                                           }),
+                                                                    ),
+                                                                  ),
                                                                 ),
-                                                              ),
-                                                            ],
+                                                                Container(
+                                                                  margin: const EdgeInsets
+                                                                      .only(
+                                                                          bottom:
+                                                                              110,
+                                                                          top:
+                                                                              10),
+                                                                  decoration:
+                                                                      BoxDecoration(
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            30),
+                                                                    color: Colors
+                                                                        .white,
+                                                                    boxShadow: [
+                                                                      BoxShadow(
+                                                                        color: Colors
+                                                                            .grey
+                                                                            .withOpacity(0.05),
+                                                                        spreadRadius:
+                                                                            10,
+                                                                        blurRadius:
+                                                                            12,
+                                                                        offset: const Offset(
+                                                                            0,
+                                                                            -1), // changes position of shadow
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                  padding: const EdgeInsets
+                                                                          .symmetric(
+                                                                      horizontal:
+                                                                          25,
+                                                                      vertical:
+                                                                          25),
+                                                                  child: Column(
+                                                                    children: [
+                                                                      Row(
+                                                                        mainAxisAlignment:
+                                                                            MainAxisAlignment.spaceBetween,
+                                                                        children: [
+                                                                          Text(
+                                                                            'Ventas',
+                                                                            style:
+                                                                                GoogleFonts.quicksand(color: Colors.black),
+                                                                          ),
+                                                                          Text(
+                                                                            socioService.ventaCache.size.toString(),
+                                                                            style:
+                                                                                GoogleFonts.quicksand(color: Colors.black),
+                                                                          )
+                                                                        ],
+                                                                      ),
+                                                                      const SizedBox(
+                                                                        height:
+                                                                            10,
+                                                                      ),
+                                                                      Row(
+                                                                        mainAxisAlignment:
+                                                                            MainAxisAlignment.spaceBetween,
+                                                                        children: [
+                                                                          Text(
+                                                                            'Pedidos completos',
+                                                                            style:
+                                                                                GoogleFonts.quicksand(color: Colors.black),
+                                                                          ),
+                                                                          Text(
+                                                                            socioService.ventaCache.completados.toString(),
+                                                                            style:
+                                                                                GoogleFonts.quicksand(color: Colors.black),
+                                                                          )
+                                                                        ],
+                                                                      ),
+                                                                      Container(
+                                                                        margin: const EdgeInsets.only(
+                                                                            top:
+                                                                                10),
+                                                                        width: double
+                                                                            .infinity,
+                                                                        padding:
+                                                                            const EdgeInsets.all(7),
+                                                                        decoration: BoxDecoration(
+                                                                            borderRadius:
+                                                                                BorderRadius.circular(25),
+                                                                            border: Border.all(width: 1, color: Colors.grey.withOpacity(.2))),
+                                                                        child:
+                                                                            Center(
+                                                                          child:
+                                                                              Column(
+                                                                            children: [
+                                                                              Text(
+                                                                                'TOTAL :',
+                                                                                style: GoogleFonts.quicksand(color: Colors.blueGrey, fontSize: 10),
+                                                                              ),
+                                                                              Text('\$ ${socioService.ventaCache.ganancia.toStringAsFixed(2)}', style: GoogleFonts.quicksand(fontSize: 30, color: Colors.black.withOpacity(.8))),
+                                                                            ],
+                                                                          ),
+                                                                        ),
+                                                                      )
+                                                                    ],
+                                                                  ),
+                                                                )
+                                                              ],
+                                                            ),
                                                           ),
                                               )
                                             ],
@@ -612,7 +714,7 @@ class _SocioDashBoardViewState extends State<SocioDashBoardView>
                               GestureDetector(
                                 behavior: HitTestBehavior.translucent,
                                 onTap: () {
-                                  _controller.hide();
+                                  controller.hide();
                                 },
                                 child: Column(
                                   children: [
@@ -659,7 +761,7 @@ class _SocioDashBoardViewState extends State<SocioDashBoardView>
                                                                   'token2') ??
                                                           '');
                                                 });
-                                                _controller.hide();
+                                                controller.hide();
                                               }
                                             },
                                             child: Column(
@@ -753,7 +855,7 @@ class _SocioDashBoardViewState extends State<SocioDashBoardView>
                         ),
                         panelHeader: GestureDetector(
                           onTap: () {
-                            _controller.show();
+                            controller.show();
                           },
                           child: Container(
                             height: 90.0,
@@ -763,11 +865,14 @@ class _SocioDashBoardViewState extends State<SocioDashBoardView>
                         ),
                       )
                     : Column(
-                        children: const [
+                        children: [
                           LinearProgressIndicator(
                             minHeight: 1,
-                            backgroundColor: Color.fromRGBO(234, 248, 248, 0),
-                            color: Color.fromRGBO(62, 204, 191, 1),
+                            backgroundColor: const Color.fromRGBO(234, 248, 248, 0),
+                            color: Theme.of(context)
+                                .colorScheme
+                                .primary
+                                .withOpacity(1),
                           ),
                         ],
                       )),

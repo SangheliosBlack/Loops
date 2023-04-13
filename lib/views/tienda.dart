@@ -1,4 +1,3 @@
-import 'package:animate_do/animate_do.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:delivery/helpers/haversine.dart';
 import 'package:delivery/models/direccion.dart';
@@ -23,14 +22,14 @@ class StoreIndividual extends StatefulWidget {
   const StoreIndividual({Key? key, required this.tienda}) : super(key: key);
 
   @override
-  _StoreIndividualState createState() => _StoreIndividualState();
+  StoreIndividualState createState() => StoreIndividualState();
 }
 
-class _StoreIndividualState extends State<StoreIndividual> {
+class StoreIndividualState extends State<StoreIndividual> {
   @override
   Widget build(BuildContext context) {
     final tiendaService = Provider.of<TiendaService>(context);
-    final authService = Provider.of<AuthService>(context);
+    final authService = Provider.of<AuthService>(context, listen: false);
     final direccionesService = Provider.of<DireccionesService>(context);
     double width = MediaQuery.of(context).size.width;
     final generalActions = Provider.of<GeneralActions>(context);
@@ -77,33 +76,10 @@ class _StoreIndividualState extends State<StoreIndividual> {
                               child: Container(
                                   margin: const EdgeInsets.symmetric(
                                       horizontal: 25),
-                                  child: Stack(
-                                    children: [
-                                      const Icon(
-                                        Icons.shopping_bag,
-                                        color: Colors.white,
-                                        size: 40,
-                                      ),
-                                      Positioned.fill(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            const SizedBox(
-                                              height: 13,
-                                            ),
-                                            Text('${authService.totalPiezas()}',
-                                                style: GoogleFonts.quicksand(
-                                                  color: Colors.black,
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 14,
-                                                )),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
+                                  child: const Icon(
+                                    Icons.shopping_bag,
+                                    color: Colors.white,
+                                    size: 40,
                                   )),
                             ),
                           ],
@@ -494,40 +470,77 @@ class _StoreIndividualState extends State<StoreIndividual> {
                                         snapshot) {
                                   return LinearProgressIndicator(
                                     minHeight: 1,
-                                    color: Colors.white.withOpacity(1),
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .primary
+                                        .withOpacity(.1),
                                     backgroundColor:
-                                        const Color.fromRGBO(62, 204, 191, 1),
+                                        Theme.of(context).colorScheme.primary,
                                   );
                                 },
                               )
-                            : Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(40),
-                                  color: Colors.white,
-                                ),
-                                child: ListView.builder(
-                                  primary: false,
-                                  
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  padding: const EdgeInsets.only(
-                                      right: 20, left: 20, top: 25, bottom: 45),
-                                  shrinkWrap: true,
-                                  itemBuilder:
-                                      (BuildContext context, int index) =>
-                                          ItemPorCategoria(
-                                    categoria: tiendaService
-                                        .productosCategoria[
-                                            tiendaService.tiendaCache(
-                                                nombre: widget.tienda.nombre)]
-                                        .productos[index],
-                                    tienda: widget.tienda,
-                                  ),
-                                  itemCount: tiendaService
-                                      .productosCategoria[
-                                          tiendaService.tiendaCache(
-                                              nombre: widget.tienda.nombre)]
-                                      .productos
-                                      .length,
+                            : AnimatedSize(
+                                duration: const Duration(milliseconds: 200),
+                                child: FutureBuilder(
+                                  future: Future.delayed(
+                                      const Duration(milliseconds: 1200)),
+                                  builder: (BuildContext context,
+                                      AsyncSnapshot<dynamic> snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.done) {
+                                      return Container(
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(40),
+                                          color: Colors.white,
+                                        ),
+                                        child: ListView.builder(
+                                          primary: false,
+                                          physics:
+                                              const NeverScrollableScrollPhysics(),
+                                          padding: const EdgeInsets.only(
+                                              right: 20,
+                                              left: 20,
+                                              top: 25,
+                                              bottom: 45),
+                                          shrinkWrap: true,
+                                          itemBuilder: (BuildContext context,
+                                                  int index) =>
+                                              ItemPorCategoria(
+                                            categoria: tiendaService
+                                                .productosCategoria[
+                                                    tiendaService.tiendaCache(
+                                                        nombre: widget
+                                                            .tienda.nombre)]
+                                                .productos[index],
+                                            tienda: widget.tienda,
+                                          ),
+                                          itemCount: tiendaService
+                                              .productosCategoria[
+                                                  tiendaService.tiendaCache(
+                                                      nombre:
+                                                          widget.tienda.nombre)]
+                                              .productos
+                                              .length,
+                                        ),
+                                      );
+                                    } else {
+                                      return Column(
+                                        children: [
+                                          const SizedBox(
+                                            height: 15,
+                                          ),
+                                          CircularProgressIndicator(
+                                            strokeWidth: 3,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .primary
+                                                .withOpacity(1),
+                                          ),
+                                        ],
+                                      );
+                                    }
+                                  },
                                 ),
                               )),
                   )
@@ -584,12 +597,16 @@ class _ItemPorCategoriaState extends State<ItemPorCategoria> {
         child: AnimatedSize(
           duration: const Duration(seconds: 1),
           child: ExpansionPanelList(
+
             expandedHeaderPadding: const EdgeInsets.symmetric(vertical: 0),
             elevation: 0,
             children: [
               ExpansionPanel(
+
                 headerBuilder: (context, isExpanded) {
                   return ListTile(
+                    iconColor: Colors.blue,
+                    
                     title: Text(
                       widget.categoria.titulo,
                       style: GoogleFonts.quicksand(

@@ -62,7 +62,7 @@ class _DashBoardViewRepartidorState extends State<DashBoardViewRepartidor>
 
   @override
   Widget build(BuildContext context) {
-    bool _onEditing = false;
+    bool onEditing = false;
     final authProvider = Provider.of<AuthService>(context);
     final repartidorService = Provider.of<RepartidorProvider>(context);
     const cameraPosition =
@@ -298,8 +298,10 @@ class _DashBoardViewRepartidorState extends State<DashBoardViewRepartidor>
                                                 height: 110,
                                                 decoration: BoxDecoration(
                                                   shape: BoxShape.circle,
-                                                  color: const Color.fromRGBO(
-                                                      41, 199, 184, 1),
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .primary
+                                                      .withOpacity(1),
                                                   boxShadow: [
                                                     BoxShadow(
                                                       color: Colors.grey
@@ -383,10 +385,8 @@ class _DashBoardViewRepartidorState extends State<DashBoardViewRepartidor>
                                                                       .spaceBetween,
                                                               children: [
                                                                 Text(
-                                                                  nombre[0] +
-                                                                      ' ' +
-                                                                      nombre[1]
-                                                                          [0],
+                                                                  '${nombre[0]} ${nombre[1]
+                                                                          [0]}',
                                                                   style: GoogleFonts.quicksand(
                                                                       fontSize:
                                                                           22,
@@ -612,10 +612,10 @@ class _DashBoardViewRepartidorState extends State<DashBoardViewRepartidor>
                                                                 onEditing: (bool
                                                                     value) {
                                                                   setState(() {
-                                                                    _onEditing =
+                                                                    onEditing =
                                                                         value;
                                                                   });
-                                                                  if (!_onEditing) {
+                                                                  if (!onEditing) {
                                                                     FocusScope.of(
                                                                             context)
                                                                         .unfocus();
@@ -1506,9 +1506,9 @@ class _DashBoardViewRepartidorState extends State<DashBoardViewRepartidor>
   _agregarMarcadores({required PedidoProducto envio}) async {
     final nombre = envio.usuario.nombre.split(' ');
     final inicioMarker = await getStartCustomMarker(
-        text: envio.tienda + '\n' + envio.direccionNegocio.titulo, type: true);
+        text: '${envio.tienda}\n${envio.direccionNegocio.titulo}', type: true);
     final finMarker = await getStartCustomMarker(
-        text: nombre[0] + '\n' + envio.direccionCliente.titulo, type: false);
+        text: '${nombre[0]}\n${envio.direccionCliente.titulo}', type: false);
 
     _addMarker(
         LatLng(envio.direccionNegocio.coordenadas.lat.toDouble(),

@@ -136,15 +136,15 @@ class _VerProductoViewState extends State<VerProductoView> {
                             const SizedBox(height: 10),
                             GestureDetector(
                               onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => StoreIndividual(
-                                                tienda: widget.tienda,
-                                              )),
-                                    );
-                                  },
-                                  behavior: HitTestBehavior.translucent,
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => StoreIndividual(
+                                            tienda: widget.tienda,
+                                          )),
+                                );
+                              },
+                              behavior: HitTestBehavior.translucent,
                               child: Text(widget.producto.tienda,
                                   style: GoogleFonts.quicksand(
                                       fontSize: 14, color: Colors.blue)),
@@ -175,9 +175,12 @@ class _VerProductoViewState extends State<VerProductoView> {
                                 itemCount: 5,
                                 itemPadding:
                                     const EdgeInsets.symmetric(horizontal: 4.0),
-                                itemBuilder: (context, _) => const FaIcon(
+                                itemBuilder: (context, _) => FaIcon(
                                   FontAwesomeIcons.solidStar,
-                                  color: Color.fromRGBO(62, 204, 191, 1),
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .primary
+                                      .withOpacity(1),
                                 ),
                                 itemSize: 12,
                                 unratedColor: Colors.grey.withOpacity(.4),
@@ -428,119 +431,140 @@ class _VerProductoViewState extends State<VerProductoView> {
 
                                     return GestureDetector(
                                       behavior: HitTestBehavior.translucent,
-                                      onTap: direccionesService.direcciones.isEmpty ? () async {
-                                        {
-                                      if (sugerencia.listaSugerencias.isEmpty) {
-                                        calculandoAlerta(context);
-                                        try {
-                                          if (sugerencia
-                                              .listaSugerencias.isEmpty) {
-                                            await sugerencia.ubicacionActual();
-                                          }
-                                          final resultado = await showSearch(
-                                              context: context,
-                                              delegate: SearchDestination());
-                                          if (resultado!.cancelo == false) {
-                                            retornoBusqueda(resultado,
-                                                direccionesService, context);
-                                          }
-                                        } catch (e) {
-                                          debugPrint(
-                                              'Ningun lugar seleccionado');
-                                        }
-                                        Navigator.pop(context);
-                                      } else {
-                                        try {
-                                          final resultado = await showSearch(
-                                              context: context,
-                                              delegate: SearchDestination());
-                                          if (resultado!.cancelo == false) {
-                                            retornoBusqueda(resultado,
-                                                direccionesService, context);
-                                          }
-                                        } catch (e) {
-                                          debugPrint(
-                                              'Ningun lugar seleccionado');
-                                        }
-                                      }
-                                    }
-                                      } : widget.tienda.online == false
+                                      onTap: direccionesService
+                                              .direcciones.isEmpty
                                           ? () async {
-                                              final snackBar = SnackBar(
-                                                duration:
-                                                    const Duration(seconds: 3),
-                                                backgroundColor: Colors.red,
-                                                content: Text(
-                                                  '${widget.tienda.nombre} se encuentra fuera de servicio vuelve en su horario de atencion entre ${DateFormat('h:mm a', 'es-MX').format(widget.tienda.horario.apertura).toString()} y ${DateFormat('h:mm a', 'es-MX').format(widget.tienda.horario.cierre).toString()}',
-                                                  style:
-                                                      GoogleFonts.quicksand(),
-                                                ),
-                                              );
-
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(snackBar);
-                                            }
-                                          : authService.listadoTemp.fold<num>(
-                                                      0,
-                                                      (previousValue,
-                                                              element) =>
-                                                          element
-                                                              .listado.length +
-                                                          previousValue) >=
-                                                  widget
-                                                      .producto.opciones
-                                                      .fold<num>(
-                                                          0,
-                                                          (previousValue,
-                                                                  element) =>
-                                                              element.minimo +
-                                                              previousValue)
-                                              ? () async {
+                                              {
+                                                if (sugerencia
+                                                    .listaSugerencias.isEmpty) {
                                                   calculandoAlerta(context);
-                                                  await authService.agregarProductoCesta(
-                                                      producto: widget.producto,
-                                                      cantidad: cantidad,
-                                                      listado: opcionesFinales(opciones: authService.listadoTemp),
-                                                      envio: calculateDistance(
-                                                          lat1: objeto.coordenadas.latitud,
-                                                          lon1: objeto.coordenadas.longitud,
-                                                          lat2: direccionesService
-                                                              .direcciones[authService.usuario.cesta.direccion.titulo != ''
-                                                                  ? direccionesService.direcciones.indexWhere((element) => authService.usuario.cesta.direccion.titulo == element.titulo)
-                                                                  : obtenerFavorito(direccionesService.direcciones) != -1
-                                                                      ? obtenerFavorito(direccionesService.direcciones)
-                                                                      : 0]
-                                                              .coordenadas
-                                                              .lat,
-                                                          lon2: direccionesService
-                                                              .direcciones[authService.usuario.cesta.direccion.titulo != ''
-                                                                  ? direccionesService.direcciones.indexWhere((element) => authService.usuario.cesta.direccion.titulo == element.titulo)
-                                                                  : obtenerFavorito(direccionesService.direcciones) != -1
-                                                                      ? obtenerFavorito(direccionesService.direcciones)
-                                                                      : 0]
-                                                              .coordenadas
-                                                              .lng));
+                                                  try {
+                                                    if (sugerencia
+                                                        .listaSugerencias
+                                                        .isEmpty) {
+                                                      await sugerencia
+                                                          .ubicacionActual();
+                                                    }
+                                                    final resultado =
+                                                        await showSearch(
+                                                            context: context,
+                                                            delegate:
+                                                                SearchDestination());
+                                                    if (resultado!.cancelo ==
+                                                        false) {
+                                                      retornoBusqueda(
+                                                          resultado,
+                                                          direccionesService,
+                                                          context);
+                                                    }
+                                                  } catch (e) {
+                                                    debugPrint(
+                                                        'Ningun lugar seleccionado');
+                                                  }
                                                   Navigator.pop(context);
-                                                  Navigator.pop(context);
+                                                } else {
+                                                  try {
+                                                    final resultado =
+                                                        await showSearch(
+                                                            context: context,
+                                                            delegate:
+                                                                SearchDestination());
+                                                    if (resultado!.cancelo ==
+                                                        false) {
+                                                      retornoBusqueda(
+                                                          resultado,
+                                                          direccionesService,
+                                                          context);
+                                                    }
+                                                  } catch (e) {
+                                                    debugPrint(
+                                                        'Ningun lugar seleccionado');
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          : widget.tienda.online == false
+                                              ? () async {
                                                   final snackBar = SnackBar(
                                                     duration: const Duration(
-                                                        seconds: 2),
-                                                    backgroundColor:
-                                                        const Color.fromRGBO(
-                                                            0, 0, 0, 1),
+                                                        seconds: 3),
+                                                    backgroundColor: Colors.red,
                                                     content: Text(
-                                                      '${widget.producto.nombre} x $cantidad agregado',
-                                                      style:
-                                                          GoogleFonts.quicksand(
-                                                        color: Colors.white,
-                                                      ),
+                                                      '${widget.tienda.nombre} se encuentra fuera de servicio vuelve en su horario de atencion entre ${DateFormat('h:mm a', 'es-MX').format(widget.tienda.horario.apertura).toString()} y ${DateFormat('h:mm a', 'es-MX').format(widget.tienda.horario.cierre).toString()}',
+                                                      style: GoogleFonts
+                                                          .quicksand(),
                                                     ),
                                                   );
 
                                                   ScaffoldMessenger.of(context)
                                                       .showSnackBar(snackBar);
                                                 }
-                                              : null,
+                                              : authService.listadoTemp.fold<
+                                                              num>(
+                                                          0,
+                                                          (previousValue,
+                                                                  element) =>
+                                                              element.listado
+                                                                  .length +
+                                                              previousValue) >=
+                                                      widget.producto.opciones
+                                                          .fold<num>(
+                                                              0,
+                                                              (previousValue,
+                                                                      element) =>
+                                                                  element
+                                                                      .minimo +
+                                                                  previousValue)
+                                                  ? () async {
+                                                      calculandoAlerta(context);
+                                                      await authService.agregarProductoCesta(
+                                                          producto: widget.producto,
+                                                          cantidad: cantidad,
+                                                          listado: opcionesFinales(opciones: authService.listadoTemp),
+                                                          envio: calculateDistance(
+                                                              lat1: objeto.coordenadas.latitud,
+                                                              lon1: objeto.coordenadas.longitud,
+                                                              lat2: direccionesService
+                                                                  .direcciones[authService.usuario.cesta.direccion.titulo != ''
+                                                                      ? direccionesService.direcciones.indexWhere((element) => authService.usuario.cesta.direccion.titulo == element.titulo)
+                                                                      : obtenerFavorito(direccionesService.direcciones) != -1
+                                                                          ? obtenerFavorito(direccionesService.direcciones)
+                                                                          : 0]
+                                                                  .coordenadas
+                                                                  .lat,
+                                                              lon2: direccionesService
+                                                                  .direcciones[authService.usuario.cesta.direccion.titulo != ''
+                                                                      ? direccionesService.direcciones.indexWhere((element) => authService.usuario.cesta.direccion.titulo == element.titulo)
+                                                                      : obtenerFavorito(direccionesService.direcciones) != -1
+                                                                          ? obtenerFavorito(direccionesService.direcciones)
+                                                                          : 0]
+                                                                  .coordenadas
+                                                                  .lng));
+                                                      Navigator.pop(context);
+                                                      Navigator.pop(context);
+                                                      final snackBar = SnackBar(
+                                                        duration:
+                                                            const Duration(
+                                                                seconds: 2),
+                                                        backgroundColor:
+                                                            const Color
+                                                                    .fromRGBO(
+                                                                0, 0, 0, 1),
+                                                        content: Text(
+                                                          '${widget.producto.nombre} x $cantidad agregado',
+                                                          style: GoogleFonts
+                                                              .quicksand(
+                                                            color: Colors.white,
+                                                          ),
+                                                        ),
+                                                      );
+
+                                                      ScaffoldMessenger.of(
+                                                              context)
+                                                          .showSnackBar(
+                                                              snackBar);
+                                                    }
+                                                  : null,
                                       child: AnimatedContainer(
                                           duration:
                                               const Duration(milliseconds: 200),
@@ -552,41 +576,47 @@ class _VerProductoViewState extends State<VerProductoView> {
                                                   BorderRadius.circular(35),
                                               border: Border.all(
                                                   width: 1,
-                                                  color: Colors.black.withOpacity(authService.listadoTemp.fold<num>(
-                                                              0,
-                                                              (previousValue, element) =>
-                                                                  element.listado.length +
-                                                                  previousValue) >=
-                                                          widget.producto.opciones.fold<num>(
-                                                              0,
-                                                              (previousValue, element) =>
-                                                                  element.minimo +
-                                                                  previousValue)
-                                                      ? direccionesService.direcciones.isEmpty
-                                                          ? .1
-                                                          : .8
-                                                      : .1))),
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .primary
+                                                      .withOpacity(authService.listadoTemp.fold<num>(
+                                                                  0,
+                                                                  (previousValue, element) =>
+                                                                      element
+                                                                          .listado
+                                                                          .length +
+                                                                      previousValue) >=
+                                                              widget.producto
+                                                                  .opciones
+                                                                  .fold<num>(
+                                                                      0, (previousValue, element) => element.minimo + previousValue)
+                                                          ? direccionesService.direcciones.isEmpty
+                                                              ? .1
+                                                              : 1
+                                                          : .1))),
                                           child: Center(
                                             child: Text(
                                               'Agregar',
                                               style: GoogleFonts.quicksand(
-                                                  color: Colors.black.withOpacity(authService
-                                                              .listadoTemp
-                                                              .fold<num>(
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .primary
+                                                      .withOpacity(authService.listadoTemp.fold<num>(
                                                                   0,
                                                                   (previousValue, element) =>
                                                                       element.listado.length +
                                                                       previousValue) >=
-                                                          widget.producto.opciones.fold<num>(
-                                                              0,
-                                                              (previousValue,
-                                                                      element) =>
-                                                                  element.minimo +
-                                                                  previousValue)
-                                                      ? direccionesService.direcciones.isEmpty
-                                                          ? .1
-                                                          : .8
-                                                      : .1),
+                                                              widget.producto.opciones.fold<num>(
+                                                                  0,
+                                                                  (previousValue, element) =>
+                                                                      element.minimo +
+                                                                      previousValue)
+                                                          ? direccionesService
+                                                                  .direcciones
+                                                                  .isEmpty
+                                                              ? .1
+                                                              : .8
+                                                          : .1),
                                                   fontSize: 20),
                                             ),
                                           )),
@@ -664,8 +694,8 @@ class ListadoOpcinesWidget extends StatelessWidget {
             margin: const EdgeInsets.only(left: 5),
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(opcion.titulo,
                     style: GoogleFonts.quicksand(
@@ -754,7 +784,7 @@ class _OpcionWidgetState extends State<OpcionWidget> {
   void initState() {
     super.initState();
     final provider = Provider.of<AuthService>(context, listen: false);
-    Future.delayed(Duration.zero, () async {
+    Future.delayed(const Duration(milliseconds: 200), () async {
       if (widget.opcionIndex.auto) {
         provider.modificarListadoTemp(
             opcion: widget.opcionIndex.tipo,
@@ -815,14 +845,15 @@ class _OpcionWidgetState extends State<OpcionWidget> {
               margin: const EdgeInsets.only(right: 10, bottom: 7),
               padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 25),
               decoration: BoxDecoration(
-                  color: authService.listadoTemp.indexWhere((element) => element.index == widget.index) !=
+                  color: authService.listadoTemp.indexWhere(
+                              (element) => element.index == widget.index) !=
                           -1
                       ? authService
                               .listadoTemp[authService.listadoTemp.indexWhere(
                                   (element) => element.index == widget.index)]
                               .listado
                               .contains(widget.opcionIndex.tipo)
-                          ? const Color.fromRGBO(62, 204, 191, 1)
+                          ? Theme.of(context).colorScheme.primary.withOpacity(1)
                           : const Color.fromRGBO(200, 201, 203, .2)
                       : const Color.fromRGBO(200, 201, 203, .2),
                   borderRadius: BorderRadius.circular(25)),
@@ -834,8 +865,7 @@ class _OpcionWidgetState extends State<OpcionWidget> {
                                       element.index == widget.index) !=
                                   -1
                               ? authService
-                                      .listadoTemp[authService.listadoTemp
-                                          .indexWhere((element) => element.index == widget.index)]
+                                      .listadoTemp[authService.listadoTemp.indexWhere((element) => element.index == widget.index)]
                                       .listado
                                       .contains(widget.opcionIndex.tipo)
                                   ? Colors.white
