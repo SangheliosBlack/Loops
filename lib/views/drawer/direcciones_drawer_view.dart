@@ -34,21 +34,23 @@ class MisDireccionesView extends StatelessWidget {
                   if (sugerencia.listaSugerencias.isEmpty) {
                     await sugerencia.ubicacionActual();
                   }
-                  final resultado = await showSearch(
+                  if(context.mounted){
+                    final resultado = await showSearch(
                       context: context, delegate: SearchDestination());
                   if (resultado!.cancelo == false) {
-                    retornoBusqueda(resultado, direccionesService, context);
+                    if(context.mounted) retornoBusqueda(resultado, direccionesService, context);
+                  }
                   }
                 } catch (e) {
                   debugPrint('Ningun lugar seleccionado');
                 }
-                Navigator.pop(context);
+                if(context.mounted) Navigator.pop(context);
               } else {
                 try {
                   final resultado = await showSearch(
                       context: context, delegate: SearchDestination());
                   if (resultado!.cancelo == false) {
-                    retornoBusqueda(resultado, direccionesService, context);
+                    if(context.mounted) retornoBusqueda(resultado, direccionesService, context);
                   }
                 } catch (e) {
                   debugPrint('Ningun lugar seleccionado');
@@ -111,7 +113,7 @@ class MisDireccionesView extends StatelessWidget {
     final nuevaDireccion = await direccionesService.agregarNuevaDireccion(
         id: id, latitud: latitud, longitud: longitud, titulo: titulo);
     if (nuevaDireccion) {
-      Navigator.pop(context);
+      if(context.mounted) Navigator.pop(context);
     } else {
       /**IMPLEMENTAR ALGO ERROR*/
     }

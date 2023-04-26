@@ -80,6 +80,9 @@ dependencies:
   url_launcher: ^6.1.10
   whatsapp_unilink: ^2.1.0
   text_scroll: ^0.2.0
+  http_parser: ^4.0.2
+  esc_pos_utils: ^1.1.0
+  image: ^3.0.2
 
 
 dev_dependencies:
@@ -123,10 +126,6 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/images/
-    - assets/peeps/accessories/
-    - assets/peeps/face/
-    - assets/peeps/facial/
-    - assets/peeps/head/
     - assets/sounds/
   #   - images/a_dot_ham.jpeg
 

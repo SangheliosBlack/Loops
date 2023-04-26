@@ -2,9 +2,7 @@ import 'package:delivery/models/abono.dart';
 import 'package:delivery/models/eleccion_model.dart';
 import 'package:delivery/models/venta_response.dart';
 import 'package:esc_pos_utils/esc_pos_utils.dart';
-import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
-import 'package:image/image.dart';
 
 Future<List<int>> testTicket(
     {required bool tiendaRopa,
@@ -46,9 +44,9 @@ Future<List<int>> testTicket(
 
   bytes += generator.setGlobalFont(PosFontType.fontA);
 
-  final ByteData data = await rootBundle.load('assets/images/impresion1.png');
-  final Uint8List buf = data.buffer.asUint8List();
-  final Image image = decodeImage(buf)!;
+  // final ByteData data = await rootBundle.load('assets/images/impresion1.png');
+  // final Uint8List buf = data.buffer.asUint8List();
+  // final Image image = decodeImage(buf)!;
 
   bytes += generator.feed(1);
 

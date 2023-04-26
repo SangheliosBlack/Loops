@@ -11,6 +11,7 @@ import 'package:delivery/service/socio_service.dart';
 import 'package:delivery/views/extras/pedido_view.dart';
 import 'package:delivery/views/punto_venta/agregar_abono_widget.dart';
 import 'package:esc_pos_bluetooth/esc_pos_bluetooth.dart';
+import 'package:esc_pos_utils/esc_pos_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
@@ -18,7 +19,6 @@ import 'package:flutter_verification_code/flutter_verification_code.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
-import 'package:esc_pos_utils/esc_pos_utils.dart';
 import 'package:provider/provider.dart';
 import 'package:timelines/timelines.dart';
 
@@ -72,7 +72,9 @@ class _DetallesPedidoState extends State<DetallesPedido> {
             ),
           );
 
-          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          if(context.mounted){
+            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          }
         }
       });
     }
@@ -762,9 +764,12 @@ class _DetallesPedidoState extends State<DetallesPedido> {
                                                                         .id,
                                                                 idVenta: widget
                                                                     .pedido
-                                                                    .idVenta);
+                                                                    .idVenta, total: widget
+                                                                    .pedido
+                                                                    .total);
 
-                                                        Navigator.pop(context);
+                                                        if(context.mounted){
+                                                          Navigator.pop(context);
                                                         if (estado) {
                                                           showModalBottomSheet(
                                                               barrierColor: Colors
@@ -832,6 +837,7 @@ class _DetallesPedidoState extends State<DetallesPedido> {
                                                                   ],
                                                                 );
                                                               });
+                                                        } 
                                                         } else {
                                                           final snackBar =
                                                               SnackBar(

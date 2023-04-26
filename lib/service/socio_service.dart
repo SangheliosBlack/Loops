@@ -136,10 +136,10 @@ class SocioService with ChangeNotifier {
       VentaPro(venta: [], size: 0, completados: 0, ganancia: 0);
 
   Future<bool> confirmarCodigoRepartidor(
-      {required String idVenta, required String idSubventa}) async {
+      {required String idVenta, required String idSubventa,required num total}) async {
     await Future.delayed(const Duration(milliseconds: 1000));
 
-    final data = {'uid': idVenta, 'uidVenta': idSubventa};
+    final data = {'uid': idVenta, 'uidVenta': idSubventa,'total':total,'tienda':tienda.uid};
 
     try {
       final resp = await http.post(

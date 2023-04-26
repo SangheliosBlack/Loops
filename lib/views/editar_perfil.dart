@@ -28,122 +28,170 @@ class EditarPerfil extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Stack(
-              children: [
-                Container(
-                  color: Colors.blue,
-                  margin: const EdgeInsets.only(right: 25),
-                  child: Hero(
-                    tag: 'perfil123',
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(1000),
-                      child: SizedBox(
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(1000),
-                          child: const AvatarWidget(
-                            small: false,
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Stack(
+                    children: [
+                      Container(
+                        color: Colors.blue,
+                        margin: const EdgeInsets.only(right: 25),
+                        child: Hero(
+                          tag: 'perfil123',
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(1000),
+                            child: SizedBox(
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(1000),
+                                child: const AvatarWidget(
+                                  small: false,
+                                ),
+                              ),
+                            ),
                           ),
                         ),
                       ),
-                    ),
+                      Positioned(
+                          bottom: 0,
+                          right: 0,
+                          child: GestureDetector(
+                            behavior: HitTestBehavior.translucent,
+                            onTap: () {},
+                            child: Container(
+                              padding: const EdgeInsets.all(7),
+                              decoration: BoxDecoration(
+                                  color: Colors.grey[100],
+                                  shape: BoxShape.circle),
+                              child: const Icon(
+                                Icons.edit,
+                                size: 15,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ))
+                    ],
                   ),
-                ),
-                Positioned(
-                    bottom: 0,
-                    right: 0,
-                    child: GestureDetector(
-                      behavior: HitTestBehavior.translucent,
-                      onTap: () {},
-                      child: Container(
-                        padding: const EdgeInsets.all(7),
-                        decoration: BoxDecoration(
-                            color: Colors.grey[100], shape: BoxShape.circle),
-                        child: const Icon(
-                          Icons.edit,
-                          size: 15,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ))
-              ],
-            ),
-            const SizedBox(height: 20),
-            Text(
-              'Nombre',
-              style: GoogleFonts.quicksand(color: Colors.grey, fontSize: 14),
-            ),
-            const SizedBox(height: 15),
-            Text(
-              authService.usuario.nombre,
-              style: GoogleFonts.quicksand(
-                  color: Colors.black.withOpacity(.8), fontSize: 18),
-            ),
-            const SizedBox(height: 40),
-            Text(
-              'Correo electronico',
-              style: GoogleFonts.quicksand(color: Colors.grey, fontSize: 14),
-            ),
-            const SizedBox(height: 15),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Text(
-                    authService.usuario.correo,
-                    overflow: TextOverflow.ellipsis,
+                  const SizedBox(height: 20),
+                  Text(
+                    'Nombre',
+                    style:
+                        GoogleFonts.quicksand(color: Colors.grey, fontSize: 14),
+                  ),
+                  const SizedBox(height: 15),
+                  Text(
+                    authService.usuario.nombre,
                     style: GoogleFonts.quicksand(
                         color: Colors.black.withOpacity(.8), fontSize: 18),
                   ),
-                ),
-                Text(
-                  '',
-                  style: GoogleFonts.quicksand(
-                      color: Colors.green.withOpacity(.8), fontSize: 13),
-                ),
-              ],
+                  const SizedBox(height: 40),
+                  Text(
+                    'Correo electronico',
+                    style:
+                        GoogleFonts.quicksand(color: Colors.grey, fontSize: 14),
+                  ),
+                  const SizedBox(height: 15),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          authService.usuario.correo,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.quicksand(
+                              color: Colors.black.withOpacity(.8),
+                              fontSize: 18),
+                        ),
+                      ),
+                      Text(
+                        '',
+                        style: GoogleFonts.quicksand(
+                            color: Colors.green.withOpacity(.8), fontSize: 13),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 40),
+                  Text(
+                    'Numero de telefono',
+                    style:
+                        GoogleFonts.quicksand(color: Colors.grey, fontSize: 14),
+                  ),
+                  const SizedBox(height: 15),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            authService.usuario.dialCode,
+                            style: GoogleFonts.quicksand(
+                                color: Colors.blue, fontSize: 18),
+                          ),
+                          const SizedBox(width: 7),
+                          Text(
+                            authService.usuario.numeroCelular,
+                            style: GoogleFonts.quicksand(
+                                color: Colors.black.withOpacity(.8),
+                                fontSize: 18),
+                          ),
+                        ],
+                      ),
+                      Text(
+                        'Verificado',
+                        style: GoogleFonts.quicksand(
+                            color: Colors.green.withOpacity(.8), fontSize: 13),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  Text(
+                    'Contraseña',
+                    style:
+                        GoogleFonts.quicksand(color: Colors.grey, fontSize: 14),
+                  ),
+                  const SizedBox(height: 15),
+                  Text(
+                    '•••••••••••',
+                    style: GoogleFonts.quicksand(
+                        color: Colors.black.withOpacity(.8), fontSize: 18),
+                  ),
+                ],
+              ),
             ),
-            const SizedBox(height: 40),
-            Text(
-              'Numero de telefono',
-              style: GoogleFonts.quicksand(color: Colors.grey, fontSize: 14),
-            ),
-            const SizedBox(height: 15),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    Text(
-                      authService.usuario.dialCode,
-                      style: GoogleFonts.quicksand(
-                          color: Colors.blue, fontSize: 18),
+            !authService.usuario.hibrido
+                ? Center(
+                    child: GestureDetector(
+                      behavior: HitTestBehavior.translucent,
+                      onTap: () async {
+                        var res = await authService.hibridoOff();
+                        if (res) {
+                          if (context.mounted) Navigator.pop(context);
+                        } else {
+                          final snackBar = SnackBar(
+                            duration: const Duration(seconds: 2),
+                            backgroundColor: Colors.black,
+                            content: Text(
+                              'Accion incorrecta, aun tienes un pedido pendiente.',
+                              style: GoogleFonts.quicksand(
+                                color: Colors.white,
+                              ),
+                            ),
+                          );
+
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(snackBar);
+                          }
+                        }
+                      },
+                      child: Text(
+                        'Cerrar sesion modo repartidor',
+                        style: GoogleFonts.quicksand(),
+                      ),
                     ),
-                    const SizedBox(width: 7),
-                    Text(
-                      authService.usuario.numeroCelular,
-                      style: GoogleFonts.quicksand(
-                          color: Colors.black.withOpacity(.8), fontSize: 18),
-                    ),
-                  ],
-                ),
-                Text(
-                  'Verificado',
-                  style: GoogleFonts.quicksand(
-                      color: Colors.green.withOpacity(.8), fontSize: 13),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            Text(
-              'Contraseña',
-              style: GoogleFonts.quicksand(color: Colors.grey, fontSize: 14),
-            ),
-            const SizedBox(height: 15),
-            Text(
-              '•••••••••••',
-              style: GoogleFonts.quicksand(
-                  color: Colors.black.withOpacity(.8), fontSize: 18),
-            ),
+                  )
+                : Container()
           ],
         ),
       ),

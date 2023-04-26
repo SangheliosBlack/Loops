@@ -51,7 +51,7 @@ class _VentaPantallaState extends State<VentaPantalla>
                           mostrarCarga(context);
                           await authService.eliminarCesta();
                           socioService.modificarEntregadoCliente(dinero: '0');
-                          Navigator.pop(context);
+                          if(context.mounted) Navigator.pop(context);
                         },
                         child: Container(
                           padding: const EdgeInsets.all(5),
@@ -137,7 +137,7 @@ class _VentaPantallaState extends State<VentaPantalla>
                                             await authService
                                                 .eliminarProductoCesta(
                                                     pos: index);
-                                            Navigator.pop(context);
+                                            if(context.mounted) Navigator.pop(context);
                                             final snackBar = SnackBar(
                                               duration:
                                                   const Duration(seconds: 2),
@@ -152,8 +152,10 @@ class _VentaPantallaState extends State<VentaPantalla>
                                               ),
                                             );
 
-                                            ScaffoldMessenger.of(context)
+                                            if(context.mounted){
+                                              ScaffoldMessenger.of(context)
                                                 .showSnackBar(snackBar);
+                                            }
                                           } else {
                                             mostrarCarga(context);
                                             await authService.actulizarCantidad(
@@ -173,7 +175,7 @@ class _VentaPantallaState extends State<VentaPantalla>
                                                 producto: authService.usuario
                                                     .cesta.productos[index]);
 
-                                            Navigator.pop(context);
+                                            if(context.mounted) Navigator.pop(context);
                                           }
                                         },
                                         behavior: HitTestBehavior.translucent,
@@ -237,7 +239,7 @@ class _VentaPantallaState extends State<VentaPantalla>
                                                   .tienda.promociones,
                                               producto: authService.usuario
                                                   .cesta.productos[index]);
-                                          Navigator.pop(context);
+                                          if(context.mounted) Navigator.pop(context);
                                         },
                                         behavior: HitTestBehavior.translucent,
                                         child: Container(
@@ -325,7 +327,7 @@ class _VentaPantallaState extends State<VentaPantalla>
                                           socioService
                                               .modificarEntregadoCliente(
                                                   dinero: '0');
-                                          Navigator.pop(context);
+                                          if(context.mounted) Navigator.pop(context);
                                         },
                                         child: Container(
                                             padding: const EdgeInsets.all(10),
@@ -614,7 +616,7 @@ class _VentaPantallaState extends State<VentaPantalla>
                                         venta: data!);
 
                                     controller.clear();
-                                    if (bluetoothService.isConnected) {
+                                    if (bluetoothService.isConnected && context.mounted) {
                                       starPrint(
                                           entregado:
                                               socioService.entregado.toString(),
@@ -657,7 +659,7 @@ class _VentaPantallaState extends State<VentaPantalla>
                                     authService.estadoApartado2();
                                     socioService.modificarEntregadoCliente2(
                                         dinero: '0');
-                                    Navigator.pop(context);
+                                    if(context.mounted) Navigator.pop(context);
                                   }
                                 : null,
                     child: Container(

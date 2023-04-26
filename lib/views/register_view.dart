@@ -467,7 +467,7 @@ class RegisterViewState extends State<RegisterView> {
                                           if (registroOk.isEmpty) {
                                             navigationService
                                                 .navigateToReplace('dashboard');
-                                            Navigator.pop(context);
+                                            if(context.mounted) Navigator.pop(context);
                                           } else {
                                             registerFormProvider
                                                 .validarErrores(registroOk);

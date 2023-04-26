@@ -434,7 +434,7 @@ class _VerProductoViewState extends State<VerProductoView> {
                                       onTap: direccionesService
                                               .direcciones.isEmpty
                                           ? () async {
-                                              {
+                                              
                                                 if (sugerencia
                                                     .listaSugerencias.isEmpty) {
                                                   calculandoAlerta(context);
@@ -445,23 +445,27 @@ class _VerProductoViewState extends State<VerProductoView> {
                                                       await sugerencia
                                                           .ubicacionActual();
                                                     }
-                                                    final resultado =
+                                                    if(context.mounted){
+                                                      final resultado =
                                                         await showSearch(
                                                             context: context,
                                                             delegate:
                                                                 SearchDestination());
                                                     if (resultado!.cancelo ==
                                                         false) {
-                                                      retornoBusqueda(
+                                                       if(context.mounted){
+                                                        retornoBusqueda(
                                                           resultado,
                                                           direccionesService,
                                                           context);
+                                                       }
+                                                    }
                                                     }
                                                   } catch (e) {
                                                     debugPrint(
                                                         'Ningun lugar seleccionado');
                                                   }
-                                                  Navigator.pop(context);
+                                                  if(context.mounted) Navigator.pop(context);
                                                 } else {
                                                   try {
                                                     final resultado =
@@ -471,17 +475,19 @@ class _VerProductoViewState extends State<VerProductoView> {
                                                                 SearchDestination());
                                                     if (resultado!.cancelo ==
                                                         false) {
-                                                      retornoBusqueda(
+                                                      if(context.mounted){
+                                                        retornoBusqueda(
                                                           resultado,
                                                           direccionesService,
                                                           context);
+                                                      }
                                                     }
                                                   } catch (e) {
                                                     debugPrint(
                                                         'Ningun lugar seleccionado');
                                                   }
                                                 }
-                                              }
+                                              
                                             }
                                           : widget.tienda.online == false
                                               ? () async {
@@ -540,8 +546,10 @@ class _VerProductoViewState extends State<VerProductoView> {
                                                                           : 0]
                                                                   .coordenadas
                                                                   .lng));
-                                                      Navigator.pop(context);
-                                                      Navigator.pop(context);
+                                                      if (context.mounted) {
+                                                        Navigator.pop(context);
+                                                        Navigator.pop(context);
+                                                      }
                                                       final snackBar = SnackBar(
                                                         duration:
                                                             const Duration(
@@ -559,10 +567,12 @@ class _VerProductoViewState extends State<VerProductoView> {
                                                         ),
                                                       );
 
-                                                      ScaffoldMessenger.of(
-                                                              context)
-                                                          .showSnackBar(
-                                                              snackBar);
+                                                      if (context.mounted) {
+                                                        ScaffoldMessenger.of(
+                                                                context)
+                                                            .showSnackBar(
+                                                                snackBar);
+                                                      }
                                                     }
                                                   : null,
                                       child: AnimatedContainer(
@@ -647,7 +657,7 @@ class _VerProductoViewState extends State<VerProductoView> {
 
     final nuevaDireccion = await direccionesService.agregarNuevaDireccion(
         id: id, latitud: latitud, longitud: longitud, titulo: titulo);
-    if (nuevaDireccion) {
+    if (nuevaDireccion && context.mounted) {
       Navigator.pop(context);
     } else {
       /**IMPLEMENTAR ALGO ERROR*/

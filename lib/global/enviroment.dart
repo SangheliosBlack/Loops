@@ -17,8 +17,8 @@ class Statics {
     900: const Color.fromRGBO(255, 255, 255, 1),
   };
 
-  //  static String apiUrl = 'https://server-delivery-production.herokuapp.com/api';
-  static String apiUrl = 'http://192.168.0.3:3000/api';
+  static String apiUrl = 'https://server-delivery-production.herokuapp.com/api';
+  // static String apiUrl = 'http://192.168.0.5:3000/api';
   static List<dynamic> listSetting = [
     {
       'icono': Icons.credit_card_outlined,
@@ -35,6 +35,11 @@ class Statics {
       'titulo': 'Mis pedidos',
       'ruta': '/drawer/pedidos'
     },
+    {
+      'icono': Icons.route_outlined,
+      'titulo': 'Modo repartidor',
+      'ruta': '/drawer/repartidor'
+    },
     {'icono': Icons.logout, 'titulo': 'Cerrar sesion', 'ruta': 'logout'},
   ];
 
@@ -45,7 +50,6 @@ class Statics {
       ),
       zoom: 15);
 
-  
   static String mapStysle = '''
   [
     {

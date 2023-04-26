@@ -42,7 +42,7 @@ class AdminHandlers {
       }
       if (permissionService.isGranted) {
         if (permissionService.isEnabled) {
-          if (authService.usuario.repartidor) {
+          if (authService.usuario.repartidor && authService.usuario.hibrido) {
             return const DashBoardViewRepartidor();
           } else {
             return const DashboardView();

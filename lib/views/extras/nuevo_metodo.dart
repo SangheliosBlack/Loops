@@ -591,21 +591,23 @@ class _AgregarNuevoMetodoState extends State<AgregarNuevoMetodo> {
                                             cardExpYear: valorDos.split('/')[1],
                                             cardCvc: valorTres);
                                     if (tarjeta) {
-                                      Navigator.pop(context);
-                                      Navigator.pop(context);
-                                      final snackBar = SnackBar(
-                                        duration: const Duration(seconds: 2),
-                                        backgroundColor: Colors.black,
-                                        content: Text(
-                                          'Metodo creado con exito',
-                                          style: GoogleFonts.quicksand(
-                                            color: Colors.white,
+                                      if (context.mounted) {
+                                        Navigator.pop(context);
+                                        Navigator.pop(context);
+                                        final snackBar = SnackBar(
+                                          duration: const Duration(seconds: 2),
+                                          backgroundColor: Colors.black,
+                                          content: Text(
+                                            'Metodo creado con exito',
+                                            style: GoogleFonts.quicksand(
+                                              color: Colors.white,
+                                            ),
                                           ),
-                                        ),
-                                      );
+                                        );
 
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(snackBar);
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(snackBar);
+                                      }
                                     } else {
                                       setState(() {
                                         send = false;

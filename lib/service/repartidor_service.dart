@@ -123,10 +123,10 @@ class RepartidorProvider with ChangeNotifier {
   }
 
   Future<bool> confirmarCodigoCliente(
-      {required String idVenta, required String idSubventa}) async {
+      {required String idVenta, required String idSubventa,required num envio}) async {
     await Future.delayed(const Duration(milliseconds: 1000));
 
-    final data = {'uid': idVenta, 'uidVenta': idSubventa};
+    final data = {'uid': idVenta, 'uidVenta': idSubventa,'envio':envio};
 
     try {
       final resp = await http.post(

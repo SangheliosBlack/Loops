@@ -78,7 +78,7 @@ class AgregarProductoViewState extends State<AgregarProductoView> {
                     final result = await socioService.eliminarProducto(
                         idListado: socioService.tienda.productos,
                         idProducto: widget.uid);
-                    Navigator.pop(context);
+                    if (context.mounted) Navigator.pop(context);
                     if (result) {
                       final snackBar = SnackBar(
                         duration: const Duration(seconds: 5),
@@ -88,10 +88,11 @@ class AgregarProductoViewState extends State<AgregarProductoView> {
                           style: GoogleFonts.quicksand(),
                         ),
                       );
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
 
-                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-
-                      Navigator.pop(context);
+                        Navigator.pop(context);
+                      }
                     } else {
                       final snackBar = SnackBar(
                         duration: const Duration(seconds: 5),
@@ -102,7 +103,7 @@ class AgregarProductoViewState extends State<AgregarProductoView> {
                         ),
                       );
 
-                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                      if(context.mounted) ScaffoldMessenger.of(context).showSnackBar(snackBar);
                     }
                   },
                   child: Container(
@@ -216,12 +217,7 @@ class AgregarProductoViewState extends State<AgregarProductoView> {
                             }
                           },
                           keyboardType: TextInputType.number,
-                          toolbarOptions: const ToolbarOptions(
-                            copy: true,
-                            cut: true,
-                            paste: false,
-                            selectAll: false,
-                          ),
+                          enableInteractiveSelection: false,
                           decoration: InputDecoration(
                             prefixIconConstraints: const BoxConstraints(
                                 maxHeight: 60, maxWidth: 60),
@@ -302,12 +298,7 @@ class AgregarProductoViewState extends State<AgregarProductoView> {
                             }
                           },
                           keyboardType: TextInputType.number,
-                          toolbarOptions: const ToolbarOptions(
-                            copy: true,
-                            cut: true,
-                            paste: false,
-                            selectAll: false,
-                          ),
+                          enableInteractiveSelection: false,
                           decoration: InputDecoration(
                             prefixIconConstraints: const BoxConstraints(
                                 maxHeight: 60, maxWidth: 60),
@@ -527,7 +518,6 @@ class AgregarProductoViewState extends State<AgregarProductoView> {
                                 productoUid: widget.uid,
                                 cantidad: cuatroCtrl.text.trim());
 
-
                             if (resp) {
                               String precio =
                                   unoCtrl.text.trim().replaceAll('\$', '');
@@ -551,12 +541,14 @@ class AgregarProductoViewState extends State<AgregarProductoView> {
                                 ),
                               );
 
-                              ScaffoldMessenger.of(context)
-                                  .showSnackBar(snackBar);
-                              await Future.delayed(
-                                  const Duration(milliseconds: 400));
-                              Navigator.pop(context);
-                              Navigator.pop(context);
+                              if (context.mounted) {
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(snackBar);
+                                await Future.delayed(
+                                    const Duration(milliseconds: 400));
+                                if (context.mounted) Navigator.pop(context);
+                                if (context.mounted) Navigator.pop(context);
+                              }
                             } else {
                               final snackBar = SnackBar(
                                 duration: const Duration(seconds: 2),
@@ -567,14 +559,16 @@ class AgregarProductoViewState extends State<AgregarProductoView> {
                                 ),
                               );
 
-                              ScaffoldMessenger.of(context)
-                                  .showSnackBar(snackBar);
-                              Navigator.pop(context);
-                              setState(() {
-                                if (mounted) {
-                                  send = false;
-                                }
-                              });
+                              if (context.mounted) {
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(snackBar);
+                                Navigator.pop(context);
+                                setState(() {
+                                  if (mounted) {
+                                    send = false;
+                                  }
+                                });
+                              }
                             }
                           }
                         : () async {
@@ -608,12 +602,14 @@ class AgregarProductoViewState extends State<AgregarProductoView> {
                                 ),
                               );
 
-                              ScaffoldMessenger.of(context)
-                                  .showSnackBar(snackBar);
-                              await Future.delayed(
-                                  const Duration(milliseconds: 400));
-                              Navigator.pop(context);
-                              Navigator.pop(context);
+                              if (context.mounted) {
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(snackBar);
+                                await Future.delayed(
+                                    const Duration(milliseconds: 400));
+                                if (context.mounted) Navigator.pop(context);
+                                if (context.mounted) Navigator.pop(context);
+                              }
                             } else {
                               final snackBar = SnackBar(
                                 duration: const Duration(seconds: 2),
@@ -624,14 +620,16 @@ class AgregarProductoViewState extends State<AgregarProductoView> {
                                 ),
                               );
 
-                              ScaffoldMessenger.of(context)
-                                  .showSnackBar(snackBar);
-                              Navigator.pop(context);
-                              setState(() {
-                                if (mounted) {
-                                  send = false;
-                                }
-                              });
+                              if (context.mounted) {
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(snackBar);
+                                Navigator.pop(context);
+                                setState(() {
+                                  if (mounted) {
+                                    send = false;
+                                  }
+                                });
+                              }
                             }
                           }
                     : null,

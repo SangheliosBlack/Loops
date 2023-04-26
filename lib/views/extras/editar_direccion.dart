@@ -89,7 +89,7 @@ class _EditarDireccionViewState extends State<EditarDireccionView> {
                   if (result) {
                     direccionesService.eliminarDireccion(
                         id: widget.direccion.id);
-                    Navigator.pop(context);
+                    if(context.mounted) Navigator.pop(context);
                   }
                 },
                 child: Container(

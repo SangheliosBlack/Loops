@@ -8,6 +8,7 @@ import 'package:delivery/models/codigo_response.dart';
 import 'package:delivery/models/direccion.dart';
 import 'package:delivery/models/direccion.dart' as coordenas;
 import 'package:delivery/models/envio_valor.dart';
+import 'package:delivery/models/estado_sistema.dart';
 import 'package:delivery/models/image_response.dart';
 import 'package:delivery/models/lista_opciones.dart';
 import 'package:delivery/models/productos.dart';
@@ -17,10 +18,11 @@ import 'package:delivery/models/usuario.dart';
 import 'package:delivery/models/venta_response.dart';
 import 'package:delivery/providers/push_notifications_provider.dart';
 import 'package:flutter/foundation.dart';
-import 'package:http_parser/http_parser.dart';
+
 import 'package:delivery/models/auth.dart';
 import 'package:delivery/models/errors.dart';
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mime/mime.dart';
 
@@ -32,6 +34,16 @@ enum ButtonStatus { autenticando, disponible, pressed }
 
 enum PuntoVenta { isAvailable, notAvailable }
 
+enum EstadoSistema {
+  isMaintenance,
+  isClosed,
+  isOpen,
+  isAvailable,
+  isNotAvailable,
+  noUpdate,
+  restringido
+}
+
 class AuthService with ChangeNotifier {
   ButtonStatus _buttonStatus = ButtonStatus.disponible;
   ButtonStatus get buttonStatus => _buttonStatus;
@@ -42,6 +54,7 @@ class AuthService with ChangeNotifier {
 
   AuthStatus authStatus = AuthStatus.checking;
   PuntoVenta puntoVentaStatus = PuntoVenta.notAvailable;
+  EstadoSistema estadoSistemaStatus = EstadoSistema.isOpen;
 
   late Usuario usuario;
 
@@ -71,6 +84,38 @@ class AuthService with ChangeNotifier {
 
   estadoApartado2() {
     usuario.cesta.apartado = false;
+  }
+
+  revisarEstado() async {
+    final resp = await http.get(
+        Uri.parse('${Statics.apiUrl}/autentificacion/revisarEstado'),
+        headers: {
+          'Content-Type': 'application/json',
+          'x-token': await AuthService.getToken(),
+          'x-version': '1.0.6 beta'
+        });
+
+    print(resp.body);
+
+    final estado = estadoSistemaFromJson(resp.body);
+
+    if (estado.restringido) {
+      estadoSistemaStatus = EstadoSistema.restringido;
+    } else {
+      if (estado.version != 'true') {
+        estadoSistemaStatus = EstadoSistema.noUpdate;
+      } else {
+        if (estado.cerrada) {
+          estadoSistemaStatus = EstadoSistema.isClosed;
+        } else if (estado.mantenimiento) {
+          estadoSistemaStatus = EstadoSistema.isMaintenance;
+        } else if (estado.disponible) {
+          estadoSistemaStatus = EstadoSistema.isAvailable;
+        } else {
+          estadoSistemaStatus = EstadoSistema.isNotAvailable;
+        }
+      }
+    }
   }
 
   calcularPromociones(
@@ -411,7 +456,9 @@ class AuthService with ChangeNotifier {
           headers: {
             'Content-Type': 'application/json',
           });
+      print(resp.body);
       if (resp.statusCode == 200) {
+        print('que');
         final loginResponse = loginResponseFromJson(resp.body);
         usuario = loginResponse.usuario;
         await _guardarToken(loginResponse.token, false, '');
@@ -421,6 +468,7 @@ class AuthService with ChangeNotifier {
         return false;
       }
     } catch (e) {
+      print(e);
       return false;
     }
   }
@@ -478,6 +526,7 @@ class AuthService with ChangeNotifier {
             'x-token': token ?? '',
             'x-token-firebase': tokenFirebase ?? ''
           });
+
       if (resp.statusCode == 200) {
         final loginResponse = loginResponseFromJson(resp.body);
 
@@ -486,6 +535,7 @@ class AuthService with ChangeNotifier {
         await _guardarToken(
             loginResponse.token, loginResponse.checkToken, tokenFirebase!);
         await Future.delayed(const Duration(milliseconds: 750));
+
         return true;
       } else {
         logout();
@@ -504,6 +554,7 @@ class AuthService with ChangeNotifier {
     if (isSocio) {
       puntoVentaStatus = PuntoVenta.isAvailable;
     }
+    await revisarEstado();
     notifyListeners();
   }
 
@@ -519,6 +570,7 @@ class AuthService with ChangeNotifier {
 
   static Future<String> getToken() async {
     final token = LocalStorage.prefs.getString('token');
+    print(token);
     return token!;
   }
 
@@ -940,7 +992,8 @@ class AuthService with ChangeNotifier {
           body: jsonEncode(data),
           headers: {
             'Content-Type': 'application/json',
-            'x-token': await AuthService.getToken()
+            'x-token': await AuthService.getToken(),
+            'x-version': '1.0.6 beta'
           });
 
       var respJson = ventoFromJson(resp.body);
@@ -956,7 +1009,6 @@ class AuthService with ChangeNotifier {
         return null;
       }
     } catch (e) {
-
       return null;
     }
   }

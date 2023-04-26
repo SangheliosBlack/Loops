@@ -54,8 +54,8 @@ class DrawerCustomState extends State<DrawerCustom> {
                       child: const SizedBox(
                         width: 200,
                         height: 200,
-                        child: Image(
-                            image: AssetImage('assets/images/loops.jpg')),
+                        child:
+                            Image(image: AssetImage('assets/images/loops.jpg')),
                       ),
                     ),
                   ),
@@ -103,14 +103,19 @@ class DrawerCustomState extends State<DrawerCustom> {
                         physics: const NeverScrollableScrollPhysics(),
                         padding: const EdgeInsets.symmetric(
                             horizontal: 0, vertical: 15),
-                        itemBuilder: (BuildContext context, int index) =>
-                            itemSettings(
+                        itemBuilder: (BuildContext context, int index) {
+                          if (index == 3 && !authService.usuario.repartidor) {
+                            return Container();
+                          } else {
+                            return itemSettings(
                               index: index,
                               context: context,
                               titulo: Statics.listSetting[index]['titulo'],
                               icono: Statics.listSetting[index]['icono'],
                               ruta: Statics.listSetting[index]['ruta'],
-                            ),
+                            );
+                          }
+                        },
                         separatorBuilder: (BuildContext context, int index) =>
                             index != 2
                                 ? const SizedBox(height: 15)
@@ -144,14 +149,19 @@ class DrawerCustomState extends State<DrawerCustom> {
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
       onTap: () {
-        if (ruta == "logout") {
-          navigationService.navigateTo('/');
+        if (ruta == "/drawer/repartidor") {
+          authService.hibridoOn();
           Navigator.pop(context);
-          Navigator.pop(context);
-          socketService.disconnect();
-          authService.logout();
         } else {
-          navigationService.navegarDraw(ruta: ruta);
+          if (ruta == "logout") {
+            navigationService.navigateTo('/');
+            Navigator.pop(context);
+            Navigator.pop(context);
+            socketService.disconnect();
+            authService.logout();
+          } else {
+            navigationService.navegarDraw(ruta: ruta);
+          }
         }
       },
       child: Row(

@@ -436,7 +436,7 @@ class MetodosPagoViewState extends State<MetodosPagoView> {
                               await stripeService.metodoPredeterminado(
                                   id: datum.id,
                                   customer: authService.usuario.customerID);
-                          Navigator.pop(context);
+                          if(context.mounted) Navigator.pop(context);
                           if (confirm == false) {
                             final snackBar = SnackBar(
                               duration: const Duration(seconds: 4),
@@ -450,8 +450,10 @@ class MetodosPagoViewState extends State<MetodosPagoView> {
                               ),
                             );
 
-                            ScaffoldMessenger.of(context)
+                            if(context.mounted){
+                              ScaffoldMessenger.of(context)
                                 .showSnackBar(snackBar);
+                            }
                           }
                         } else if (boton == 'Eliminar') {
                           final eliminar = await confirmarEliminacion(
@@ -460,7 +462,7 @@ class MetodosPagoViewState extends State<MetodosPagoView> {
                               titulo:
                                   'Tarjeta ${(datum.card.brand).capitalize()} con terminacion ${datum.card.last4}');
                           if (eliminar) {
-                            calculandoAlerta(context);
+                            if(context.mounted) calculandoAlerta(context);
                             if (stripeService.tarjetaPredeterminada ==
                                 datum.id) {
                               stripeService.tarjetaPredeterminada = '';
@@ -481,11 +483,13 @@ class MetodosPagoViewState extends State<MetodosPagoView> {
                                 ),
                               );
 
-                              ScaffoldMessenger.of(context)
+                              if(context.mounted){
+                                ScaffoldMessenger.of(context)
                                   .showSnackBar(snackBar);
+                              }
                             }
 
-                            Navigator.pop(context);
+                            if(context.mounted) Navigator.pop(context);
                           }
                         }
                       },

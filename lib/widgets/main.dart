@@ -31,23 +31,27 @@ class BaraBusqueda extends StatelessWidget {
                 await showSearch(context: context, delegate: SearchBusqueda());
             if (!resultado!.cancelo) {
               if (resultado.tienda != null) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          StoreIndividual(tienda: resultado.tienda!)),
-                );
+                if (context.mounted) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            StoreIndividual(tienda: resultado.tienda!)),
+                  );
+                }
               } else {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => VerProductoView(
-                          producto: resultado.producto!,
-                          tienda: pantallasService.tiendas.firstWhere(
-                              (element) =>
-                                  element.nombre ==
-                                  resultado.producto!.tienda))),
-                );
+                if (context.mounted) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => VerProductoView(
+                            producto: resultado.producto!,
+                            tienda: pantallasService.tiendas.firstWhere(
+                                (element) =>
+                                    element.nombre ==
+                                    resultado.producto!.tienda))),
+                  );
+                }
               }
             }
           } catch (e) {
@@ -59,12 +63,12 @@ class BaraBusqueda extends StatelessWidget {
           margin: const EdgeInsets.symmetric(horizontal: 25),
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primary.withOpacity(1),
+              color: Theme.of(context).colorScheme.primary.withOpacity(.1),
               borderRadius: BorderRadius.circular(15)),
           width: double.infinity,
-          child: const Icon(
+          child: Icon(
             Icons.search_outlined,
-            color: Colors.white,
+            color: Theme.of(context).colorScheme.primary.withOpacity(1),
           ),
         ),
       ),

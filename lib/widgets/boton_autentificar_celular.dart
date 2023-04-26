@@ -33,8 +33,10 @@ class _BotonAutentificarState extends State<BotonAutentificar> {
       onTap: send
           ? null
           : () async {
+              print('entre');
               if (widget.controller.text.trim().replaceAll(' ', '') ==
                   '4741030509') {
+                print('2ssssss');
                 await authService.logInCelular(numero: '4741030509');
               } else {
                 var validar = widget.formKey.currentState!.validate();
@@ -58,14 +60,16 @@ class _BotonAutentificarState extends State<BotonAutentificar> {
                   if (estado) {
                     final String numero = widget.controller.text;
 
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => ConfirmarCodigo(
-                                numero: numero,
-                                codigo: putoDial.dial,
-                              )),
-                    );
+                    if (context.mounted) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ConfirmarCodigo(
+                                  numero: numero,
+                                  codigo: putoDial.dial,
+                                )),
+                      );
+                    }
                   } else {
                     final snackBar = SnackBar(
                       duration: const Duration(seconds: 3),
@@ -77,7 +81,9 @@ class _BotonAutentificarState extends State<BotonAutentificar> {
                       ),
                     );
 
-                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                    }
                   }
                 }
               }

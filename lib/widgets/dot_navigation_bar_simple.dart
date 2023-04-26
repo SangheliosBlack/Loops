@@ -10,31 +10,26 @@ class MenuInferior extends StatelessWidget {
   Widget build(BuildContext context) {
     final generalActions = Provider.of<GeneralActions>(context);
     final authService = Provider.of<AuthService>(context);
-    return Container(
-      padding: const EdgeInsets.all(5),
-      height: 90,
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(30),
-        child: BottomNavigationBar(
-          backgroundColor: Theme.of(context).colorScheme.primary,
-          showSelectedLabels: false,
-          showUnselectedLabels: false,
-          onTap: (valor) {
-            generalActions.controllerNavigate(valor);
-          },
-          currentIndex: generalActions.paginaActual,
-          elevation: 5,
-          unselectedIconTheme:
-              IconThemeData(color: Colors.white.withOpacity(.3)),
-          type: BottomNavigationBarType.fixed,
-          fixedColor: Colors.white.withOpacity(.1),
-          selectedIconTheme: const IconThemeData(
-            color: Colors.white,
-          ),
-          items: authService.usuario.socio
-              ? listaSocio(context)
-              : listaUsuario(context),
+    return SizedBox(
+      height: 80,
+      child: BottomNavigationBar(
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        showSelectedLabels: false,
+        showUnselectedLabels: false,
+        onTap: (valor) {
+          generalActions.controllerNavigate(valor);
+        },
+        currentIndex: generalActions.paginaActual,
+        elevation: 5,
+        unselectedIconTheme: IconThemeData(color: Colors.white.withOpacity(.3)),
+        type: BottomNavigationBarType.fixed,
+        fixedColor: Colors.white.withOpacity(.1),
+        selectedIconTheme: const IconThemeData(
+          color: Colors.white,
         ),
+        items: authService.usuario.socio
+            ? listaSocio(context)
+            : listaUsuario(context),
       ),
     );
   }

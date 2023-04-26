@@ -179,6 +179,29 @@ class _DashBoardViewRepartidorState extends State<DashBoardViewRepartidor>
                   ),
                 ),
                 Positioned(
+                    top: 90,
+                    left: 20,
+                    child: GestureDetector(
+                      behavior: HitTestBehavior.translucent,
+                      onTap: () {
+                        setState(() {});
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.2),
+                            spreadRadius: 5,
+                            blurRadius: 7,
+                            offset: const Offset(
+                                0, 3), // changes position of shadow
+                          ),
+                        ], color: Colors.white, shape: BoxShape.circle),
+                        width: 50,
+                        height: 50,
+                        child: const Icon(Icons.bolt),
+                      ),
+                    )),
+                Positioned(
                   bottom: 0,
                   child: Container(
                     padding: const EdgeInsets.symmetric(
@@ -213,10 +236,15 @@ class _DashBoardViewRepartidorState extends State<DashBoardViewRepartidor>
                                                     ),
                                                   );
 
-                                                  ScaffoldMessenger.of(context)
-                                                      .showSnackBar(snackBar);
+                                                  if (context.mounted) {
+                                                    ScaffoldMessenger.of(
+                                                            context)
+                                                        .showSnackBar(snackBar);
+                                                  }
                                                 }
-                                                Navigator.pop(context);
+                                                if (context.mounted) {
+                                                  Navigator.pop(context);
+                                                }
                                               },
                                               behavior:
                                                   HitTestBehavior.translucent,
@@ -284,10 +312,15 @@ class _DashBoardViewRepartidorState extends State<DashBoardViewRepartidor>
                                                     ),
                                                   );
 
-                                                  ScaffoldMessenger.of(context)
-                                                      .showSnackBar(snackBar);
+                                                  if (context.mounted) {
+                                                    ScaffoldMessenger.of(
+                                                            context)
+                                                        .showSnackBar(snackBar);
+                                                  }
                                                 }
-                                                Navigator.pop(context);
+                                                if (context.mounted) {
+                                                  Navigator.pop(context);
+                                                }
                                               },
                                               behavior:
                                                   HitTestBehavior.translucent,
@@ -385,8 +418,7 @@ class _DashBoardViewRepartidorState extends State<DashBoardViewRepartidor>
                                                                       .spaceBetween,
                                                               children: [
                                                                 Text(
-                                                                  '${nombre[0]} ${nombre[1]
-                                                                          [0]}',
+                                                                  '${nombre[0]} ${nombre[1][0]}',
                                                                   style: GoogleFonts.quicksand(
                                                                       fontSize:
                                                                           22,
@@ -543,10 +575,15 @@ class _DashBoardViewRepartidorState extends State<DashBoardViewRepartidor>
                                                                             .id,
                                                                         idVenta: repartidorService
                                                                             .listaEnvios[valor]
-                                                                            .idVenta);
+                                                                            .idVenta, envio: repartidorService
+                                                                            .listaEnvios[valor]
+                                                                            .envio);
 
-                                                                    Navigator.pop(
-                                                                        context);
+                                                                    if (context
+                                                                        .mounted) {
+                                                                      Navigator.pop(
+                                                                          context);
+                                                                    }
                                                                     if (estado) {
                                                                       await authProvider
                                                                           .transitoUsuarioOff();
@@ -554,13 +591,15 @@ class _DashBoardViewRepartidorState extends State<DashBoardViewRepartidor>
                                                                           .clear();
                                                                       polylineCoordinates
                                                                           .clear();
-                                                                      Navigator
-                                                                          .push(
-                                                                        context,
-                                                                        MaterialPageRoute(
-                                                                            builder: (context) =>
-                                                                                const DoneDeliveryView()),
-                                                                      );
+                                                                      if (context
+                                                                          .mounted) {
+                                                                        Navigator
+                                                                            .push(
+                                                                          context,
+                                                                          MaterialPageRoute(
+                                                                              builder: (context) => const DoneDeliveryView()),
+                                                                        );
+                                                                      }
                                                                     } else {
                                                                       final snackBar =
                                                                           SnackBar(
@@ -578,10 +617,11 @@ class _DashBoardViewRepartidorState extends State<DashBoardViewRepartidor>
                                                                           ],
                                                                         ),
                                                                       );
-                                                                      ScaffoldMessenger.of(
-                                                                              context)
-                                                                          .showSnackBar(
-                                                                              snackBar);
+                                                                      if (context
+                                                                          .mounted) {
+                                                                        ScaffoldMessenger.of(context)
+                                                                            .showSnackBar(snackBar);
+                                                                      }
                                                                     }
                                                                   } else {
                                                                     final snackBar =
@@ -866,8 +906,11 @@ class _DashBoardViewRepartidorState extends State<DashBoardViewRepartidor>
                                                                               .lng
                                                                               .toDouble()),
                                                                       14));
-                                                                  Navigator.pop(
-                                                                      context);
+                                                                  if (context
+                                                                      .mounted) {
+                                                                    Navigator.pop(
+                                                                        context);
+                                                                  }
                                                                   final snackBar =
                                                                       SnackBar(
                                                                     duration: const Duration(
@@ -890,13 +933,19 @@ class _DashBoardViewRepartidorState extends State<DashBoardViewRepartidor>
                                                                     ),
                                                                   );
 
-                                                                  ScaffoldMessenger.of(
-                                                                          context)
-                                                                      .showSnackBar(
-                                                                          snackBar);
+                                                                  if (context
+                                                                      .mounted) {
+                                                                    ScaffoldMessenger.of(
+                                                                            context)
+                                                                        .showSnackBar(
+                                                                            snackBar);
+                                                                  }
                                                                 } else {
-                                                                  Navigator.pop(
-                                                                      context);
+                                                                  if (context
+                                                                      .mounted) {
+                                                                    Navigator.pop(
+                                                                        context);
+                                                                  }
                                                                   final snackBar =
                                                                       SnackBar(
                                                                     duration: const Duration(
@@ -919,10 +968,13 @@ class _DashBoardViewRepartidorState extends State<DashBoardViewRepartidor>
                                                                     ),
                                                                   );
 
-                                                                  ScaffoldMessenger.of(
-                                                                          context)
-                                                                      .showSnackBar(
-                                                                          snackBar);
+                                                                  if (context
+                                                                      .mounted) {
+                                                                    ScaffoldMessenger.of(
+                                                                            context)
+                                                                        .showSnackBar(
+                                                                            snackBar);
+                                                                  }
                                                                 }
                                                               },
                                                             ),
@@ -1315,8 +1367,11 @@ class _DashBoardViewRepartidorState extends State<DashBoardViewRepartidor>
                                                                           .lng
                                                                           .toDouble()),
                                                                   14));
-                                                              Navigator.pop(
-                                                                  context);
+                                                              if (context
+                                                                  .mounted) {
+                                                                Navigator.pop(
+                                                                    context);
+                                                              }
                                                               final snackBar =
                                                                   SnackBar(
                                                                 duration:
@@ -1340,14 +1395,19 @@ class _DashBoardViewRepartidorState extends State<DashBoardViewRepartidor>
                                                                 ),
                                                               );
 
-                                                              ScaffoldMessenger
-                                                                      .of(
-                                                                          context)
-                                                                  .showSnackBar(
-                                                                      snackBar);
+                                                              if (context
+                                                                  .mounted) {
+                                                                ScaffoldMessenger.of(
+                                                                        context)
+                                                                    .showSnackBar(
+                                                                        snackBar);
+                                                              }
                                                             } else {
-                                                              Navigator.pop(
-                                                                  context);
+                                                              if (context
+                                                                  .mounted) {
+                                                                Navigator.pop(
+                                                                    context);
+                                                              }
                                                               final snackBar =
                                                                   SnackBar(
                                                                 duration:
@@ -1371,11 +1431,13 @@ class _DashBoardViewRepartidorState extends State<DashBoardViewRepartidor>
                                                                 ),
                                                               );
 
-                                                              ScaffoldMessenger
-                                                                      .of(
-                                                                          context)
-                                                                  .showSnackBar(
-                                                                      snackBar);
+                                                              if (context
+                                                                  .mounted) {
+                                                                ScaffoldMessenger.of(
+                                                                        context)
+                                                                    .showSnackBar(
+                                                                        snackBar);
+                                                              }
                                                             }
                                                           },
                                                         ),

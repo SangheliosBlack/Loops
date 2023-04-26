@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_print
+// ignore_for_file: avoid_print, use_build_context_synchronously
 
 import 'package:bluetooth_enable_fork/bluetooth_enable_fork.dart';
 import 'package:delivery/helpers/calculando_alerta.dart';
@@ -64,7 +64,7 @@ class _PuntoVentaMainViewState extends State<PuntoVentaMainView> {
     socketService.socket.on('conectar-negocio', (data) => print(data));
 
     final socioService = Provider.of<SocioService>(context, listen: false);
-    
+
     socioService.obtenerPedidos(
         filter: '',
         token: LocalStorage.prefs.getString('token2') ?? '',
@@ -747,7 +747,9 @@ class _PuntoVentaMainViewState extends State<PuntoVentaMainView> {
                                                       context: context,
                                                       delegate: SearchPrenda());
                                               if (!resultado!.cancelo) {
-                                                calculandoAlerta(context);
+                                                if (context.mounted) {
+                                                  calculandoAlerta(context);
+                                                }
                                                 await authServiceService
                                                     .agregarProductoCesta(
                                                         skuOnly: true,
@@ -756,7 +758,9 @@ class _PuntoVentaMainViewState extends State<PuntoVentaMainView> {
                                                         cantidad: 1,
                                                         listado: [],
                                                         envio: 0);
-                                                Navigator.pop(context);
+                                                if (context.mounted) {
+                                                  Navigator.pop(context);
+                                                }
                                                 final snackBar = SnackBar(
                                                   duration: const Duration(
                                                       seconds: 2),
@@ -771,9 +775,11 @@ class _PuntoVentaMainViewState extends State<PuntoVentaMainView> {
                                                     ),
                                                   ),
                                                 );
+                                                if (context.mounted) {
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(snackBar);
+                                                }
 
-                                                ScaffoldMessenger.of(context)
-                                                    .showSnackBar(snackBar);
                                                 //////
                                                 generalActions
                                                     .controllerNavigate(0);
@@ -1398,7 +1404,7 @@ class _PuntoVentaMainViewState extends State<PuntoVentaMainView> {
           socketService.socket.emit('conectar-negocio', {'token': token});
           await socioProvider.conectarNegocio();
         }
-        Navigator.pop(context);
+        if (context.mounted) Navigator.pop(context);
       },
     );
     Widget cancelButton = TextButton(
@@ -1431,15 +1437,17 @@ class _PuntoVentaMainViewState extends State<PuntoVentaMainView> {
     );
 
     // show the dialog
-    showDialog(
-      barrierDismissible: false,
-      useSafeArea: true,
-      barrierColor: Colors.black.withOpacity(.2),
-      context: context,
-      builder: (BuildContext context) {
-        return alert;
-      },
-    );
+    if (context.mounted) {
+      showDialog(
+        barrierDismissible: false,
+        useSafeArea: true,
+        barrierColor: Colors.black.withOpacity(.2),
+        context: context,
+        builder: (BuildContext context) {
+          return alert;
+        },
+      );
+    }
   }
 }
 
@@ -1451,10 +1459,10 @@ Future<void> scanQR(SocioService socioService, BuildContext context) async {
             '#3EB9B1', 'Cancelar', false, BarcodeScanner.ScanMode.QR);
 
     final Venta? venta = await socioService.obtenerVentaQR(qr: barcodeScanRes);
-    mostrarCarga(context);
+    if (context.mounted) mostrarCarga(context);
     await Future.delayed(const Duration(milliseconds: 1000));
 
-    Navigator.pop(context);
+    if (context.mounted) Navigator.pop(context);
 
     print(venta);
 

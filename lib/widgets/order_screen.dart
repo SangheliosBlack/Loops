@@ -24,6 +24,7 @@ import 'package:delivery/widgets/direcciones_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
@@ -116,7 +117,7 @@ class SectionOrder extends StatelessWidget {
                             onTap: () async {
                               mostrarCarga(context);
                               await authService.eliminarCesta();
-                              Navigator.pop(context);
+                              if (context.mounted) Navigator.pop(context);
                               final snackBar = SnackBar(
                                 duration: const Duration(seconds: 2),
                                 backgroundColor:
@@ -129,8 +130,10 @@ class SectionOrder extends StatelessWidget {
                                 ),
                               );
 
-                              ScaffoldMessenger.of(context)
-                                  .showSnackBar(snackBar);
+                              if (context.mounted) {
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(snackBar);
+                              }
                             },
                             child: Container(
                                 padding: const EdgeInsets.symmetric(
@@ -355,7 +358,7 @@ class OrderItems extends StatelessWidget {
                       onTap: () async {
                         mostrarCarga(context);
                         await authService.eliminarProductoCesta(pos: index);
-                        Navigator.pop(context);
+                        if (context.mounted) Navigator.pop(context);
                         final snackBar = SnackBar(
                           duration: const Duration(seconds: 2),
                           backgroundColor: const Color.fromRGBO(0, 0, 0, 1),
@@ -367,7 +370,9 @@ class OrderItems extends StatelessWidget {
                           ),
                         );
 
-                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                        }
                       },
                       child: Container(
                         margin: const EdgeInsets.only(bottom: 13),
@@ -418,16 +423,16 @@ class OrderItems extends StatelessWidget {
                                 ),
                               );
 
-                               if(context.mounted){
+                              if (context.mounted) {
                                 ScaffoldMessenger.of(context)
-                                  .showSnackBar(snackBar);
-                               }
+                                    .showSnackBar(snackBar);
+                              }
                             } else {
                               mostrarCarga(context);
                               await authService.actulizarCantidad(
                                   cantidad: (producto.cantidad - 1).toInt(),
                                   index: index);
-                              if(context.mounted) Navigator.pop(context);
+                              if (context.mounted) Navigator.pop(context);
                             }
                           },
                           child: Container(
@@ -465,7 +470,7 @@ class OrderItems extends StatelessWidget {
                                   await authService.actulizarCantidad(
                                       cantidad: (producto.cantidad + 1).toInt(),
                                       index: index);
-                                   if(context.mounted)Navigator.pop(context);
+                                  if (context.mounted) Navigator.pop(context);
                                 }
                               : () {
                                   final snackBar = SnackBar(
@@ -553,21 +558,27 @@ class DeliveryOptionsContainer extends StatelessWidget {
                   if (sugerencia.listaSugerencias.isEmpty) {
                     await sugerencia.ubicacionActual();
                   }
-                  final resultado = await showSearch(
-                      context: context, delegate: SearchDestination());
-                  if (resultado!.cancelo == false) {
-                    retornoBusqueda(resultado, direccionesService, context);
+                  if (context.mounted) {
+                    final resultado = await showSearch(
+                        context: context, delegate: SearchDestination());
+                    if (resultado!.cancelo == false) {
+                      if (context.mounted) {
+                        retornoBusqueda(resultado, direccionesService, context);
+                      }
+                    }
                   }
                 } catch (e) {
                   debugPrint('Ningun lugar seleccionado');
                 }
-                if(context.mounted) Navigator.pop(context);
+                if (context.mounted) Navigator.pop(context);
               } else {
                 try {
                   final resultado = await showSearch(
                       context: context, delegate: SearchDestination());
                   if (resultado!.cancelo == false) {
-                    retornoBusqueda(resultado, direccionesService, context);
+                    if (context.mounted) {
+                      retornoBusqueda(resultado, direccionesService, context);
+                    }
                   }
                 } catch (e) {
                   debugPrint('Ningun lugar seleccionado');
@@ -637,7 +648,7 @@ class DeliveryOptionsContainer extends StatelessWidget {
     final nuevaDireccion = await direccionesService.agregarNuevaDireccion(
         id: id, latitud: latitud, longitud: longitud, titulo: titulo);
     if (nuevaDireccion) {
-      Navigator.pop(context);
+      if (context.mounted) Navigator.pop(context);
     } else {
       /**IMPLEMENTAR ALGO ERROR*/
     }
@@ -1064,6 +1075,44 @@ class _PaymentSummaryState extends State<PaymentSummary> {
                   ),
                 ),
                 const SizedBox(height: 5),
+                Container(
+                  margin: const EdgeInsets.only(top: 5),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                              width: 65,
+                              height: 45,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color:
+                                      const Color.fromARGB(255, 255, 186, 102)),
+                              child: const Center(
+                                child: FaIcon(
+                                  FontAwesomeIcons.bitcoinSign,
+                                  color: Colors.white,
+                                  size: 18,
+                                ),
+                              )),
+                          const SizedBox(width: 12),
+                          Text('Bitcoin',
+                              style: GoogleFonts.quicksand(
+                                fontSize: 17,
+                                color: Colors.black.withOpacity(.8),
+                              ))
+                        ],
+                      ),
+                      Text(
+                        'Proximamanete...',
+                        style: GoogleFonts.quicksand(
+                            color: Colors.grey, fontSize: 12),
+                      )
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 5),
                 /*Container(
                   margin: const EdgeInsets.only(top: 5),
                   padding: const EdgeInsets.all(5),
@@ -1149,12 +1198,14 @@ class _PaymentSummaryState extends State<PaymentSummary> {
                         );
                         controller.text = '';
                         await Future.delayed(const Duration(milliseconds: 300));
-                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                        }
                       } else {
                         mostrarCarga(context);
                         var codigo = await authService.aplicarCupon(codigo: d);
                         controller.text = '';
-                        Navigator.pop(context);
+                        if (context.mounted) Navigator.pop(context);
                         if (codigo.ok == false) {
                           final snackBar = SnackBar(
                             duration: const Duration(seconds: 2),
@@ -1166,8 +1217,10 @@ class _PaymentSummaryState extends State<PaymentSummary> {
                               ),
                             ),
                           );
-
-                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(snackBar);
+                          }
                         } else {
                           final nombre = codigo.usuario.split(' ');
                           final snackBar = SnackBar(
@@ -1180,7 +1233,10 @@ class _PaymentSummaryState extends State<PaymentSummary> {
                               ),
                             ),
                           );
-                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(snackBar);
+                          }
                           await Future.delayed(
                               const Duration(milliseconds: 600));
                           scrollListView(controller: widget.controller);
@@ -1223,13 +1279,15 @@ class _PaymentSummaryState extends State<PaymentSummary> {
                       );
                       controller.text = '';
                       await Future.delayed(const Duration(milliseconds: 300));
-                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                      }
                     } else {
                       mostrarCarga(context);
                       var codigo = await authService.aplicarCupon(
                           codigo: controller.text);
                       controller.text = '';
-                      Navigator.pop(context);
+                      if (context.mounted) Navigator.pop(context);
                       if (codigo.ok == false) {
                         final snackBar = SnackBar(
                           duration: const Duration(seconds: 2),
@@ -1242,7 +1300,9 @@ class _PaymentSummaryState extends State<PaymentSummary> {
                           ),
                         );
 
-                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                        }
                       } else {
                         final nombre = codigo.usuario.split(' ');
                         final snackBar = SnackBar(
@@ -1255,7 +1315,10 @@ class _PaymentSummaryState extends State<PaymentSummary> {
                             ),
                           ),
                         );
-                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                        }
+
                         await Future.delayed(const Duration(milliseconds: 600));
                         scrollListView(controller: widget.controller);
                       }
@@ -1500,22 +1563,41 @@ class _PaymentSummaryState extends State<PaymentSummary> {
             children: [
               Expanded(
                 child: GestureDetector(
-                  onTap: revisarTiendasAbiertas(
-                              authSerice: authService,
-                              pantallasService: pantallaService) ==
-                          false
-                      ? authService.usuario.cesta.productos.isEmpty ||
-                              direccionesService.direcciones.isEmpty ||
-                              authService.calcularTotal() >= 999 &&
-                                  authService.usuario.cesta.efectivo
-                          ? null
-                          : () async {
-                              calculandoAlerta(context);
-                              /*NotificationApi.showNotification(
+                  onTap: authService.estadoSistemaStatus ==
+                          EstadoSistema.isNotAvailable
+                      ? () {
+                          final snackBar = SnackBar(
+                            duration: const Duration(seconds: 2),
+                            backgroundColor: const Color.fromRGBO(0, 0, 0, 1),
+                            content: Text(
+                              'Loops aun no se encuentra disponible.',
+                              style: GoogleFonts.quicksand(
+                                color: Colors.white,
+                              ),
+                            ),
+                          );
+
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(snackBar);
+                          }
+                        }
+                      : revisarTiendasAbiertas(
+                                  authSerice: authService,
+                                  pantallasService: pantallaService) ==
+                              false
+                          ? authService.usuario.cesta.productos.isEmpty ||
+                                  direccionesService.direcciones.isEmpty ||
+                                  authService.calcularTotal() >= 999 &&
+                                      authService.usuario.cesta.efectivo
+                              ? null
+                              : () async {
+                                  calculandoAlerta(context);
+                                  /*NotificationApi.showNotification(
                               title: 'Titulos',
                               body: 'Body',
                               payload: 'sarah.abs');*/
-                              /*socketService.emit('mensaje-personal', {
+                                  /*socketService.emit('mensaje-personal', {
                             'direccion': direccionesService.direcciones[
                                 authService.usuario.cesta.direccion.titulo != ''
                                     ? direccionesService.direcciones.indexWhere(
@@ -1539,76 +1621,80 @@ class _PaymentSummaryState extends State<PaymentSummary> {
                             'efectivo': authService.usuario.cesta.efectivo,
                             'prodcutos': authService.usuario.cesta.productos
                           });*/
-                              final busqueda = tarjetasService.listaTarjetas
-                                  .indexWhere((element) =>
-                                      element.id ==
-                                      customerService.tarjetaPredeterminada);
-                              final busqueda2 = tarjetasService.listaTarjetas
-                                  .indexWhere((element) =>
-                                      element.id ==
-                                      authService.usuario.cesta.tarjeta);
-                              final venta = await authService.crearPedido(
-                                  direccion: direccionesService.direcciones[authService
-                                              .usuario.cesta.direccion.titulo !=
-                                          ''
-                                      ? direccionesService.direcciones
-                                          .indexWhere((element) =>
-                                              authService.usuario.cesta.direccion.titulo ==
-                                              element.titulo)
-                                      : obtenerFavorito(direccionesService.direcciones) !=
-                                              -1
-                                          ? obtenerFavorito(
-                                              direccionesService.direcciones)
-                                          : 0],
-                                  tarjeta: busqueda2 != -1
-                                      ? tarjetasService
-                                          .listaTarjetas[busqueda2].id
-                                      : tarjetasService.listaTarjetas.isNotEmpty
+                                  final busqueda = tarjetasService.listaTarjetas
+                                      .indexWhere((element) =>
+                                          element.id ==
+                                          customerService
+                                              .tarjetaPredeterminada);
+                                  final busqueda2 = tarjetasService
+                                      .listaTarjetas
+                                      .indexWhere((element) =>
+                                          element.id ==
+                                          authService.usuario.cesta.tarjeta);
+                                  final venta = await authService.crearPedido(
+                                      direccion: direccionesService.direcciones[
+                                          authService.usuario.cesta.direccion.titulo !=
+                                                  ''
+                                              ? direccionesService.direcciones
+                                                  .indexWhere((element) =>
+                                                      authService.usuario.cesta
+                                                          .direccion.titulo ==
+                                                      element.titulo)
+                                              : obtenerFavorito(direccionesService.direcciones) !=
+                                                      -1
+                                                  ? obtenerFavorito(
+                                                      direccionesService
+                                                          .direcciones)
+                                                  : 0],
+                                      tarjeta: busqueda2 != -1
                                           ? tarjetasService
-                                              .listaTarjetas[
-                                                  busqueda != -1 ? busqueda : 0]
-                                              .id
-                                          : '',
-                                  customer: customerService.customer.id,
-                                  envio: authService.calcularEnvioAvanzado(
-                                      tiendas: pantallaService.tiendas,
-                                      direcciones: direccionesService.direcciones),
-                                  tiendaRopa: false,
-                                  listadoEnviosValores: authService.calcularEnviosIndividuales(tiendas: pantallaService.tiendas, direcciones: direccionesService.direcciones));
+                                              .listaTarjetas[busqueda2].id
+                                          : tarjetasService
+                                                  .listaTarjetas.isNotEmpty
+                                              ? tarjetasService
+                                                  .listaTarjetas[busqueda != -1 ? busqueda : 0]
+                                                  .id
+                                              : '',
+                                      customer: customerService.customer.id,
+                                      envio: authService.calcularEnvioAvanzado(tiendas: pantallaService.tiendas, direcciones: direccionesService.direcciones),
+                                      tiendaRopa: false,
+                                      listadoEnviosValores: authService.calcularEnviosIndividuales(tiendas: pantallaService.tiendas, direcciones: direccionesService.direcciones));
 
-                              if (venta != null) {
-                                pedidosService.agregarCompra(venta: venta);
-                                // socketService.socket
-                                //     .emit('enviar-pedido', venta);
-                                scrollListView2(controller: widget.controller);
-                                if(context.mounted) Navigator.pop(context);
-                                if(context.mounted){
-                                } Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => DoneView(
-                                            venta: venta,
-                                          )),
-                                );
-                                  
-                              } else {
-                                final snackBar = SnackBar(
-                                  duration: const Duration(seconds: 2),
-                                  backgroundColor:
-                                      const Color.fromRGBO(0, 0, 0, 1),
-                                  content: Text(
-                                    'Establecimiento fuera de horario',
-                                    style: GoogleFonts.quicksand(
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                );
+                                  if (venta != null) {
+                                    pedidosService.agregarCompra(venta: venta);
+                                    // socketService.socket
+                                    //     .emit('enviar-pedido', venta);
+                                    scrollListView2(
+                                        controller: widget.controller);
+                                    if (context.mounted) Navigator.pop(context);
+                                    if (context.mounted) {}
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => DoneView(
+                                                venta: venta,
+                                              )),
+                                    );
+                                  } else {
+                                    final snackBar = SnackBar(
+                                      duration: const Duration(seconds: 2),
+                                      backgroundColor:
+                                          const Color.fromRGBO(0, 0, 0, 1),
+                                      content: Text(
+                                        'Establecimiento fuera de horario',
+                                        style: GoogleFonts.quicksand(
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    );
 
-                                ScaffoldMessenger.of(context)
-                                    .showSnackBar(snackBar);
-                              }
-                            }
-                      : null,
+                                    if (context.mounted) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(snackBar);
+                                    }
+                                  }
+                                }
+                          : null,
                   child: AnimatedOpacity(
                     duration: const Duration(milliseconds: 400),
                     opacity: revisarTiendasAbiertas(

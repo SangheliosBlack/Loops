@@ -70,7 +70,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '101948232468',
     projectId: 'flluter-push-notifications',
     storageBucket: 'flluter-push-notifications.appspot.com',
-    iosClientId: '101948232468-gngiig53iccgiqbk25anfsq9njjtd7c6.apps.googleusercontent.com',
-    iosBundleId: 'com.example.delivery',
+    iosClientId:
+        '101948232468-gngiig53iccgiqbk25anfsq9njjtd7c6.apps.googleusercontent.com',
+    iosBundleId: 'com.loopsdelivery',
   );
 }

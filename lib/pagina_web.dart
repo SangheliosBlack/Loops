@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:text_scroll/text_scroll.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:whatsapp_unilink/whatsapp_unilink.dart';
 
@@ -12,7 +11,6 @@ class PaginaWeb extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
-    double width = MediaQuery.of(context).size.width;
 
     return Overlay(
       initialEntries: [
@@ -33,17 +31,17 @@ class PaginaWeb extends StatelessWidget {
                               'Proximamente...',
                               style: GoogleFonts.quicksand(color: Colors.white),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               width: 15,
                             ),
-                            Icon(
+                            const Icon(
                               FontAwesomeIcons.googlePlay,
                               color: Colors.white,
                             ),
-                            SizedBox(
+                            const SizedBox(
                               width: 10,
                             ),
-                            Icon(
+                            const Icon(
                               FontAwesomeIcons.appStore,
                               color: Colors.white,
                             )
@@ -67,10 +65,10 @@ class PaginaWeb extends StatelessWidget {
                           style: GoogleFonts.quicksand(
                               color: Colors.white, fontSize: 30),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 15,
                         ),
-                        Icon(
+                        const Icon(
                           Icons.surfing,
                           color: Colors.white,
                           size: 150,
@@ -82,10 +80,10 @@ class PaginaWeb extends StatelessWidget {
                     children: [
                       Expanded(
                         child: SingleChildScrollView(
-                          physics: BouncingScrollPhysics(),
+                          physics: const BouncingScrollPhysics(),
                           child: Container(
                             height: height,
-                            decoration: BoxDecoration(
+                            decoration: const BoxDecoration(
                               image: DecorationImage(
                                   image: AssetImage('assets/images/pub.jpeg'),
                                   fit: BoxFit.cover),
@@ -102,22 +100,22 @@ class PaginaWeb extends StatelessWidget {
                                       width: 180,
                                       height: 180,
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 10,
                                     ),
                                     Container(
-                                      margin: EdgeInsets.symmetric(vertical: 7),
+                                      margin: const EdgeInsets.symmetric(vertical: 7),
                                       width: 250,
                                       height: 1,
                                       decoration:
-                                          BoxDecoration(color: Colors.white),
+                                          const BoxDecoration(color: Colors.white),
                                     ),
                                     Text(
                                       'DELIVERY',
                                       style: GoogleFonts.quicksand(
                                           color: Colors.white, fontSize: 32),
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 70,
                                     ),
                                     Row(
@@ -132,7 +130,7 @@ class PaginaWeb extends StatelessWidget {
                                     Row(
                                       children: [
                                         Container(
-                                          margin: EdgeInsets.only(top: 25),
+                                          margin: const EdgeInsets.only(top: 25),
                                           child: Column(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
@@ -145,7 +143,7 @@ class PaginaWeb extends StatelessWidget {
                                                       fontWeight:
                                                           FontWeight.w100,
                                                       fontSize: 18)),
-                                              SizedBox(
+                                              const SizedBox(
                                                 height: 5,
                                               ),
                                               Text(
@@ -155,7 +153,7 @@ class PaginaWeb extends StatelessWidget {
                                                       fontWeight:
                                                           FontWeight.w100,
                                                       fontSize: 18)),
-                                              SizedBox(
+                                              const SizedBox(
                                                 height: 5,
                                               ),
                                               Text(
@@ -165,7 +163,7 @@ class PaginaWeb extends StatelessWidget {
                                                           FontWeight.w100,
                                                       color: Colors.white,
                                                       fontSize: 18)),
-                                              SizedBox(
+                                              const SizedBox(
                                                 height: 5,
                                               ),
                                               Text(
@@ -175,7 +173,7 @@ class PaginaWeb extends StatelessWidget {
                                                       fontWeight:
                                                           FontWeight.w100,
                                                       fontSize: 18)),
-                                              SizedBox(
+                                              const SizedBox(
                                                 height: 5,
                                               ),
                                               Text('- Motocicleta propia',
@@ -184,7 +182,7 @@ class PaginaWeb extends StatelessWidget {
                                                       fontWeight:
                                                           FontWeight.w100,
                                                       fontSize: 18)),
-                                              SizedBox(
+                                              const SizedBox(
                                                 height: 20,
                                               ),
                                               Text(
@@ -194,7 +192,7 @@ class PaginaWeb extends StatelessWidget {
                                                       fontWeight:
                                                           FontWeight.w100,
                                                       fontSize: 18)),
-                                              SizedBox(
+                                              const SizedBox(
                                                 height: 5,
                                               ),
                                               Text('- Vales de gasolina',
@@ -203,7 +201,7 @@ class PaginaWeb extends StatelessWidget {
                                                           FontWeight.w100,
                                                       color: Colors.white,
                                                       fontSize: 18)),
-                                              SizedBox(
+                                              const SizedBox(
                                                 height: 5,
                                               ),
                                               Text('- Sueldo diario',
@@ -225,7 +223,7 @@ class PaginaWeb extends StatelessWidget {
                         ),
                       ),
                       Container(
-                        padding: EdgeInsets.all(20),
+                        padding: const EdgeInsets.all(20),
                         color: Colors.black,
                         child: Row(
                           children: [
@@ -238,12 +236,12 @@ class PaginaWeb extends StatelessWidget {
                                         url:
                                             'https://www.facebook.com/profile.php?id=100088086092372');
                                   },
-                                  child: Icon(
+                                  child: const Icon(
                                     FontAwesomeIcons.facebook,
                                     color: Colors.white,
                                   ),
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   width: 10,
                                 ),
                                 GestureDetector(
@@ -253,19 +251,19 @@ class PaginaWeb extends StatelessWidget {
                                         url:
                                             'https://www.instagram.com/loopsdelivery/');
                                   },
-                                  child: Icon(
+                                  child: const Icon(
                                     FontAwesomeIcons.instagram,
                                     color: Colors.white,
                                   ),
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   width: 10,
                                 ),
                                 GestureDetector(
                                   onTap: () {
                                     launchWhatsAppUri();
                                   },
-                                  child: Icon(
+                                  child: const Icon(
                                     FontAwesomeIcons.whatsapp,
                                     color: Colors.white,
                                   ),
@@ -296,7 +294,7 @@ class PaginaWeb extends StatelessWidget {
   }
 
   launchWhatsAppUri() async {
-    final link = WhatsAppUnilink(
+    const link = WhatsAppUnilink(
       phoneNumber: '+52-(474)1030509',
       text: "Hola, quisiera participar como repartidor en Loops!",
     );

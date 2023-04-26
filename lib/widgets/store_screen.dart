@@ -374,7 +374,7 @@ class ListadoCategorias extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 25),
         decoration: BoxDecoration(
-            color: const Color.fromRGBO(243, 246, 246, 1),
+            color: const Color.fromRGBO(238, 238, 238, 1),
             borderRadius: BorderRadius.circular(15)),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,

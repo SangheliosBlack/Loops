@@ -1,4 +1,5 @@
 import 'package:delivery/pagina_web.dart';
+import 'package:delivery/service/repartidor_service.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:delivery/providers/register_form_provider.dart';
@@ -10,6 +11,7 @@ import 'package:delivery/service/navigator_service.dart';
 import 'package:delivery/service/bluetooth_servide.dart';
 import 'package:delivery/layout/permission_layout.dart';
 import 'package:delivery/layout/dashboard_layout.dart';
+import 'package:delivery/layout/sistema_estado.dart';
 import 'package:delivery/service/socket_service.dart';
 import 'package:delivery/layout/delivery_layout.dart';
 import 'package:delivery/service/local_storage.dart';
@@ -78,6 +80,7 @@ class AppState extends StatelessWidget {
       ChangeNotifierProvider(lazy: false, create: (_) => LoginFromProvider()),
       ChangeNotifierProvider(lazy: false, create: (_) => AuthService()),
       ChangeNotifierProvider(lazy: false, create: (_) => PutoDial()),
+      ChangeNotifierProvider(lazy: false, create: (_) => RepartidorProvider()),
       ChangeNotifierProvider(
           lazy: false, create: (_) => PermissionStatusProvider()),
     ], child: const MyApp());
@@ -146,29 +149,40 @@ class _MyAppState extends State<MyApp> {
             : Overlay(
                 initialEntries: [
                   OverlayEntry(builder: (context) {
-                    return authProvider.authStatus == AuthStatus.checking
-                        ? const SplashLayout()
-                        : authProvider.authStatus == AuthStatus.authenticated
-                            ? permissionProvider.isGranted &&
-                                        permissionProvider.isEnabled ||
-                                    kIsWeb
-                                ? authProvider.puntoVentaStatus ==
-                                        PuntoVenta.isAvailable
-                                    ? SocioLayout(
-                                        child: child!,
-                                      )
-                                    : socketProvider.serverStatus ==
-                                            ServerStatus.Online
-                                        ? authProvider.usuario.repartidor
-                                            ? DeliveryLayout(
-                                                child: child!,
-                                              )
-                                            : DashboardLayout(
-                                                child: child!,
-                                              )
-                                        : const SplashLayout()
-                                : PermissionLaoyut(child: child!)
-                            : AuthLayout(child: child!);
+                    return authProvider.estadoSistemaStatus ==
+                                EstadoSistema.isClosed ||
+                            authProvider.estadoSistemaStatus ==
+                                EstadoSistema.isMaintenance ||
+                            authProvider.estadoSistemaStatus ==
+                                EstadoSistema.noUpdate ||
+                            authProvider.estadoSistemaStatus ==
+                                EstadoSistema.restringido
+                        ? const SistemaEstadoLayout()
+                        : authProvider.authStatus == AuthStatus.checking
+                            ? const SplashLayout()
+                            : authProvider.authStatus ==
+                                    AuthStatus.authenticated
+                                ? permissionProvider.isGranted &&
+                                            permissionProvider.isEnabled ||
+                                        kIsWeb
+                                    ? authProvider.puntoVentaStatus ==
+                                            PuntoVenta.isAvailable
+                                        ? SocioLayout(
+                                            child: child!,
+                                          )
+                                        : socketProvider.serverStatus ==
+                                                ServerStatus.Online
+                                            ? authProvider.usuario.repartidor &&
+                                                    authProvider.usuario.hibrido
+                                                ? DeliveryLayout(
+                                                    child: child!,
+                                                  )
+                                                : DashboardLayout(
+                                                    child: child!,
+                                                  )
+                                            : const SplashLayout()
+                                    : PermissionLaoyut(child: child!)
+                                : AuthLayout(child: child!);
                   })
                 ],
               );

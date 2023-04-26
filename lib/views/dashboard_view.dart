@@ -219,24 +219,33 @@ class _DashboardViewState extends State<DashboardView> {
                                               .listaSugerencias.isEmpty) {
                                             await sugerencia.ubicacionActual();
                                           }
-                                          final resultado = await showSearch(
-                                              context: context,
-                                              delegate: SearchDestination());
-                                          if (resultado!.cancelo == false) {
-                                            retornoBusqueda(resultado,
-                                                direccionesService, context);
+                                          if (context.mounted) {
+                                            final resultado = await showSearch(
+                                                context: context,
+                                                delegate: SearchDestination());
+                                            if (resultado!.cancelo == false) {
+                                              if (context.mounted) {
+                                                retornoBusqueda(
+                                                    resultado,
+                                                    direccionesService,
+                                                    context);
+                                              }
+                                            }
                                           }
                                         } catch (e) {
                                           debugPrint(
                                               'Ningun lugar seleccionado');
                                         }
-                                        Navigator.pop(context);
+                                        if (context.mounted) {
+                                          Navigator.pop(context);
+                                        }
                                       } else {
                                         try {
                                           final resultado = await showSearch(
                                               context: context,
                                               delegate: SearchDestination());
-                                          if (resultado!.cancelo == false) {
+                                          if (resultado!.cancelo == false &&
+                                              context.mounted) {
                                             retornoBusqueda(resultado,
                                                 direccionesService, context);
                                           }
@@ -344,7 +353,7 @@ class _DashboardViewState extends State<DashboardView> {
     final nuevaDireccion = await direccionesService.agregarNuevaDireccion(
         id: id, latitud: latitud, longitud: longitud, titulo: titulo);
     if (nuevaDireccion) {
-      Navigator.pop(context);
+      if (context.mounted) Navigator.pop(context);
     } else {
       /**IMPLEMENTAR ALGO ERROR*/
     }
@@ -392,6 +401,7 @@ class _DashBoardMainViewState extends State<DashBoardMainView>
   @override
   Widget build(BuildContext context) {
     final pedidosService = Provider.of<PedidosService>(context);
+    final authService = Provider.of<AuthService>(context);
     super.build(context);
     return RefreshIndicator(
       displacement: 100,
@@ -401,6 +411,7 @@ class _DashBoardMainViewState extends State<DashBoardMainView>
         widget.llenarPantallasService.pantallaPrincipalCategorias();
         widget.llenarPantallasService.pantallaPrincipalProductos();
         widget.llenarPantallasService.pantallaPrincipalTiendas();
+        authService.revisarEstado();
         pedidosService.recargarPedidos();
       },
       child: Column(

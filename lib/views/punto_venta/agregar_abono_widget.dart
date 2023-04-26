@@ -247,7 +247,7 @@ class _AgregarAbonoWidgetState extends State<AgregarAbonoWidget> {
 
                             await Future.delayed(
                                 const Duration(milliseconds: 100));
-                            if (bluetoothService.isConnected) {
+                            if (bluetoothService.isConnected && context.mounted) {
                               starPrint(
                                   newDate: true,
                                   entregado: valorNuevoAbono,
@@ -279,11 +279,15 @@ class _AgregarAbonoWidgetState extends State<AgregarAbonoWidget> {
                                 ),
                               );
 
-                              ScaffoldMessenger.of(context)
-                                  .showSnackBar(snackBar);
+                              if (context.mounted) {
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(snackBar);
+                              }
                             }
-                            Navigator.pop(context);
-                            Navigator.pop(context);
+                            if (context.mounted) {
+                              Navigator.pop(context);
+                              Navigator.pop(context);
+                            }
                           }
                         : null),
                     child: Builder(builder: (context) {
