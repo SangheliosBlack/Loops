@@ -1,3 +1,4 @@
+import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:delivery/service/auth_service.dart';
 import 'package:delivery/service/hide_show_menu.dart';
 import 'package:flutter/material.dart';
@@ -12,21 +13,13 @@ class MenuInferior extends StatelessWidget {
     final authService = Provider.of<AuthService>(context);
     return SizedBox(
       height: 80,
-      child: BottomNavigationBar(
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        showSelectedLabels: false,
-        showUnselectedLabels: false,
+      child: CurvedNavigationBar(
+        backgroundColor: Colors.transparent,
+        index: generalActions.paginaActual,
+        color: Theme.of(context).colorScheme.primary,
         onTap: (valor) {
           generalActions.controllerNavigate(valor);
         },
-        currentIndex: generalActions.paginaActual,
-        elevation: 5,
-        unselectedIconTheme: IconThemeData(color: Colors.white.withOpacity(.3)),
-        type: BottomNavigationBarType.fixed,
-        fixedColor: Colors.white.withOpacity(.1),
-        selectedIconTheme: const IconThemeData(
-          color: Colors.white,
-        ),
         items: authService.usuario.socio
             ? listaSocio(context)
             : listaUsuario(context),
@@ -34,222 +27,64 @@ class MenuInferior extends StatelessWidget {
     );
   }
 
-  List<BottomNavigationBarItem> listaUsuario(BuildContext context) {
+  listaUsuario(BuildContext context) {
     final authService = Provider.of<AuthService>(context);
 
     return [
-      const BottomNavigationBarItem(
-        activeIcon: Icon(
-          Icons.home,
-          size: 30,
-        ),
-        icon: Icon(
-          Icons.home_outlined,
-          size: 30,
-        ),
-        label: 'Calls',
-      ),
-      BottomNavigationBarItem(
-        activeIcon: SizedBox(
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              const Icon(
-                Icons.shopping_bag,
-                size: 30,
+      const Icon(Icons.home, size: 30, color: Colors.white),
+      Stack(
+        alignment: Alignment.center,
+        children: [
+          const Icon(Icons.shopping_bag_outlined,
+              size: 30, color: Colors.white),
+          Positioned(
+            top: 0,
+            right: 0,
+            child: AnimatedOpacity(
+              opacity: authService.totalPiezas() > 0 ? 1 : 0,
+              duration: const Duration(milliseconds: 200),
+              child: Container(
+                width: 6,
+                height: 6,
+                decoration: const BoxDecoration(
+                    color: Colors.white, shape: BoxShape.circle),
               ),
-              Positioned(
-                top: 0,
-                right: 0,
-                child: AnimatedOpacity(
-                  opacity: authService.totalPiezas() > 0 ? 1 : 0,
-                  duration: const Duration(milliseconds: 200),
-                  child: Container(
-                    width: 6,
-                    height: 6,
-                    decoration: const BoxDecoration(
-                        color: Color.fromRGBO(41, 199, 184, 1),
-                        shape: BoxShape.circle),
-                  ),
-                ),
-              )
-            ],
-          ),
-        ),
-        icon: SizedBox(
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              const Icon(
-                Icons.shopping_bag_outlined,
-                size: 30,
-              ),
-              Positioned(
-                top: 0,
-                right: 0,
-                child: AnimatedOpacity(
-                  opacity: authService.totalPiezas() > 0 ? 1 : 0,
-                  duration: const Duration(milliseconds: 200),
-                  child: Container(
-                    width: 6,
-                    height: 6,
-                    decoration: const BoxDecoration(
-                        color: Color.fromRGBO(41, 199, 184, 1),
-                        shape: BoxShape.circle),
-                  ),
-                ),
-              )
-            ],
-          ),
-        ),
-        label: 'Camera',
+            ),
+          )
+        ],
       ),
-      /*const BottomNavigationBarItem(
-        activeIcon: Icon(Icons.favorite),
-        icon: Icon(Icons.favorite_outline),
-        label: 'Chats',
-      ),*/
     ];
   }
 
-  List<BottomNavigationBarItem> listaSocio(BuildContext context) {
+  listaSocio(BuildContext context) {
     final authService = Provider.of<AuthService>(context);
     return [
-      const BottomNavigationBarItem(
-        activeIcon: Icon(
-          Icons.home,
-          size: 30,
-        ),
-        icon: Icon(
-          Icons.home_outlined,
-          size: 30,
-        ),
-        label: 'Calls',
+      const Icon(Icons.home, size: 30, color: Colors.white),
+      Stack(
+        alignment: Alignment.center,
+        children: [
+          const Icon(
+            Icons.shopping_bag_outlined,
+            size: 30,
+            color: Colors.white,
+          ),
+          Positioned(
+            top: 0,
+            right: 0,
+            child: AnimatedOpacity(
+              opacity: authService.totalPiezas() > 0 ? 1 : 0,
+              duration: const Duration(milliseconds: 200),
+              child: Container(
+                width: 6,
+                height: 6,
+                decoration: const BoxDecoration(
+                    color: Colors.white, shape: BoxShape.circle),
+              ),
+            ),
+          )
+        ],
       ),
-      BottomNavigationBarItem(
-        activeIcon: SizedBox(
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              const Icon(
-                Icons.shopping_bag,
-                size: 30,
-              ),
-              Positioned(
-                top: 0,
-                right: 0,
-                child: AnimatedOpacity(
-                  opacity: authService.totalPiezas() > 0 ? 1 : 0,
-                  duration: const Duration(milliseconds: 200),
-                  child: Container(
-                    width: 6,
-                    height: 6,
-                    decoration: const BoxDecoration(
-                        color: Color.fromRGBO(41, 199, 184, 1),
-                        shape: BoxShape.circle),
-                  ),
-                ),
-              )
-            ],
-          ),
-        ),
-        icon: SizedBox(
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              const Icon(
-                Icons.shopping_bag_outlined,
-                size: 30,
-              ),
-              Positioned(
-                top: 0,
-                right: 0,
-                child: AnimatedOpacity(
-                  opacity: authService.totalPiezas() > 0 ? 1 : 0,
-                  duration: const Duration(milliseconds: 200),
-                  child: Container(
-                    width: 6,
-                    height: 6,
-                    decoration: const BoxDecoration(
-                        color: Color.fromRGBO(41, 199, 184, 1),
-                        shape: BoxShape.circle),
-                  ),
-                ),
-              )
-            ],
-          ),
-        ),
-        label: 'Camera',
-      ),
-      /*const BottomNavigationBarItem(
-        activeIcon: Icon(Icons.favorite),
-        icon: Icon(Icons.favorite_outline),
-        label: 'Chats',
-      ),*/
-      BottomNavigationBarItem(
-        activeIcon: SizedBox(
-          height: 50,
-          width: 50,
-          child: Stack(
-            alignment: Alignment.center,
-            children: const [
-              Icon(
-                Icons.store,
-                size: 30,
-              ),
-              /*Positioned(
-                top: -3,
-                left: 0,
-                child: Container(
-                  padding: const EdgeInsets.all(5),
-                  decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Color.fromRGBO(41, 200, 182, 1)),
-                  child: Text(
-                    '2',
-                    style: GoogleFonts.quicksand(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                        fontSize: 12),
-                  ),
-                ),
-              )*/
-            ],
-          ),
-        ),
-        icon: SizedBox(
-          height: 50,
-          width: 50,
-          child: Stack(
-            alignment: Alignment.center,
-            children: const [
-              Icon(
-                Icons.store_outlined,
-                size: 30,
-              ),
-
-              /*Positioned(
-                top: -3,
-                left: 0,
-                child: Container(
-                  padding: const EdgeInsets.all(5),
-                  decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Color.fromRGBO(41, 200, 182, 1)),
-                  child: Text(
-                    '2',
-                    style: GoogleFonts.quicksand(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                        fontSize: 12),
-                  ),
-                ),
-              )*/
-            ],
-          ),
-        ),
-        label: 'Camera',
-      ),
+      const Icon(Icons.store, size: 30, color: Colors.white)
     ];
   }
 }
