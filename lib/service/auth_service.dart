@@ -92,7 +92,7 @@ class AuthService with ChangeNotifier {
         headers: {
           'Content-Type': 'application/json',
           'x-token': await AuthService.getToken(),
-          'x-version': '1.0.6 beta'
+          'x-version': '1.0.8 beta'
         });
 
     print(resp.body);

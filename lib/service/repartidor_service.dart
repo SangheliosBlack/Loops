@@ -67,8 +67,6 @@ class RepartidorProvider with ChangeNotifier {
     }
   }
 
-  
-
   Future<List<PedidoProducto>> cargarPedidos() async {
     await Future.delayed(const Duration(milliseconds: 750));
     try {
@@ -116,17 +114,22 @@ class RepartidorProvider with ChangeNotifier {
 
       final envios = pedidoProductoFromJson(resp.body);
       listaEnvios = envios;
+
+      print(envios);
       return envios;
     } catch (e) {
+      print(e);
       return [];
     }
   }
 
   Future<bool> confirmarCodigoCliente(
-      {required String idVenta, required String idSubventa,required num envio}) async {
+      {required String idVenta,
+      required String idSubventa,
+      required num envio}) async {
     await Future.delayed(const Duration(milliseconds: 1000));
 
-    final data = {'uid': idVenta, 'uidVenta': idSubventa,'envio':envio};
+    final data = {'uid': idVenta, 'uidVenta': idSubventa, 'envio': envio};
 
     try {
       final resp = await http.post(
@@ -138,11 +141,11 @@ class RepartidorProvider with ChangeNotifier {
           });
 
       if (resp.statusCode == 200) {
-        listaEnvios[listaEnvios
-                .indexWhere((element) => element.id == idSubventa)]
+        listaEnvios[
+                listaEnvios.indexWhere((element) => element.id == idSubventa)]
             .entregadoCliente = true;
-        listaEnvios[listaEnvios
-                .indexWhere((element) => element.id == idSubventa)]
+        listaEnvios[
+                listaEnvios.indexWhere((element) => element.id == idSubventa)]
             .entregadoClienteTiempo = DateTime.now();
 
         notifyListeners();

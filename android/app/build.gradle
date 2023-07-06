@@ -57,8 +57,8 @@ android {
         applicationId "com.loopsdelivery"
         minSdkVersion 21
         targetSdkVersion flutter.targetSdkVersion
-        versionCode 7
-        versionName "1.0.7 beta"
+        versionCode 8
+        versionName "1.0.8 beta"
         multiDexEnabled true
     }
 
