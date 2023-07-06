@@ -18,7 +18,7 @@ class Statics {
   };
 
   static String apiUrl = 'https://server-delivery-production.herokuapp.com/api';
-   //static String apiUrl = 'http://192.168.0.9:3000/api';
+  //static String apiUrl = 'http://192.168.0.9:3000/api';
   static List<dynamic> listSetting = [
     {
       'icono': Icons.credit_card_outlined,
@@ -39,6 +39,11 @@ class Statics {
       'icono': Icons.route_outlined,
       'titulo': 'Modo repartidor',
       'ruta': '/drawer/repartidor'
+    },
+    {
+      'icono': Icons.storefront,
+      'titulo': 'Vende con nosotros',
+      'ruta': 'logout'
     },
     {'icono': Icons.logout, 'titulo': 'Cerrar sesion', 'ruta': 'logout'},
   ];
