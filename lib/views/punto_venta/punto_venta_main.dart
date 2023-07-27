@@ -177,10 +177,21 @@ class _PuntoVentaMainViewState extends State<PuntoVentaMainView> {
                                             }
                                           : () {},
                                   child: Row(children: [
-                                    Text(
-                                      socioService.tienda.nombre,
-                                      style: GoogleFonts.quicksand(
-                                          fontSize: 25, color: Colors.black),
+                                    Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        
+                                        Text(
+                                          "Caja 1",
+                                          style: GoogleFonts.quicksand(
+                                              fontSize: 11, color: Colors.grey),
+                                        ),
+                                        Text(
+                                          authServiceService.usuario.nombre,
+                                          style: GoogleFonts.quicksand(
+                                              fontSize: 20, color: Colors.black),
+                                        ),
+                                      ],
                                     ),
                                     const SizedBox(
                                       width: 5,
@@ -887,18 +898,7 @@ class _PuntoVentaMainViewState extends State<PuntoVentaMainView> {
                                                 milliseconds: 300),
                                             child: Row(
                                               children: [
-                                                Text(
-                                                  authServiceService.usuario
-                                                      .cesta.productos.length
-                                                      .toString(),
-                                                  style: GoogleFonts.quicksand(
-                                                      color: generalActions
-                                                                  .paginaActual ==
-                                                              0
-                                                          ? Colors.white
-                                                          : Colors.black),
-                                                ),
-                                                const SizedBox(width: 5),
+                                            
                                                 Icon(Icons.shopping_bag,
                                                     color: generalActions
                                                                 .paginaActual ==
@@ -1017,54 +1017,54 @@ class _PuntoVentaMainViewState extends State<PuntoVentaMainView> {
                                             ),
                                           ),
                                         ),
-                                        GestureDetector(
-                                          behavior: HitTestBehavior.translucent,
-                                          onTap: () {
-                                            generalActions
-                                                .controllerNavigate(3);
-                                          },
-                                          child: Container(
-                                            margin:
-                                                const EdgeInsets.only(left: 15),
-                                            padding: const EdgeInsets.symmetric(
-                                                vertical: 5, horizontal: 15),
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(20),
-                                              color:
-                                                  generalActions.paginaActual ==
-                                                          3
-                                                      ? Colors.black
-                                                      : Colors.white,
-                                              border: Border.all(
-                                                  width: 1,
-                                                  color: Colors.grey
-                                                      .withOpacity(.1)),
-                                            ),
-                                            child: Row(
-                                              children: [
-                                                Icon(Icons.pending,
-                                                    color: generalActions
-                                                                .paginaActual ==
-                                                            3
-                                                        ? Colors.white
-                                                        : Colors.black),
-                                                const SizedBox(
-                                                  width: 9,
-                                                ),
-                                                Text(
-                                                  'Apartados',
-                                                  style: GoogleFonts.quicksand(
-                                                      color: generalActions
-                                                                  .paginaActual ==
-                                                              3
-                                                          ? Colors.white
-                                                          : Colors.black),
-                                                )
-                                              ],
-                                            ),
-                                          ),
-                                        ),
+                                        // GestureDetector(
+                                        //   behavior: HitTestBehavior.translucent,
+                                        //   onTap: () {
+                                        //     generalActions
+                                        //         .controllerNavigate(3);
+                                        //   },
+                                        //   child: Container(
+                                        //     margin:
+                                        //         const EdgeInsets.only(left: 15),
+                                        //     padding: const EdgeInsets.symmetric(
+                                        //         vertical: 5, horizontal: 15),
+                                        //     decoration: BoxDecoration(
+                                        //       borderRadius:
+                                        //           BorderRadius.circular(20),
+                                        //       color:
+                                        //           generalActions.paginaActual ==
+                                        //                   3
+                                        //               ? Colors.black
+                                        //               : Colors.white,
+                                        //       border: Border.all(
+                                        //           width: 1,
+                                        //           color: Colors.grey
+                                        //               .withOpacity(.1)),
+                                        //     ),
+                                        //     child: Row(
+                                        //       children: [
+                                        //         Icon(Icons.pending,
+                                        //             color: generalActions
+                                        //                         .paginaActual ==
+                                        //                     3
+                                        //                 ? Colors.white
+                                        //                 : Colors.black),
+                                        //         const SizedBox(
+                                        //           width: 9,
+                                        //         ),
+                                        //         Text(
+                                        //           'Apartados',
+                                        //           style: GoogleFonts.quicksand(
+                                        //               color: generalActions
+                                        //                           .paginaActual ==
+                                        //                       3
+                                        //                   ? Colors.white
+                                        //                   : Colors.black),
+                                        //         )
+                                        //       ],
+                                        //     ),
+                                        //   ),
+                                        // ),
                                         GestureDetector(
                                           onTap: () async {
                                             await scanQR(socioService, context);
@@ -1525,16 +1525,10 @@ class _InventarioViewState extends State<InventarioView>
           padding: const EdgeInsets.symmetric(horizontal: 25),
           child: Row(
             children: [
-              SizedBox(
-                width: 90,
-                child: Text(
-                  'SKU',
-                  style: GoogleFonts.quicksand(color: Colors.blueGrey),
-                ),
-              ),
+              
               Expanded(
                 child: Text('Nombre',
-                    style: GoogleFonts.quicksand(color: Colors.blueGrey)),
+                    style: GoogleFonts.quicksand(color: Colors.blueGrey,fontSize: 12)),
               ),
               const SizedBox(
                 width: 17,
@@ -1542,7 +1536,7 @@ class _InventarioViewState extends State<InventarioView>
               SizedBox(
                 width: 80,
                 child: Text('Cantidad',
-                    style: GoogleFonts.quicksand(color: Colors.blueGrey)),
+                    style: GoogleFonts.quicksand(color: Colors.blueGrey,fontSize: 12)),
               ),
               const SizedBox(
                 width: 5,
@@ -1550,13 +1544,9 @@ class _InventarioViewState extends State<InventarioView>
               SizedBox(
                 width: 85,
                 child: Text('Precio',
-                    style: GoogleFonts.quicksand(color: Colors.blueGrey)),
+                    style: GoogleFonts.quicksand(color: Colors.blueGrey,fontSize: 12)),
               ),
-              SizedBox(
-                width: 55,
-                child: Text('Talla',
-                    style: GoogleFonts.quicksand(color: Colors.blueGrey)),
-              ),
+              
             ],
           ),
         ),
@@ -1584,18 +1574,13 @@ class _InventarioViewState extends State<InventarioView>
                       const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                   child: Row(
                     children: [
-                      SizedBox(
-                        width: 90,
-                        child: Text(
-                          producto.sku,
-                          style: GoogleFonts.quicksand(),
-                        ),
-                      ),
+                      
                       Expanded(
                         child: Text(
                           producto.nombre,
-                          style: GoogleFonts.quicksand(),
+                          style: GoogleFonts.quicksand(fontSize: 11),
                           overflow: TextOverflow.ellipsis,
+                          
                         ),
                       ),
                       producto.apartado
@@ -1614,30 +1599,24 @@ class _InventarioViewState extends State<InventarioView>
                         width: 80,
                         child: Center(
                           child: Text(producto.cantidad.toString(),
-                              style: GoogleFonts.quicksand()),
+                              style: GoogleFonts.quicksand(fontSize: 11)),
                         ),
                       ),
                       SizedBox(
                         width: 80,
                         child: Text('\$ ${producto.precio.toStringAsFixed(2)}',
-                            style: GoogleFonts.quicksand()),
+                            style: GoogleFonts.quicksand(fontSize: 11)),
                       ),
-                      SizedBox(
-                        width: 55,
-                        child: Center(
-                          child: Text(producto.descripcion,
-                              overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.quicksand()),
-                        ),
-                      ),
+                      
                     ],
                   ),
                 ),
               );
             },
             itemCount: socioService.tienda.listaProductos.length,
-            separatorBuilder: (_, __) => const SizedBox(
+            separatorBuilder: (_, __) =>  Divider(
               height: 5,
+              color: Colors.grey.withOpacity(.1),
             ),
           ),
         )
@@ -1857,7 +1836,7 @@ class PedidoVentaWidget extends StatelessWidget {
           context,
           MaterialPageRoute(
               builder: (context) => DetallesPedido(
-                    tiendaRopa: false,
+                    tiendaRopa: true,
                     pedido: pedido,
                     showActions: showActions,
                     confirmar: confirmar,
@@ -1878,7 +1857,7 @@ class PedidoVentaWidget extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
                 maxLines: 1,
                 style: GoogleFonts.quicksand(
-                    fontSize: 13, color: Colors.black.withOpacity(.8)),
+                    fontSize: 11, color: Colors.black.withOpacity(.8)),
               ),
             ),
             Row(
@@ -1900,10 +1879,10 @@ class PedidoVentaWidget extends StatelessWidget {
                     ),
                     Text(
                       socioService.tienda.tiendaRopa
-                          ? '\$${pedido.totalSafe.toStringAsFixed(2)}'
+                          ? '\$${pedido.total.toStringAsFixed(2)}'
                           : '\$${pedido.total.toStringAsFixed(2)}',
                       style: GoogleFonts.quicksand(
-                          fontSize: 13, color: Colors.black.withOpacity(.8)),
+                          fontSize: 11, color: Colors.black.withOpacity(.8)),
                     ),
                     const SizedBox(
                       width: 20,
@@ -1937,7 +1916,7 @@ class PedidoVentaWidget extends StatelessWidget {
                                   : calcularEstadoPedido(
                                       pedido: pedido, context: context),
                               style: GoogleFonts.quicksand(
-                                  fontSize: 13,
+                                  fontSize: 11,
                                   color: pedido.apartado
                                       ? Colors.white
                                       : Colors.black.withOpacity(.8)),
@@ -2023,7 +2002,7 @@ class PedidoVentaWidget extends StatelessWidget {
       if (pedido.apartado) {
         return 'Apartado';
       } else {
-        return 'Liquidado';
+        return 'Finalizado';
       }
     } else {
       if (!pedido.confirmado) {

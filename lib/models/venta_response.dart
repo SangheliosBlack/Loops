@@ -8,8 +8,8 @@ import 'package:delivery/models/ruta.dart';
 import 'package:delivery/models/usuario.dart';
 import 'package:delivery/models/usuario_venta.dart';
 
-List<Venta> ventaResponseFromJson(String str) =>
-    List<Venta>.from(json.decode(str).map((x) => Venta.fromJson(x)));
+  List<Venta> ventaResponseFromJson(String str) =>
+      List<Venta>.from(json.decode(str).map((x) => Venta.fromJson(x)));
 
 String ventaToJson(List<Venta> data) =>
     json.encode(List<dynamic>.from(data.map((x) => x.toJson())));

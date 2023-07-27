@@ -115,19 +115,7 @@ class _DetallesPedidoState extends State<DetallesPedido> {
               }),
               child: Container(
                 margin: const EdgeInsets.only(left: 20),
-                child: Row(
-                  children: [
-                    const Icon(Icons.arrow_back, color: Colors.black),
-                    const SizedBox(
-                      width: 5,
-                    ),
-                    Text(
-                      'Regresar',
-                      style: GoogleFonts.quicksand(
-                          fontSize: 15, color: Colors.grey),
-                    ),
-                  ],
-                ),
+                child: const Icon(Icons.arrow_back, color: Colors.black),
               ),
             ),
           ],
@@ -147,6 +135,7 @@ class _DetallesPedidoState extends State<DetallesPedido> {
               ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start  ,
                 children: [
                   widget.tiendaRopa
                       ? Container()
@@ -168,13 +157,49 @@ class _DetallesPedidoState extends State<DetallesPedido> {
                             ),
                           ],
                         ),
+                  Row(
+                    mainAxisAlignment: 
+                    MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        
+                        children: [
+                          Row(
+                            children: [
+                              Container(margin: const EdgeInsets.only(right: 5),padding: const EdgeInsets.all(10),decoration: BoxDecoration(color: Colors.blueGrey,borderRadius: BorderRadius.circular(15)),child: const Icon(Icons.storefront_outlined,color: Colors.white,)),
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment:CrossAxisAlignment.start,
+                                children: [
+                               
+                                  Text(" Vendedor",style: GoogleFonts.quicksand(color: Colors.grey,fontSize: 11),),
+                                  Text(widget.pedido.usuario.nombre,style: GoogleFonts.quicksand(),)
+                                ],
+                              )
+                            ],
+                          ),
+                          
+                        ],
+                      ),
+                      Column(
+                        children: [
+                          Text("Propina",style: GoogleFonts.quicksand(color: Colors.grey),),
+                          Text(' \$ ${widget.pedido.envio.toStringAsFixed(2)}',style: GoogleFonts.quicksand(color: Colors.blueGrey),),
+                        ],
+                      )
+                    ],
+                  ),
                   Text(
-                    ' ${widget.tiendaRopa ? "Fecha de compra" : "Fecha de inicio"}  : $formattedDate',
+                    '${widget.tiendaRopa ? "" : "Fecha de inicio"}           $formattedDate',
                     style:
-                        GoogleFonts.quicksand(fontSize: 13, color: Colors.grey),
+                        GoogleFonts.quicksand(fontSize: 11, color: Colors.grey),
                   ),
                 ],
               ),
+              const SizedBox(
+                height: 10,
+              ),
+              const Divider(),
               const SizedBox(
                 height: 10,
               ),
@@ -182,9 +207,19 @@ class _DetallesPedidoState extends State<DetallesPedido> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    '+ \$ ${widget.pedido.total.toStringAsFixed(2)}',
-                    style: GoogleFonts.quicksand(fontSize: 45),
+                  Row(
+                    children: [
+                      Column(
+                        children: [
+                          const Icon(Icons.trending_up,size: 40,color: Colors.green,),
+                          Text("+ + + +",style: GoogleFonts.quicksand(color:Colors.green,fontSize: 10),)
+                        ],
+                      ),
+                      Text(
+                        ' \$ ${widget.pedido.total.toStringAsFixed(2)}',
+                        style: GoogleFonts.quicksand(fontSize: 45),
+                      ),
+                    ],
                   ),
                   widget.pedido.apartado
                       ? Column(
@@ -927,7 +962,7 @@ class _DetallesPedidoState extends State<DetallesPedido> {
                       ),
                       Text(
                         widget.tiendaRopa ? 'Articulo' : 'Producto',
-                        style: GoogleFonts.quicksand(color: Colors.black),
+                        style: GoogleFonts.quicksand(color: Colors.blueGrey),
                       ),
                     ],
                   ),
@@ -935,14 +970,14 @@ class _DetallesPedidoState extends State<DetallesPedido> {
                     children: [
                       Text(
                         'Precio',
-                        style: GoogleFonts.quicksand(color: Colors.black),
+                        style: GoogleFonts.quicksand(color: Colors.blueGrey),
                       ),
                       const SizedBox(
                         width: 15,
                       ),
                       Text(
-                        'Cant',
-                        style: GoogleFonts.quicksand(color: Colors.black),
+                        'C ',
+                        style: GoogleFonts.quicksand(color: Colors.blueGrey),
                       ),
                       const SizedBox(
                         width: 15,
@@ -1058,20 +1093,20 @@ class _DetallesPedidoState extends State<DetallesPedido> {
             sub: [
               Sub(
                   estado: true,
-                  titulo: 'Fecha de compra',
+                  titulo: 'Fecha de venta',
                   time: pedido.createdAt),
-              Sub(estado: true, titulo: 'Liquidado', time: pedido.createdAt)
+              //Sub(estado: true, titulo: 'Liquidado', time: pedido.createdAt)
             ],
             complete: pedido.confirmado ? true : false));
-        listado.add(EstadoPedidoAvanzado(
-            titulo: 'Fecha limite de cambio',
-            sub: [
-              Sub(
-                  estado: true,
-                  titulo: 'Limite',
-                  time: pedido.createdAt.add(const Duration(days: 30)))
-            ],
-            complete: pedido.entregadoRepartidor));
+        // listado.add(EstadoPedidoAvanzado(
+        //     titulo: 'Fecha limite de cambio',
+        //     sub: [
+        //       Sub(
+        //           estado: true,
+        //           titulo: 'Limite',
+        //           time: pedido.createdAt.add(const Duration(days: 30)))
+        //     ],
+        //     complete: pedido.entregadoRepartidor));
       }
 
       return listado;

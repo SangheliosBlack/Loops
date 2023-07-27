@@ -964,7 +964,7 @@ class ItemPedidoWidget extends StatelessWidget {
               child: Text(
                 '- ${producto.nombre}',
                 overflow: TextOverflow.visible,
-                style: GoogleFonts.quicksand(color: Colors.black, fontSize: 15),
+                style: GoogleFonts.quicksand(color: Colors.black, fontSize: 12),
               ),
             ),
             SizedBox(
@@ -974,7 +974,7 @@ class ItemPedidoWidget extends StatelessWidget {
                   Text(
                     '\$ ${producto.precio.toStringAsFixed(2)}',
                     style: GoogleFonts.quicksand(
-                        color: Colors.black, fontSize: 15),
+                        color: Colors.black, fontSize: 12),
                   ),
                   SizedBox(
                     width: 32,
@@ -982,7 +982,7 @@ class ItemPedidoWidget extends StatelessWidget {
                       child: Text(
                         producto.cantidad.toString(),
                         style: GoogleFonts.quicksand(
-                            color: Colors.black, fontSize: 15),
+                            color: Colors.black, fontSize: 12),
                       ),
                     ),
                   ),

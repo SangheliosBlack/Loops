@@ -28,6 +28,8 @@ import 'package:mime/mime.dart';
 
 import 'local_storage.dart';
 
+enum SingingCharacter { lafayette, jefferson, jamon }
+
 enum AuthStatus { checking, authenticated, notAuthenticated }
 
 enum ButtonStatus { autenticando, disponible, pressed }
@@ -57,6 +59,13 @@ class AuthService with ChangeNotifier {
   EstadoSistema estadoSistemaStatus = EstadoSistema.isOpen;
 
   late Usuario usuario;
+
+  /////////TABA//////////
+  
+  SingingCharacter grupo = SingingCharacter.jamon;
+
+
+  /////////TABA//////////
 
   List<ListadoOpcionesTemp> listadoTemp = [];
 
@@ -95,7 +104,6 @@ class AuthService with ChangeNotifier {
           'x-version': '1.0.8 beta'
         });
 
-    print(resp.body);
 
     final estado = estadoSistemaFromJson(resp.body);
 
@@ -117,6 +125,8 @@ class AuthService with ChangeNotifier {
       }
     }
   }
+
+
 
   calcularPromociones(
       {required List<Promocion> promociones,
@@ -958,12 +968,13 @@ class AuthService with ChangeNotifier {
       required Direccion direccion,
       String tarjeta = '',
       required String customer}) async {
+
+
+        //quitar los apartadis de teba en las propiedades de codigo y
     Cesta cestaEnvio = Cesta(
         productos: usuario.cesta.productos,
-        total: -(usuario.cesta.codigo != '' ? envio : 0) +
-            calcularTotal() +
-            (5.6 * calcularTiendas()) +
-            envio,
+        total: calcularTotal() +
+             calcularTotalPropina(),
         tarjeta: tarjeta,
         direccion: direccion,
         efectivo: usuario.cesta.efectivo,
@@ -998,6 +1009,10 @@ class AuthService with ChangeNotifier {
 
       var respJson = ventoFromJson(resp.body);
 
+      //////taba//////
+      grupo = SingingCharacter.jamon;
+      notifyListeners();
+
       if (resp.statusCode == 200) {
         usuario.cesta.productos = [];
         usuario.cesta.codigo = '';
@@ -1011,6 +1026,29 @@ class AuthService with ChangeNotifier {
     } catch (e) {
       return null;
     }
+  }
+
+  modificarGrupo({ SingingCharacter grupoS  = SingingCharacter.jamon}){
+
+    if(grupoS == grupo){
+      grupo = SingingCharacter.jamon;
+      notifyListeners();
+    }else{
+      grupo = grupoS;
+      notifyListeners();
+    }
+  }
+
+ num calcularTotalPropina(){
+
+    if(grupo == SingingCharacter.jamon){
+      return 0;
+    }else if(grupo == SingingCharacter.lafayette){
+      return (calcularTotal()/100)*10;
+    }else{
+      return (calcularTotal()/100)*15;
+    }
+
   }
 
   Future<Venta?> crearPedido2(

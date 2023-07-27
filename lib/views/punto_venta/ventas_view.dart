@@ -145,7 +145,7 @@ class _VentasViewState extends State<VentasView>
                       Row(
                         children: [
                           Text(
-                            'Concepto',
+                            'Estado',
                             style: GoogleFonts.quicksand(color: Colors.black),
                           ),
                           const Icon(
@@ -183,14 +183,14 @@ class _VentasViewState extends State<VentasView>
                           child: AnimatedSize(
                             duration: const Duration(milliseconds: 500),
                             child: !socioService.ventasCargadas
-                                ? SizedBox(
+                                ? const SizedBox(
                                     width: double.infinity,
                                     child: Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.center,
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
-                                      children: const [
+                                      children: [
                                         SizedBox(
                                           height: 100,
                                           width: 100,

@@ -159,8 +159,8 @@ class SearchPrenda extends SearchDelegate<BusquedaResultPrenda> {
                                 )),
                           ),
                           Container(
+                              padding: const EdgeInsets.symmetric(vertical: 10),
                               width: double.infinity,
-                              height: 60,
                               decoration: const BoxDecoration(
                                   color: Colors.black,
                                   borderRadius: BorderRadius.only(
@@ -171,21 +171,17 @@ class SearchPrenda extends SearchDelegate<BusquedaResultPrenda> {
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Text(
-                                      snapshot.data!.productos[index].sku,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: GoogleFonts.quicksand(
-                                          fontSize: 10, color: Colors.white),
-                                    ),
+                                    
                                     Text(
                                       snapshot.data!.productos[index].nombre,
                                       overflow: TextOverflow.ellipsis,
                                       style: GoogleFonts.quicksand(
-                                          fontSize: 17, color: Colors.white),
+                                          fontSize: 12, color: Colors.white),
                                     ),
+                                    const SizedBox(height: 5,),
                                     Text(
                                       '\$ ${snapshot.data!.productos[index].precio.toStringAsFixed(2)}',
-                                      style: GoogleFonts.quicksand(
+                                      style: GoogleFonts.quicksand(fontSize: 10,
                                           color: Colors.white.withOpacity(.7)),
                                     ),
                                   ],

@@ -9,6 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
+
+
 class VentaPantalla extends StatefulWidget {
   const VentaPantalla({Key? key}) : super(key: key);
 
@@ -20,6 +22,8 @@ class _VentaPantallaState extends State<VentaPantalla>
     with AutomaticKeepAliveClientMixin {
   final controller = TextEditingController();
   final controller2 = TextEditingController();
+
+  
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -29,7 +33,7 @@ class _VentaPantallaState extends State<VentaPantalla>
     return Scaffold(
       backgroundColor: Colors.white,
       body: Container(
-        padding: const EdgeInsets.all(25),
+        padding: const EdgeInsets.only(top: 25,left: 25,right: 25,bottom: 0),
         child: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
           child: Column(
@@ -269,34 +273,35 @@ class _VentaPantallaState extends State<VentaPantalla>
                                     padding: const EdgeInsets.all(10),
                                     child: Row(
                                       children: [
-                                        Container(
-                                            padding: const EdgeInsets.all(10),
-                                            decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(10),
-                                                border: Border.all(
-                                                    width: 1,
-                                                    color: Colors.grey
-                                                        .withOpacity(.2))),
-                                            child: const Icon(Icons.image)),
-                                        const SizedBox(
-                                          width: 15,
-                                        ),
+                                        // Container(
+                                        //     padding: const EdgeInsets.all(10),
+                                        //     decoration: BoxDecoration(
+                                        //         borderRadius:
+                                        //             BorderRadius.circular(10),
+                                        //         border: Border.all(
+                                        //             width: 1,
+                                        //             color: Colors.grey
+                                        //                 .withOpacity(.2))),
+                                        //     child: const Icon(Icons.image)),
+                                        // const SizedBox(
+                                        //   width: 15,
+                                        // ),
                                         Expanded(
                                           child: Text(
                                             '${authService.usuario.cesta.productos[index].nombre}  ${authService.usuario.cesta.productos[index].descripcion}',
                                             overflow: TextOverflow.fade,
+                                            textAlign: TextAlign.start,
                                             style: GoogleFonts.quicksand(
+                                              fontSize: 14,
                                                 color: Colors.black
                                                     .withOpacity(.8)),
                                           ),
                                         ),
-                                        const Spacer(),
                                         Text(
                                           '\$ ${authService.usuario.cesta.productos[index].precio.toStringAsFixed(2)}',
                                           style: GoogleFonts.quicksand(
                                               color: Colors.blueGrey,
-                                              fontSize: 25),
+                                              fontSize: 18),
                                         ),
                                         authService.usuario.cesta
                                                     .productos[index].precio <
@@ -350,6 +355,91 @@ class _VentaPantallaState extends State<VentaPantalla>
                   ),
                 ],
               ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Radio<SingingCharacter>(
+                    value: SingingCharacter.jamon,
+                    activeColor: const Color.fromRGBO(41, 199, 184, 1),
+                    groupValue: authService.grupo,
+                    toggleable: true,
+
+                    onChanged: (SingingCharacter? value)  {
+                    authService.modificarGrupo(grupoS: value!);
+
+                    }),
+                  Row(
+                    children: [
+                      Text(
+                        'Propina 0%',
+                        style: GoogleFonts.quicksand(
+                            color: Colors.black.withOpacity(.8)),
+                      ),
+                      Text(
+                          '    ( \$ 0.00 )',
+                        style: GoogleFonts.quicksand(
+                            ),
+                      ),
+                    ],
+                  )
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Radio<SingingCharacter>(
+                    value: SingingCharacter.lafayette,
+                    activeColor: const Color.fromRGBO(41, 199, 184, 1),
+                    groupValue: authService.grupo,
+                    toggleable: true,
+                    
+                    onChanged: (SingingCharacter? value)  {
+                    authService.modificarGrupo(grupoS: value!);
+
+                    }),
+                  Row(
+                    children: [
+                      Text(
+                        'Propina 10%',
+                        style: GoogleFonts.quicksand(
+                            color: Colors.black.withOpacity(.8)),
+                      ),
+                      Text(
+                        authService.usuario.cesta.productos.isEmpty ? '   ( \$ 0.00 )' : '   ( \$ ${((authService.calcularTotal()/100)*10).round().toStringAsFixed(2) } )',
+                        style: GoogleFonts.quicksand(
+                            ),
+                      ),
+                    ],
+                  )
+                ],
+              ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Radio<SingingCharacter>(
+                          value: SingingCharacter.jefferson,
+                          activeColor: const Color.fromRGBO(41, 199, 184, 1),
+                          groupValue: authService.grupo,
+                          onChanged: (SingingCharacter? value)  {
+                          authService.modificarGrupo(grupoS: value!);
+
+                          }),
+                      Row(
+                        children: [
+                          Text(
+                            'Propina 15%',
+                            style: GoogleFonts.quicksand(
+                                color: Colors.black.withOpacity(.8)),
+                          ),
+                          Text(
+                            authService.usuario.cesta.productos.isEmpty ? '   ( \$ 0.00 )' : '   ( \$ ${((authService.calcularTotal()/100)*15).round().toStringAsFixed(2) } )'  ,
+                            style: GoogleFonts.quicksand(
+                                ),
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
               Column(
                 children: [
                   Container(
@@ -364,16 +454,16 @@ class _VentaPantallaState extends State<VentaPantalla>
                           'TOTAL :    ',
                           style: GoogleFonts.quicksand(
                               color: Colors.black.withOpacity(.8),
-                              fontSize: 25),
+                              fontSize: 18),
                         ),
                         Container(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 15, vertical: 5),
                           decoration: const BoxDecoration(color: Colors.black),
                           child: Text(
-                            '\$ ${authService.calcularTotal().toStringAsFixed(2)}',
+                            '\$ ${(authService.calcularTotal()+ authService.calcularTotalPropina()).toStringAsFixed(2)}',
                             style: GoogleFonts.quicksand(
-                                fontSize: 25, color: Colors.white),
+                                fontSize: 18, color: Colors.white),
                           ),
                         )
                       ],
@@ -389,7 +479,7 @@ class _VentaPantallaState extends State<VentaPantalla>
                           'RECIBI :    ',
                           style: GoogleFonts.quicksand(
                               color: Colors.black.withOpacity(.8),
-                              fontSize: 25),
+                              fontSize: 18),
                         ),
                         SizedBox(
                           width: 130,
@@ -409,13 +499,13 @@ class _VentaPantallaState extends State<VentaPantalla>
                                 contentPadding: EdgeInsets.symmetric(
                                     vertical: 0, horizontal: 10)),
                             style: GoogleFonts.quicksand(
-                                color: Colors.blueGrey, fontSize: 25),
+                                color: Colors.blueGrey, fontSize: 18),
                             onFieldSubmitted: (valor1) async {
                               String valor = valor1.substring(1);
                               valor.trim();
                               final valor2 = valor.replaceAll(',', '');
                               if (num.parse(valor2) <
-                                  authService.calcularTotal()) {
+                                  authService.calcularTotal()+ authService.calcularTotalPropina()) {
                                 socioService.modificarEntregadoCliente(
                                     dinero: valor2);
                                 final snackBar = SnackBar(
@@ -518,70 +608,30 @@ class _VentaPantallaState extends State<VentaPantalla>
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             Text(
-                              'CAMBIO :    ',
+                              'CAMBIO :  ',
                               style: GoogleFonts.quicksand(
                                   color: Colors.black.withOpacity(.8),
-                                  fontSize: 25),
+                                  fontSize: 18),
                             ),
                             Container(
                               width: 145,
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 15, vertical: 5),
                               child: Text(
-                                '\$   ${authService.usuario.cesta.apartado ? socioService.entregado - (controller2.text.isEmpty ? 0.00 : num.parse(precio)) : socioService.entregado - authService.calcularTotal() > 0 ? (socioService.entregado - authService.calcularTotal()).toStringAsFixed(2) : 0}',
+                                '\$ ${authService.usuario.cesta.apartado ? socioService.entregado - (controller2.text.isEmpty ? 0.00 : num.parse(precio)) : socioService.entregado - authService.calcularTotal() - authService.calcularTotalPropina() > 0 ? (socioService.entregado - authService.calcularTotal() - authService.calcularTotalPropina()).toStringAsFixed(2) : 0}',
                                 textAlign: TextAlign.end,
                                 style: GoogleFonts.quicksand(
-                                    fontSize: 25, color: Colors.blueGrey),
+                                    fontSize: 18, color: Colors.blueGrey),
                               ),
                             )
                           ]),
                     );
                   }),
-                  GestureDetector(
-                    onTap: socioService.entregado <
-                                authService.calcularTotal() ||
-                            authService.usuario.cesta.apartado
-                        ? () {
-                            authService.estadoApartado();
-                            socioService.modificarEntregadoCliente(dinero: '0');
-                            controller.clear();
-                          }
-                        : () {
-                            final snackBar = SnackBar(
-                              duration: const Duration(seconds: 2),
-                              backgroundColor: const Color.fromRGBO(0, 0, 0, 1),
-                              content: Text(
-                                'Operacion denegada',
-                                style: GoogleFonts.quicksand(
-                                  color: Colors.white,
-                                ),
-                              ),
-                            );
-
-                            ScaffoldMessenger.of(context)
-                                .showSnackBar(snackBar);
-                          },
-                    behavior: HitTestBehavior.translucent,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Radio(
-                            value: true,
-                            activeColor: const Color.fromRGBO(41, 199, 184, 1),
-                            groupValue: authService.usuario.cesta.apartado,
-                            onChanged: (value) {}),
-                        Text(
-                          'Sistema de apartado 15 dias',
-                          style: GoogleFonts.quicksand(
-                              color: Colors.black.withOpacity(.8)),
-                        )
-                      ],
-                    ),
-                  ),
+                  
                   GestureDetector(
                     behavior: HitTestBehavior.translucent,
                     onTap: authService.usuario.cesta.apartado == false &&
-                            socioService.entregado < authService.calcularTotal()
+                            socioService.entregado < authService.calcularTotal()+ authService.calcularTotalPropina()
                         ? () {
                             displayTextInputDialog(context);
                           }
@@ -602,7 +652,7 @@ class _VentaPantallaState extends State<VentaPantalla>
                                             authService.usuario.cesta.apartado,
                                         liquidado:
                                             !authService.usuario.cesta.apartado,
-                                        envio: 0,
+                                        envio: authService.calcularTotalPropina(),
                                         direccion: Direccion(
                                             id: '',
                                             coordenadas:
@@ -683,6 +733,7 @@ class _VentaPantallaState extends State<VentaPantalla>
                           ),
                         )),
                   ),
+                  const SizedBox(height: 25,)
                 ],
               )
             ],
@@ -703,27 +754,15 @@ class _VentaPantallaState extends State<VentaPantalla>
         builder: (context) {
           return AlertDialog(
             title: Text(
-              'Monto insuficiente, modifique o active el sistema de apartado',
+              'Operecion incorrecta',
               style: GoogleFonts.quicksand(color: Colors.black.withOpacity(.8)),
             ),
             actions: <Widget>[
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromRGBO(41, 199, 184, 1)),
-                onPressed: () {
-                  authService.estadoApartado();
-                  controller2.clear();
-                  Navigator.pop(context);
-                },
-                child: Text(
-                  'Sistema de apartado',
-                  style: GoogleFonts.quicksand(color: Colors.white),
-                ),
-              ),
+              
               ElevatedButton(
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
                 child: Text(
-                  'Cancelar',
+                  'Ok',
                   style: GoogleFonts.quicksand(color: Colors.white),
                 ),
                 onPressed: () {

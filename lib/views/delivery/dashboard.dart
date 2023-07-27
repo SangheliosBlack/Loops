@@ -1479,7 +1479,7 @@ class _DashBoardViewRepartidorState extends State<DashBoardViewRepartidor>
                                                   ),
                                                   authProvider.usuario
                                                           .onlineRepartidor
-                                                      ? const JumpingDots(
+                                                      ?  JumpingDots(
                                                           animationDuration:
                                                               Duration(
                                                                   milliseconds:

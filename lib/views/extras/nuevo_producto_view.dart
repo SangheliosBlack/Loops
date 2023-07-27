@@ -472,7 +472,7 @@ class AgregarProductoViewState extends State<AgregarProductoView> {
                                     width: 1)),
                             labelStyle: GoogleFonts.quicksand(
                                 color: Colors.blueGrey, fontSize: 15),
-                            labelText: 'Talla',
+                            labelText: 'Descripcion ( opcional )',
                             errorStyle: GoogleFonts.quicksand(
                                 color: Colors.red, fontWeight: FontWeight.bold),
                             errorBorder: OutlineInputBorder(
